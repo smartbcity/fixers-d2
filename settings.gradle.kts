@@ -6,3 +6,6 @@ pluginManagement {
 }
 
 rootProject.name = "d2"
+
+include("dokka-storybook-plugin")
+
