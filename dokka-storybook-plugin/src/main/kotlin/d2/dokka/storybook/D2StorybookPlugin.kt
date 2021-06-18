@@ -1,5 +1,6 @@
 package d2.dokka.storybook
 
+import d2.dokka.storybook.transformers.documentables.D2AnnotationFilterTransformer
 import d2.dokka.storybook.translators.D2StorybookDocumentableToPageTranslator
 import org.jetbrains.dokka.CoreExtensions
 import org.jetbrains.dokka.base.DokkaBase
@@ -16,6 +17,12 @@ class D2StorybookPlugin: DokkaPlugin() {
 
     val renderer by extending {
         CoreExtensions.renderer providing ::D2StorybookRenderer override gfmPlugin.renderer
+    }
+
+    val d2AnnotationFilter by extending {
+        dokkaBase.preMergeDocumentableTransformer with D2AnnotationFilterTransformer() order {
+            before(dokkaBase.emptyPackagesFilter)
+        }
     }
 
     val documentableToPageTranslator by extending {
