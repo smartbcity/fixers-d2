@@ -8,7 +8,7 @@ dependencies {
 }
 
 tasks {
-    named<org.jetbrains.dokka.gradle.DokkaTask>("dokkaGfm") {
+    create<org.jetbrains.dokka.gradle.DokkaTask>("dokkaD2") {
         dependencies {
             plugins(project(":dokka-storybook-plugin"))
         }
