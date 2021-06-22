@@ -19,4 +19,9 @@ interface BoringInterface {
      * The most boring description you could ever think of
      */
     val description: String
+
+    /**
+     * A vain attempt to make it look like there are a lot to see here
+     */
+    val things: List<String?>
 }

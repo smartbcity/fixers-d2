@@ -1,9 +1,9 @@
 package d2.dokka.storybook.translators
 
 import d2.dokka.storybook.model.D2TextStyle
+import d2.dokka.storybook.model.toTypeString
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.base.DokkaBaseConfiguration
-import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.driOrNull
 import org.jetbrains.dokka.base.signatures.SignatureProvider
 import org.jetbrains.dokka.base.transformers.pages.comments.CommentsToContentConverter
 import org.jetbrains.dokka.base.translators.documentables.DefaultPageCreator
@@ -75,7 +75,7 @@ class D2StorybookPageCreator(
     ) {
         block(kind = ContentKind.Properties, elements = properties) { property ->
             text(property.name, styles = setOf(TextStyle.Italic))
-            text(property.type.driOrNull?.classNames ?: "Unknown", styles = setOf(D2TextStyle.Code))
+            text(property.type.toTypeString(), styles = setOf(D2TextStyle.Code))
             group(setOf(property.dri), property.sourceSets.toSet(), ContentKind.Main) {
                 property.sourceSets.forEach { sourceSet ->
                     property.documentation[sourceSet]?.children?.firstOrNull()?.root?.let {
