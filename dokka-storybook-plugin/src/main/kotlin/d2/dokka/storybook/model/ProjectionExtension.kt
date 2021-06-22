@@ -45,7 +45,7 @@ private fun TypeConstructor.toTypeString(): String {
     if (projections.isEmpty()) {
         return typeName
     }
-    val projectionNames = this.projections.joinToString(",", transform = Projection::toTypeString)
+    val projectionNames = this.projections.joinToString(", ", transform = Projection::toTypeString)
     return "$typeName<$projectionNames>"
 }
 
