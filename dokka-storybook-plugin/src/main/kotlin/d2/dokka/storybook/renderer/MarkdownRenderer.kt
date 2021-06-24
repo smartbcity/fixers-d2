@@ -1,35 +1,25 @@
-package d2.dokka.storybook
+package d2.dokka.storybook.renderer
 
 import d2.dokka.storybook.model.D2TextStyle
 import d2.dokka.storybook.model.WrapperTag
+import org.jetbrains.dokka.base.resolvers.local.LocationProvider
 import org.jetbrains.dokka.gfm.renderer.CommonmarkRenderer
 import org.jetbrains.dokka.model.DisplaySourceSet
-import org.jetbrains.dokka.pages.ContentGroup
+import org.jetbrains.dokka.pages.ContentDRILink
 import org.jetbrains.dokka.pages.ContentKind
 import org.jetbrains.dokka.pages.ContentPage
 import org.jetbrains.dokka.pages.ContentTable
 import org.jetbrains.dokka.pages.ContentText
+import org.jetbrains.dokka.pages.PageNode
 import org.jetbrains.dokka.pages.Style
 import org.jetbrains.dokka.pages.TextStyle
 import org.jetbrains.dokka.plugability.DokkaContext
-import org.jetbrains.dokka.plugability.plugin
-import org.jetbrains.dokka.plugability.query
 
-class D2StorybookRenderer(context: DokkaContext): CommonmarkRenderer(context) {
+open class MarkdownRenderer(
+    context: DokkaContext,
+): CommonmarkRenderer(context), D2ContentRenderer {
 
-    override val preprocessors = context.plugin<D2StorybookPlugin>().query { storybookPreprocessors }
-
-//    override fun StringBuilder.buildLink(address: String, content: StringBuilder.() -> Unit) {
-//        append(" link ")
-//    }
-//
-//    override fun StringBuilder.buildDRILink(
-//        node: ContentDRILink,
-//        pageContext: ContentPage,
-//        sourceSetRestriction: Set<DisplaySourceSet>?
-//    ) {
-//        append(" DRILink ")
-//    }
+    override lateinit var d2LocationProvider: LocationProvider
 
     override fun buildPageContent(context: StringBuilder, page: ContentPage) {
         page.content.build(context, page)
@@ -49,21 +39,11 @@ class D2StorybookRenderer(context: DokkaContext): CommonmarkRenderer(context) {
         }
     }
 
-    private fun StringBuilder.buildTableProperties(node: ContentTable, pageContext: ContentPage) {
-        node.children.forEach { child ->
-            wrapWith(WrapperTag.Article) {
-                buildNewLine()
-                buildNewLine()
-                child.children.forEach { subChild ->
-                    val trailingSpace = if (subChild is ContentGroup) "" else " "
-                    append(buildString { subChild.build(this, pageContext) } + trailingSpace)
-                }
-            }
-            buildNewLine()
-        }
+    protected open fun StringBuilder.buildTableProperties(node: ContentTable, pageContext: ContentPage) {
+        buildTableDefault(node, pageContext)
     }
 
-    private fun StringBuilder.buildTableSampleOrParameters(node: ContentTable, pageContext: ContentPage, sourceSetRestriction: Set<DisplaySourceSet>?) {
+    protected open fun StringBuilder.buildTableSampleOrParameters(node: ContentTable, pageContext: ContentPage, sourceSetRestriction: Set<DisplaySourceSet>?) {
         node.sourceSets.forEach { sourceSetData ->
             append(sourceSetData.name)
             buildNewLine()
@@ -77,7 +57,7 @@ class D2StorybookRenderer(context: DokkaContext): CommonmarkRenderer(context) {
         }
     }
 
-    private fun StringBuilder.buildTableDefault(node: ContentTable, pageContext: ContentPage) {
+    protected open fun StringBuilder.buildTableDefault(node: ContentTable, pageContext: ContentPage) {
         val size = node.header.firstOrNull()?.children?.size ?: node.children.firstOrNull()?.children?.size ?: 0
 
         if (node.header.isNotEmpty()) {
@@ -127,17 +107,17 @@ class D2StorybookRenderer(context: DokkaContext): CommonmarkRenderer(context) {
         }
     }
 
-    private fun StringBuilder.wrapWith(tag: WrapperTag, buildContent: StringBuilder.() -> Unit) {
+    protected open fun StringBuilder.wrapWith(tag: WrapperTag, buildContent: StringBuilder.() -> Unit) {
         wrapWith(listOf(tag), buildContent)
     }
 
-    private fun StringBuilder.wrapWith(tags: List<WrapperTag>, buildContent: StringBuilder.() -> Unit) {
+    protected open fun StringBuilder.wrapWith(tags: List<WrapperTag>, buildContent: StringBuilder.() -> Unit) {
         tags.forEach { tag -> append(tag.open()) }
         buildContent()
         tags.forEach { tag -> append(tag.close()) }
     }
 
-    private fun decorators(styles: Set<Style>) = buildString {
+    protected open fun decorators(styles: Set<Style>) = buildString {
         styles.forEach { style ->
             when (style) {
                 TextStyle.Bold -> append("**")
@@ -150,8 +130,28 @@ class D2StorybookRenderer(context: DokkaContext): CommonmarkRenderer(context) {
         }
     }
 
-    private fun String.withEntersAsHtml(): String = this
+    protected open fun String.withEntersAsHtml(): String = this
         .replace("\\\n", "\n\n")
         .replace("\n[\n]+".toRegex(), "<br>")
         .replace("\n", " ")
+
+    /*
+     * TODO links
+     */
+
+    override fun StringBuilder.buildLink(address: String, content: StringBuilder.() -> Unit) {
+        append(" -Link- ")
+    }
+
+    override fun StringBuilder.buildDRILink(
+        node: ContentDRILink,
+        pageContext: ContentPage,
+        sourceSetRestriction: Set<DisplaySourceSet>?
+    ) {
+        append(" -DRILink- ")
+    }
+
+    override fun StringBuilder.buildNavigation(page: PageNode) {
+        append(" -Navigation- ")
+    }
 }
