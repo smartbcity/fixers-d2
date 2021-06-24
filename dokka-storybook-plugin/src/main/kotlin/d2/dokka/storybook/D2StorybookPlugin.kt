@@ -19,6 +19,10 @@ class D2StorybookPlugin: DokkaPlugin() {
         CoreExtensions.renderer providing ::D2StorybookRenderer override gfmPlugin.renderer
     }
 
+    val locationProvider by extending {
+        dokkaBase.locationProviderFactory providing D2StorybookLocationProvider::Factory override gfmPlugin.locationProvider
+    }
+
     val d2AnnotationFilter by extending {
         dokkaBase.preMergeDocumentableTransformer with D2AnnotationFilterTransformer() order {
             before(dokkaBase.emptyPackagesFilter)

@@ -1,6 +1,8 @@
 package d2.dokka.storybook.translators
 
 import d2.dokka.storybook.model.D2TextStyle
+import d2.dokka.storybook.model.page.FileData
+import d2.dokka.storybook.model.page.ModelPageNode
 import d2.dokka.storybook.model.toTypeString
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.base.DokkaBaseConfiguration
@@ -16,7 +18,6 @@ import org.jetbrains.dokka.model.DPackage
 import org.jetbrains.dokka.model.DProperty
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.WithScope
-import org.jetbrains.dokka.pages.ClasslikePageNode
 import org.jetbrains.dokka.pages.ContentGroup
 import org.jetbrains.dokka.pages.ContentKind
 import org.jetbrains.dokka.pages.ContentStyle
@@ -32,11 +33,24 @@ class D2StorybookPageCreator(
 ): DefaultPageCreator(configuration, commentsToContentConverter, signatureProvider, logger) {
 
     override fun pageForModule(m: DModule) =
-        ModulePageNode(m.name.ifEmpty { "<root>" }, contentForModule(m), m, m.packages.flatMap(DPackage::classlikes).map(::pageForClasslike))
+        ModulePageNode(m.name.ifEmpty { "<root>" }, contentForModule(m), m, m.packages.flatMap(DPackage::classlikes).flatMap(::pagesForClasslike))
 
-    override fun pageForClasslike(c: DClasslike): ClasslikePageNode {
-        return ClasslikePageNode(
-            c.name.orEmpty(), contentForClasslike(c), setOf(), null, emptyList()
+    private fun pagesForClasslike(c: DClasslike): List<ModelPageNode> {
+        return listOf(
+            c.toPage(FileData.MAIN),
+            c.toPage(FileData.DESCRIPTION),
+            c.toPage(FileData.SAMPLE)
+        )
+    }
+
+    private fun DClasslike.toPage(fileData: FileData): ModelPageNode {
+        return ModelPageNode(
+            name = this.name.orEmpty(),
+            content = contentForClasslike(this),
+            dri = setOf(this.dri.copy(extra = fileData.id)),
+            documentable = this,
+            children = emptyList(),
+            fileData = fileData
         )
     }
 
