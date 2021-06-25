@@ -12,7 +12,9 @@ interface WithFileData {
 enum class FileData(val id: String, val extension: String) {
     MAIN("main", ".mdx"),
     DESCRIPTION("desc", ".md"),
-    SAMPLE("sample", ".json")
+    SAMPLE("sample", ".json");
+
+    override fun toString() = "$id$extension"
 }
 
 interface D2StorybookPageNode: PageNode, WithFileData
