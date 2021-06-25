@@ -32,9 +32,9 @@ open class D2StorybookRenderer(
     protected open val preprocessors = context.plugin<D2StorybookPlugin>().query { storybookPreprocessors }
 
     private val renderers = mutableMapOf<Any, D2ContentRenderer>(
-        FileData.MAIN to ModelMainRenderer(context),
+        FileData.MAIN to ModelMainRenderer(),
         FileData.DESCRIPTION to ModelDescriptionRenderer(context),
-        FileData.SAMPLE to ModelSampleRenderer(context),
+        FileData.SAMPLE to ModelSampleRenderer(),
         "Default" to MarkdownRenderer(context)
     )
 

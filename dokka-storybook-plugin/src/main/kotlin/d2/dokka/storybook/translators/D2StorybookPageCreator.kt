@@ -41,10 +41,28 @@ class D2StorybookPageCreator(
 
     private fun pagesForClasslike(c: DClasslike): List<ModelPageNode> {
         return listOf(
-//            c.toMainPage(),
+            c.toMainPage(),
             c.toDescriptionPage(),
             c.toSamplePage()
         )
+    }
+
+    private fun DClasslike.toMainPage(): ModelPageNode {
+        return toModelPageNode(
+            content = mainContentForClasslike(this),
+            fileData = FileData.MAIN
+        )
+    }
+
+    private fun mainContentForClasslike(c: DClasslike): ContentGroup {
+        if (c is DInterface) {
+            return contentBuilder.contentFor(c, kind = ContentKind.Main)  {
+                text(FileData.DESCRIPTION.toString(), kind = ContentKind.Comment)
+                text(FileData.SAMPLE.toString(), kind = ContentKind.Sample)
+            }
+        }
+
+        return contentBuilder.contentFor(c, kind = ContentKind.Empty)
     }
 
     private fun DClasslike.toDescriptionPage(): ModelPageNode {
@@ -116,7 +134,7 @@ class D2StorybookPageCreator(
             }
         }
 
-        return super.contentForClasslike(c)
+        return contentBuilder.contentFor(c, kind = ContentKind.Empty)
     }
 
     private fun contentForExamples(c: DClasslike): List<ContentGroup> {

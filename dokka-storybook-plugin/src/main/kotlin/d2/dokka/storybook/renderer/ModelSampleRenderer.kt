@@ -8,9 +8,8 @@ import org.jetbrains.dokka.pages.ContentGroup
 import org.jetbrains.dokka.pages.ContentNode
 import org.jetbrains.dokka.pages.ContentPage
 import org.jetbrains.dokka.pages.ContentText
-import org.jetbrains.dokka.plugability.DokkaContext
 
-open class ModelSampleRenderer(context: DokkaContext): D2ContentRenderer {
+open class ModelSampleRenderer: D2ContentRenderer {
 
     override lateinit var d2LocationProvider: LocationProvider
 
