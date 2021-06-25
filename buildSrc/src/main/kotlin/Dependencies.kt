@@ -5,4 +5,5 @@ object PluginVersions {
 
 object Versions {
 	const val junit = "5.7.0"
+	const val jackson = "2.12.3"
 }

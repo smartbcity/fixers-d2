@@ -1,9 +1,13 @@
 package d2.dokka.storybook.renderer
 
+import com.fasterxml.jackson.core.JsonParser
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.jetbrains.dokka.base.resolvers.local.LocationProvider
 import org.jetbrains.dokka.model.DisplaySourceSet
+import org.jetbrains.dokka.pages.ContentGroup
 import org.jetbrains.dokka.pages.ContentNode
 import org.jetbrains.dokka.pages.ContentPage
+import org.jetbrains.dokka.pages.ContentText
 import org.jetbrains.dokka.plugability.DokkaContext
 
 open class ModelSampleRenderer(context: DokkaContext): D2ContentRenderer {
@@ -18,8 +22,10 @@ open class ModelSampleRenderer(context: DokkaContext): D2ContentRenderer {
         builder: StringBuilder,
         pageContext: ContentPage,
         sourceSetRestriction: Set<DisplaySourceSet>? = null
-    ) =
+    ) {
         builder.buildContentNode(this, pageContext, sourceSetRestriction)
+        builder.beautifyJson()
+    }
 
     open fun StringBuilder.buildContentNode(
         node: ContentNode,
@@ -28,7 +34,18 @@ open class ModelSampleRenderer(context: DokkaContext): D2ContentRenderer {
     ) {
         if (sourceSetRestriction.isNullOrEmpty() || node.sourceSets.any { it in sourceSetRestriction }) {
             when (node) {
-                else -> append(node::class.simpleName + "\n")
+//                is ContentGroup -> buildGroup(node, pageContext, sourceSetRestriction)
+                is ContentGroup -> {
+                    append("{")
+                    append(node.children.map { it as ContentGroup }.joinToString(",") {
+                        val builder = StringBuilder()
+                        builder.append((it.children[0] as ContentText).text)
+                        builder.append(":")
+                        builder.append((it.children[1] as ContentText).text.replace("\\", ""))
+                    })
+                    append("}")
+                }
+                else -> TODO()
 //                is ContentText -> buildText(node)
 //                is ContentHeader -> buildHeader(node, pageContext, sourceSetRestriction)
 //                is ContentCodeBlock -> buildCodeBlock(node, pageContext)
@@ -38,7 +55,6 @@ open class ModelSampleRenderer(context: DokkaContext): D2ContentRenderer {
 //                is ContentEmbeddedResource -> buildResource(node, pageContext)
 //                is ContentList -> buildList(node, pageContext, sourceSetRestriction)
 //                is ContentTable -> buildTable(node, pageContext, sourceSetRestriction)
-//                is ContentGroup -> buildGroup(node, pageContext, sourceSetRestriction)
 //                is ContentBreakLine -> buildNewLine()
 //                is PlatformHintedContent -> buildPlatformDependent(node, pageContext, sourceSetRestriction)
 //                is ContentDivergentGroup -> buildDivergent(node, pageContext)
@@ -49,6 +65,19 @@ open class ModelSampleRenderer(context: DokkaContext): D2ContentRenderer {
     }
 
     protected open fun buildJson() {
+//        ObjectMapper
+    }
 
+    protected open fun StringBuilder.beautifyJson() {
+        val prettyJson = toPrettyJson()
+        clear()
+        append(prettyJson)
+    }
+
+    protected open fun StringBuilder.toPrettyJson(): String {
+        val mapper = ObjectMapper()
+            .enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES)
+        val json = mapper.readValue(this.toString(), Any::class.java)
+        return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json)
     }
 }

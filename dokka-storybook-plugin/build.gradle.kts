@@ -3,11 +3,14 @@ plugins {
 }
 
 dependencies {
-    implementation(kotlin("stdlib"))
+    implementation(project(":d2-dsl"))
+
     compileOnly("org.jetbrains.dokka:dokka-core:${PluginVersions.dokka}")
     implementation("org.jetbrains.dokka:dokka-base:${PluginVersions.dokka}")
     implementation("org.jetbrains.dokka:gfm-plugin:${PluginVersions.dokka}")
-    implementation(project(":d2-dsl"))
+    implementation(kotlin("stdlib"))
+
+    implementation("com.fasterxml.jackson.core:jackson-databind:${Versions.jackson}")
 
     testImplementation(kotlin("test-junit"))
     testImplementation("org.jetbrains.dokka:dokka-test-api:${PluginVersions.dokka}")

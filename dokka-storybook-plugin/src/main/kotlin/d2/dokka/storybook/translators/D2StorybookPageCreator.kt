@@ -18,8 +18,12 @@ import org.jetbrains.dokka.model.DPackage
 import org.jetbrains.dokka.model.DProperty
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.WithScope
+import org.jetbrains.dokka.model.doc.CustomTagWrapper
+import org.jetbrains.dokka.model.doc.TagWrapper
+import org.jetbrains.dokka.model.doc.Text
 import org.jetbrains.dokka.pages.ContentGroup
 import org.jetbrains.dokka.pages.ContentKind
+import org.jetbrains.dokka.pages.ContentNode
 import org.jetbrains.dokka.pages.ContentStyle
 import org.jetbrains.dokka.pages.ModulePageNode
 import org.jetbrains.dokka.pages.TextStyle
@@ -37,24 +41,20 @@ class D2StorybookPageCreator(
 
     private fun pagesForClasslike(c: DClasslike): List<ModelPageNode> {
         return listOf(
-            c.toPage(FileData.MAIN),
-            c.toPage(FileData.DESCRIPTION),
-            c.toPage(FileData.SAMPLE)
+//            c.toMainPage(),
+            c.toDescriptionPage(),
+            c.toSamplePage()
         )
     }
 
-    private fun DClasslike.toPage(fileData: FileData): ModelPageNode {
-        return ModelPageNode(
-            name = this.name.orEmpty(),
-            content = contentForClasslike(this),
-            dri = setOf(this.dri.copy(extra = fileData.id)),
-            documentable = this,
-            children = emptyList(),
-            fileData = fileData
+    private fun DClasslike.toDescriptionPage(): ModelPageNode {
+        return toModelPageNode(
+            content = descriptionContentForClasslike(this),
+            fileData = FileData.DESCRIPTION
         )
     }
 
-    override fun contentForClasslike(c: DClasslike): ContentGroup {
+    private fun descriptionContentForClasslike(c: DClasslike): ContentGroup {
         if (c is DInterface) {
             return contentBuilder.contentFor(c)  {
                 group(kind = ContentKind.Cover) {
@@ -100,5 +100,60 @@ class D2StorybookPageCreator(
                 }
             }
         }
+    }
+
+    private fun DClasslike.toSamplePage(): ModelPageNode {
+        return toModelPageNode(
+            content = sampleContentForClasslike(this),
+            fileData = FileData.SAMPLE
+        )
+    }
+
+    private fun sampleContentForClasslike(c: DClasslike): ContentGroup {
+        if (c is DInterface) {
+            return contentBuilder.contentFor(c, kind = ContentKind.Properties)  {
+                +contentForExamples(c)
+            }
+        }
+
+        return super.contentForClasslike(c)
+    }
+
+    private fun contentForExamples(c: DClasslike): List<ContentGroup> {
+        return c.properties.map { property ->
+            contentBuilder.contentFor(property, sourceSets = property.sourceSets, kind = ContentKind.Main) {
+                property.sourceSets.forEach { sourceSet ->
+                    property.documentation[sourceSet]?.children?.exampleTagValue()?.let { tagValue ->
+                        text(property.name)
+                        text(tagValue)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun List<TagWrapper>.exampleTagValue(): String? {
+        val exampleTag = firstOrNull { tag -> tag is CustomTagWrapper && tag.name == "example" }
+            ?: return null
+
+        // TODO better analyse
+        val text = exampleTag.root
+            .children
+            .firstOrNull()
+            ?.children
+            ?.firstOrNull() as Text?
+
+        return text?.body
+    }
+
+    private fun DClasslike.toModelPageNode(content: ContentNode, fileData: FileData): ModelPageNode {
+        return ModelPageNode(
+            name = this.name.orEmpty(),
+            content = content,
+            dri = setOf(this.dri.copy(extra = fileData.id)),
+            documentable = this,
+            children = emptyList(),
+            fileData = fileData
+        )
     }
 }
