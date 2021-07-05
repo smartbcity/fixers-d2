@@ -14,17 +14,11 @@ open class ModelMainRenderer: D2ContentRenderer {
 
     override lateinit var d2LocationProvider: LocationProvider
 
-    protected open lateinit var builder: ReactFileBuilder
-
     override fun buildPageContent(context: StringBuilder, page: ContentPage) {
-        builder = ReactFileBuilder(context)
+        val builder = ReactFileBuilder(context)
         builder.buildFileHeader(page)
-        page.content.build(page)
+        builder.buildContentNode(page.content, page)
         builder.build()
-    }
-
-    open fun ContentNode.build(pageContext: ContentPage) {
-        builder.buildContentNode(this, pageContext)
     }
 
     open fun ReactFileBuilder.buildContentNode(
