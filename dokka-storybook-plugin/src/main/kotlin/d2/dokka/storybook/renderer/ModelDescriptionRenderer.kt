@@ -1,6 +1,6 @@
 package d2.dokka.storybook.renderer
 
-import d2.dokka.storybook.model.render.WrapperTag
+import d2.dokka.storybook.model.render.Article
 import org.jetbrains.dokka.pages.ContentGroup
 import org.jetbrains.dokka.pages.ContentPage
 import org.jetbrains.dokka.pages.ContentTable
@@ -10,7 +10,7 @@ class ModelDescriptionRenderer(context: DokkaContext): MarkdownRenderer(context)
 
     override fun StringBuilder.buildTableProperties(node: ContentTable, pageContext: ContentPage) {
         node.children.forEach { property ->
-            wrapWith(WrapperTag.Article) {
+            wrapWith(Article) {
                 buildNewLine()
                 buildNewLine()
                 property.children.forEach { child ->

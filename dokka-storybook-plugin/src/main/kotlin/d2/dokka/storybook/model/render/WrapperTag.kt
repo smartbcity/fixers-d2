@@ -1,8 +1,11 @@
 package d2.dokka.storybook.model.render
 
-enum class WrapperTag(private val id: String) {
-    Article("article");
+sealed class WrapperTag(
+    protected val name: String
+) {
 
-    fun open() = "<$id>"
-    fun close() = "</$id>"
+    open fun open() = "<$name>"
+    open fun close() = "</$name>"
 }
+
+object Article: WrapperTag("article")
