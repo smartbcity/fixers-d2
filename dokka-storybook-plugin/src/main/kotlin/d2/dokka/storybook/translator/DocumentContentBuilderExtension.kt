@@ -1,4 +1,4 @@
-package d2.dokka.storybook.translators
+package d2.dokka.storybook.translator
 
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.base.resolvers.anchors.SymbolAnchorHint

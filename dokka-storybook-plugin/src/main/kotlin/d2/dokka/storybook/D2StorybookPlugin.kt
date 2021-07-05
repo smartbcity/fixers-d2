@@ -2,8 +2,8 @@ package d2.dokka.storybook
 
 import d2.dokka.storybook.location.D2StorybookLocationProvider
 import d2.dokka.storybook.renderer.D2StorybookRenderer
-import d2.dokka.storybook.transformers.documentables.D2AnnotationFilterTransformer
-import d2.dokka.storybook.translators.D2StorybookDocumentableToPageTranslator
+import d2.dokka.storybook.transformer.documentable.D2AnnotationFilterTransformer
+import d2.dokka.storybook.translator.D2StorybookDocumentableToPageTranslator
 import org.jetbrains.dokka.CoreExtensions
 import org.jetbrains.dokka.base.DokkaBase
 import org.jetbrains.dokka.gfm.GfmPlugin

@@ -1,4 +1,4 @@
-package d2.dokka.storybook.transformers.documentables
+package d2.dokka.storybook.transformer.documentable
 
 import d2.dsl.annotation.D2
 import org.jetbrains.dokka.links.DRI

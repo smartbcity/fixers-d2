@@ -1,4 +1,4 @@
-package d2.dokka.storybook.translators
+package d2.dokka.storybook.translator
 
 import d2.dokka.storybook.model.page.FileData
 import d2.dokka.storybook.model.page.ModelPageNode
