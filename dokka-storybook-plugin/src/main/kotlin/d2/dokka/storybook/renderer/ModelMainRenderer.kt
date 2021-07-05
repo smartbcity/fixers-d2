@@ -1,7 +1,7 @@
 package d2.dokka.storybook.renderer
 
 import d2.dokka.storybook.builder.ReactFileBuilder
-import d2.dokka.storybook.model.FileImport
+import d2.dokka.storybook.model.CodeImport
 import d2.dokka.storybook.model.component.DescriptedCodeComponent
 import d2.dokka.storybook.model.page.FileData
 import org.jetbrains.dokka.base.resolvers.local.LocationProvider
@@ -73,7 +73,7 @@ open class ModelMainRenderer: D2ContentRenderer {
         val nodeId = node.dci.dri.first().classNames?.capitalize() ?: ""
         val elementId = fileData.id.capitalize()
         val elementName = "$nodeId$elementId"
-        val import = FileImport(
+        val import = CodeImport(
             path = "./$fileData",
             element = elementName
         )
@@ -83,7 +83,7 @@ open class ModelMainRenderer: D2ContentRenderer {
 
     open fun ReactFileBuilder.buildFileHeader(pageContext: ContentPage) {
         val name = pageContext.dri.first().classNames ?: "Unknown"
-        addImport(FileImport(path = "@storybook/addon-docs/blocks", element = "Meta", isComposite = true))
+        addImport(CodeImport(path = "@storybook/addon-docs/blocks", element = "Meta", isComposite = true))
         write {
             append("<Meta title=\"$name\" parameters={{ previewTabs: { canvas: { hidden: true } } }} />")
             append("\n\n")

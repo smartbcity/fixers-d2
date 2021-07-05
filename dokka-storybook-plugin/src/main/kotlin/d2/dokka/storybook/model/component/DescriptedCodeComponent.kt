@@ -1,6 +1,6 @@
 package d2.dokka.storybook.model.component
 
-import d2.dokka.storybook.model.FileImport
+import d2.dokka.storybook.model.CodeImport
 
 class DescriptedCodeComponent(
     val description: String,
@@ -9,8 +9,8 @@ class DescriptedCodeComponent(
     override val tagName: String
         get() = "DescriptedCode"
 
-    override val importData: FileImport
-        get() = FileImport(path = "@smartb/archetypes-ui-documentation", element = tagName, isComposite = true)
+    override val importData: CodeImport
+        get() = CodeImport(path = "@smartb/archetypes-ui-documentation", element = tagName, isComposite = true)
 
     override fun params(): Map<String, String> = mapOf(
         ::description.name to description,

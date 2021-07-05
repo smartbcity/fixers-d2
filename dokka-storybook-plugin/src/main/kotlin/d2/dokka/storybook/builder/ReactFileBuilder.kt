@@ -1,6 +1,6 @@
 package d2.dokka.storybook.builder
 
-import d2.dokka.storybook.model.FileImport
+import d2.dokka.storybook.model.CodeImport
 import d2.dokka.storybook.model.component.ReactComponent
 
 class ReactFileBuilder(
@@ -26,19 +26,19 @@ class ReactFileBuilder(
 
         imports.distinct()
             .sortedBy { import -> "${import.path}///${import.element}" }
-            .groupBy(FileImport::path)
+            .groupBy(CodeImport::path)
             .forEach { (path, imports) ->
-                val (compositeImports, globalImports) = imports.partition(FileImport::isComposite)
+                val (compositeImports, globalImports) = imports.partition(CodeImport::isComposite)
                 importBuilder.append("import ")
 
-                globalImports.joinTo(importBuilder, ", ", transform = FileImport::element)
+                globalImports.joinTo(importBuilder, ", ", transform = CodeImport::element)
 
                 if (globalImports.isNotEmpty() && compositeImports.isNotEmpty()) {
                     importBuilder.append(", ")
                 }
 
                 if (compositeImports.isNotEmpty()) {
-                    compositeImports.joinTo(importBuilder, ", ", "{ ", " }", transform = FileImport::element)
+                    compositeImports.joinTo(importBuilder, ", ", "{ ", " }", transform = CodeImport::element)
                 }
 
                 importBuilder.append(" from '$path'\n")
