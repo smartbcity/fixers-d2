@@ -1,6 +1,6 @@
 package d2.dokka.storybook.builder
 
-import d2.dokka.storybook.model.CodeImport
+import d2.dokka.storybook.model.render.CodeImport
 
 abstract class CodeFileBuilder<B> {
     protected abstract val builder: B

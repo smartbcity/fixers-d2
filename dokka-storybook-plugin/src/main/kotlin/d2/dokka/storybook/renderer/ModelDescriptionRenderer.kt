@@ -1,6 +1,6 @@
 package d2.dokka.storybook.renderer
 
-import d2.dokka.storybook.model.WrapperTag
+import d2.dokka.storybook.model.render.WrapperTag
 import org.jetbrains.dokka.pages.ContentGroup
 import org.jetbrains.dokka.pages.ContentPage
 import org.jetbrains.dokka.pages.ContentTable

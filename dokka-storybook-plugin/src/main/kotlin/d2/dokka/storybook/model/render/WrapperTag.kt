@@ -1,4 +1,4 @@
-package d2.dokka.storybook.model
+package d2.dokka.storybook.model.render
 
 enum class WrapperTag(private val id: String) {
     Article("article");

@@ -1,9 +1,9 @@
 package d2.dokka.storybook.translators
 
-import d2.dokka.storybook.model.D2TextStyle
 import d2.dokka.storybook.model.page.FileData
 import d2.dokka.storybook.model.page.ModelPageNode
-import d2.dokka.storybook.model.toTypeString
+import d2.dokka.storybook.model.render.D2TextStyle
+import d2.dokka.storybook.model.render.toTypeString
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.base.DokkaBaseConfiguration
 import org.jetbrains.dokka.base.signatures.SignatureProvider

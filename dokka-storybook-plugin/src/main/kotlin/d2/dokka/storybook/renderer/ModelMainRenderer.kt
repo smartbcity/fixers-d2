@@ -1,9 +1,9 @@
 package d2.dokka.storybook.renderer
 
 import d2.dokka.storybook.builder.ReactFileBuilder
-import d2.dokka.storybook.model.CodeImport
 import d2.dokka.storybook.model.component.DescriptedCodeComponent
 import d2.dokka.storybook.model.page.FileData
+import d2.dokka.storybook.model.render.CodeImport
 import org.jetbrains.dokka.base.resolvers.local.LocationProvider
 import org.jetbrains.dokka.pages.ContentGroup
 import org.jetbrains.dokka.pages.ContentKind

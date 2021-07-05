@@ -1,7 +1,7 @@
 package d2.dokka.storybook.renderer
 
-import d2.dokka.storybook.model.D2TextStyle
-import d2.dokka.storybook.model.WrapperTag
+import d2.dokka.storybook.model.render.D2TextStyle
+import d2.dokka.storybook.model.render.WrapperTag
 import org.jetbrains.dokka.base.resolvers.local.LocationProvider
 import org.jetbrains.dokka.gfm.renderer.CommonmarkRenderer
 import org.jetbrains.dokka.model.DisplaySourceSet

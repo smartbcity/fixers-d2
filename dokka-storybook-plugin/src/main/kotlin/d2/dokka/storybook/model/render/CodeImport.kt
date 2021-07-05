@@ -1,4 +1,4 @@
-package d2.dokka.storybook.model
+package d2.dokka.storybook.model.render
 
 data class CodeImport(
     val path: String,

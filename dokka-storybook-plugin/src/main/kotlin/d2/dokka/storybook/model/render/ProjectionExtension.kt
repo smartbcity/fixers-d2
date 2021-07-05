@@ -1,4 +1,4 @@
-package d2.dokka.storybook.model
+package d2.dokka.storybook.model.render
 
 import org.jetbrains.dokka.model.Bound
 import org.jetbrains.dokka.model.Contravariance

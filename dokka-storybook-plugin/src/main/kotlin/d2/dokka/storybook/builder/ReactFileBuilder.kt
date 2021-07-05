@@ -1,7 +1,7 @@
 package d2.dokka.storybook.builder
 
-import d2.dokka.storybook.model.CodeImport
 import d2.dokka.storybook.model.component.ReactComponent
+import d2.dokka.storybook.model.render.CodeImport
 
 class ReactFileBuilder(
     override val builder: StringBuilder = StringBuilder()

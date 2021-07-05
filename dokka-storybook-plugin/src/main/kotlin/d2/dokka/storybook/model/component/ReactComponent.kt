@@ -1,6 +1,6 @@
 package d2.dokka.storybook.model.component
 
-import d2.dokka.storybook.model.CodeImport
+import d2.dokka.storybook.model.render.CodeImport
 
 interface ReactComponent {
     val tagName: String
