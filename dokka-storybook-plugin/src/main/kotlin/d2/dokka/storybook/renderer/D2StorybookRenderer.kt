@@ -88,7 +88,7 @@ open class D2StorybookRenderer(
     }
 
     private suspend fun OutputWriter.write(page: ContentPage, path: String, extension: String, renderer: D2ContentRenderer) {
-        write(path, renderer.buildPage(page, locationProvider) { c, p -> renderer.buildPageContent(c, p) }, extension)
+        write(path, renderer.buildPage(page, locationProvider, renderer::buildPageContent), extension)
     }
 }
 

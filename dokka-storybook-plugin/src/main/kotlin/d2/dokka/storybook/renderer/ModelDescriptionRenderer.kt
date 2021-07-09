@@ -11,14 +11,14 @@ class ModelDescriptionRenderer(context: DokkaContext): MarkdownRenderer(context)
     override fun StringBuilder.buildTableProperties(node: ContentTable, pageContext: ContentPage) {
         node.children.forEach { property ->
             wrapWith(Article) {
-                buildNewLine()
-                buildNewLine()
+                append("\n")
+                append("\n")
                 property.children.forEach { child ->
                     val trailingSpace = if (child is ContentGroup) "" else " "
                     append(buildString { child.build(this, pageContext) } + trailingSpace)
                 }
             }
-            buildNewLine()
+            append("\n")
         }
     }
 }
