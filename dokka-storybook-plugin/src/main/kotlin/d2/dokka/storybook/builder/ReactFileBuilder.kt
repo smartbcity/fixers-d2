@@ -1,24 +1,76 @@
 package d2.dokka.storybook.builder
 
-import d2.dokka.storybook.model.component.ReactComponent
-import d2.dokka.storybook.model.render.CodeImport
+import d2.dokka.storybook.model.code.CodeElement
+import d2.dokka.storybook.model.code.WithImport
+import d2.dokka.storybook.model.code.WithParams
+import d2.dokka.storybook.model.code.imports.CodeImport
+import d2.dokka.storybook.model.code.react.ReactComponent
+import d2.dokka.storybook.model.code.react.ReactNode
+import d2.dokka.storybook.model.code.react.StringNode
 
 class ReactFileBuilder(
     override val builder: StringBuilder = StringBuilder()
 ): CodeFileBuilder<StringBuilder>() {
 
-    fun appendComponent(component: ReactComponent) {
-        addImport(component.importData)
-        builder.append("<${component.tagName}\n")
-        component.params().map { (key, value) ->
-            builder.append("  $key={$value}\n")
-        }
-        builder.append("/>")
-    }
+    override val INDENT_SIZE: Int = 2
 
     override fun build(): String {
         builder.insert(0, buildImports())
         return builder.toString()
+    }
+
+    fun append(element: CodeElement, indentLevel: Int = 0) {
+        if (element is WithImport) {
+            addImport(element.importData)
+        }
+
+        when (element) {
+            is ReactNode -> append(element, indentLevel)
+            else -> append(element.identifier, indentLevel)
+        }
+    }
+
+    fun appendNewLine() {
+        append("\n")
+    }
+
+    private fun append(node: ReactNode, indentLevel: Int) {
+        when (node) {
+            is StringNode -> append(node.toString(), indentLevel)
+            is ReactComponent -> appendReactComponent(node, indentLevel)
+        }
+    }
+
+    private fun appendReactComponent(component: ReactComponent, indentLevel: Int) {
+        when {
+            component.params.isEmpty() -> appendSimpleComponent(component, indentLevel)
+            else -> appendComplexComponent(component, indentLevel)
+        }
+    }
+
+    private fun appendSimpleComponent(component: ReactComponent, indentLevel: Int) {
+        append("<${component.identifier} />", indentLevel)
+    }
+
+    private fun appendComplexComponent(component: ReactComponent, indentLevel: Int) {
+        append("<${component.identifier}", indentLevel)
+        appendNewLine()
+
+        component.params.map { (key, value) ->
+            append("$key={", indentLevel + 1)
+            if (value is WithParams && value.params.isNotEmpty()) {
+                appendNewLine()
+                append(value, indentLevel + 2)
+                appendNewLine()
+                append("}", indentLevel + 1)
+            } else {
+                append(value)
+                append("}")
+            }
+            appendNewLine()
+        }
+
+        append("/>", indentLevel)
     }
 
     private fun buildImports(): String {

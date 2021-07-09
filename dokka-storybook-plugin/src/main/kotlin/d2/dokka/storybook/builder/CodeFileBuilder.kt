@@ -1,13 +1,26 @@
 package d2.dokka.storybook.builder
 
-import d2.dokka.storybook.model.render.CodeImport
+import d2.dokka.storybook.model.code.imports.CodeImport
 
-abstract class CodeFileBuilder<B> {
+abstract class CodeFileBuilder<B: Appendable> {
     protected abstract val builder: B
 
     protected open val imports: MutableList<CodeImport> = mutableListOf()
 
+    open val INDENT_SIZE = 4
+
     open fun write(doWrite: B.() -> Unit) = builder.doWrite()
+
+    open fun append(value: String, indentLevel: Int = 0) {
+        if (indentLevel > 0) {
+            appendIndent(indentLevel)
+        }
+        builder.append(value)
+    }
+
+    open fun appendIndent(level: Int) {
+        append(" ".repeat(level * INDENT_SIZE))
+    }
 
     open fun addImport(path: String, element: String, isComposite: Boolean = false) {
         addImport(CodeImport(
