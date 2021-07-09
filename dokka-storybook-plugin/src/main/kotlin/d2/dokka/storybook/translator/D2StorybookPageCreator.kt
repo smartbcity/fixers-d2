@@ -1,5 +1,9 @@
 package d2.dokka.storybook.translator
 
+import d2.dokka.storybook.model.doc.Example
+import d2.dokka.storybook.model.doc.Parent
+import d2.dokka.storybook.model.doc.docTagWrappers
+import d2.dokka.storybook.model.doc.firstD2TagOfTypeOrNull
 import d2.dokka.storybook.model.page.FileData
 import d2.dokka.storybook.model.page.ModelPageNode
 import d2.dokka.storybook.model.render.D2TextStyle
@@ -18,9 +22,6 @@ import org.jetbrains.dokka.model.DPackage
 import org.jetbrains.dokka.model.DProperty
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.WithScope
-import org.jetbrains.dokka.model.doc.CustomTagWrapper
-import org.jetbrains.dokka.model.doc.TagWrapper
-import org.jetbrains.dokka.model.doc.Text
 import org.jetbrains.dokka.pages.ContentGroup
 import org.jetbrains.dokka.pages.ContentKind
 import org.jetbrains.dokka.pages.ContentNode
@@ -138,30 +139,17 @@ class D2StorybookPageCreator(
     }
 
     private fun contentForExamples(c: DClasslike): List<ContentGroup> {
-        return c.properties.map { property ->
-            contentBuilder.contentFor(property, sourceSets = property.sourceSets, kind = ContentKind.Main) {
-                property.sourceSets.forEach { sourceSet ->
-                    property.documentation[sourceSet]?.children?.exampleTagValue()?.let { tagValue ->
-                        text(property.name)
-                        text(tagValue)
-                    }
+        return c.properties.mapNotNull { property ->
+            val (_, d2TagWrappers) = property.documentation.docTagWrappers()
+            val exampleTag = (d2TagWrappers.firstOrNull { it is Example } as Example?)
+
+            exampleTag?.body?.let { exampleTagBody ->
+                contentBuilder.contentFor(property, sourceSets = property.sourceSets, kind = ContentKind.Main) {
+                    text(property.name)
+                    text(exampleTagBody)
                 }
             }
         }
-    }
-
-    private fun List<TagWrapper>.exampleTagValue(): String? {
-        val exampleTag = firstOrNull { tag -> tag is CustomTagWrapper && tag.name == "example" }
-            ?: return null
-
-        // TODO better analyse
-        val text = exampleTag.root
-            .children
-            .firstOrNull()
-            ?.children
-            ?.firstOrNull() as Text?
-
-        return text?.body
     }
 
     private fun DClasslike.toModelPageNode(content: ContentNode, fileData: FileData): ModelPageNode {
