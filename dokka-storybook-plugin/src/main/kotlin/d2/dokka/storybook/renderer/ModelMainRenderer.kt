@@ -51,7 +51,9 @@ open class ModelMainRenderer: D2ContentRenderer {
 
     open fun ReactFileBuilder.buildGroup(node: ContentGroup, pageContext: ContentPage) {
         when (node.dci.kind) {
-            ContentKind.Main -> buildDescriptedCodeComponent(node, pageContext)
+            ContentKind.Main -> node.children.forEach { child -> buildContentNode(child, pageContext) }
+            ContentKind.Source -> buildDescriptedCodeComponent(node, pageContext)
+            ContentKind.Extensions -> importExtensions(node, pageContext)
             else -> TODO()
         }
     }
@@ -68,6 +70,21 @@ open class ModelMainRenderer: D2ContentRenderer {
             rightElement = CodeHighlighterComponent(displayed = sample, language = "json", title = "Example")
         )
         append(component)
+    }
+
+    open fun ReactFileBuilder.importExtensions(node: ContentGroup, pageContext: ContentPage) {
+        node.dci.dri.forEach { childDri ->
+            val fullDri = childDri.copy(extra = FileData.MAIN.id)
+            val path = d2LocationProvider.resolve(fullDri, node.sourceSets, pageContext)!!
+            val import = buildImport(fullDri, FileData.MAIN, path)
+            val component = BasicComponent(
+                identifier = import.element,
+                importData = import
+            )
+            appendNewLine()
+            appendNewLine()
+            append(component)
+        }
     }
 
 
