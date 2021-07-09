@@ -1,10 +1,14 @@
 package d2.dokka.storybook.renderer
 
 import d2.dokka.storybook.builder.ReactFileBuilder
-import d2.dokka.storybook.model.component.DescriptedCodeComponent
+import d2.dokka.storybook.model.code.BasicImportedElement
+import d2.dokka.storybook.model.code.imports.CodeImport
+import d2.dokka.storybook.model.code.react.BasicComponent
+import d2.dokka.storybook.model.code.react.CodeHighlighterComponent
+import d2.dokka.storybook.model.code.react.DescriptedCodeComponent
 import d2.dokka.storybook.model.page.FileData
-import d2.dokka.storybook.model.render.CodeImport
 import org.jetbrains.dokka.base.resolvers.local.LocationProvider
+import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.pages.ContentGroup
 import org.jetbrains.dokka.pages.ContentKind
 import org.jetbrains.dokka.pages.ContentNode
@@ -45,34 +49,40 @@ open class ModelMainRenderer: D2ContentRenderer {
         }
     }
 
-    open fun ReactFileBuilder.buildGroup(node: ContentNode, pageContext: ContentPage) {
+    open fun ReactFileBuilder.buildGroup(node: ContentGroup, pageContext: ContentPage) {
         when (node.dci.kind) {
             ContentKind.Main -> buildDescriptedCodeComponent(node, pageContext)
             else -> TODO()
         }
     }
 
-    open fun ReactFileBuilder.buildDescriptedCodeComponent(node: ContentNode, pageContext: ContentPage) {
-        val descriptionComponent = buildLocalImport(node, FileData.DESCRIPTION)
-        val codeComponent = buildLocalImport(node, FileData.SAMPLE)
+    open fun ReactFileBuilder.buildDescriptedCodeComponent(node: ContentGroup, pageContext: ContentPage) {
+        val descriptionImport = buildLocalImport(node, FileData.DESCRIPTION)
+        val sampleImport = buildLocalImport(node, FileData.SAMPLE)
+
+        val description = BasicComponent(importData = descriptionImport)
+        val sample = BasicImportedElement(importData = sampleImport)
 
         val component = DescriptedCodeComponent(
-            description = "<$descriptionComponent />",
-            code = "<$codeComponent />"
+            leftElement = description,
+            rightElement = CodeHighlighterComponent(displayed = sample, language = "json", title = "Example")
         )
-        appendComponent(component)
+        append(component)
     }
 
-    open fun ReactFileBuilder.buildLocalImport(node: ContentNode, fileData: FileData): String {
-        val nodeId = node.dci.dri.first().classNames?.capitalize() ?: ""
+
+    open fun ReactFileBuilder.buildLocalImport(node: ContentNode, fileData: FileData): CodeImport {
+        return buildImport(node.dci.dri.first(), fileData, "./$fileData")
+    }
+
+    open fun ReactFileBuilder.buildImport(target: DRI, fileData: FileData, path: String): CodeImport {
+        val nodeId = target.classNames?.capitalize() ?: ""
         val elementId = fileData.id.capitalize()
         val elementName = "$nodeId$elementId"
-        val import = CodeImport(
-            path = "./$fileData",
+        return CodeImport(
+            path = path,
             element = elementName
         )
-        addImport(import)
-        return elementName
     }
 
     open fun ReactFileBuilder.buildFileHeader(pageContext: ContentPage) {
