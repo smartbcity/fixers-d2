@@ -100,7 +100,10 @@ class D2StorybookPageCreator(
     private fun mainContentForClasslike(c: DClasslike): ContentGroup {
         if (c is DInterface) {
             return contentBuilder.contentFor(c, kind = ContentKind.Main)  {
-                group(setOf(c.dri), kind = ContentKind.Source) {}
+                group(setOf(c.dri), kind = ContentKind.Source) {
+                    text(FileData.DESCRIPTION.id, kind = ContentKind.Comment)
+                    text(FileData.SAMPLE.id, kind = ContentKind.Sample)
+                }
                 group(childrenMap[c.dri]?.toSet() ?: emptySet(), kind = ContentKind.Extensions) {}
             }
         }

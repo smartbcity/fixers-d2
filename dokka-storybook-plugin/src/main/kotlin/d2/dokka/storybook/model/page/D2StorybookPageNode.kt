@@ -15,6 +15,12 @@ enum class FileData(val id: String, val extension: String) {
     SAMPLE("sample", ".json");
 
     override fun toString() = "$id$extension"
+
+    companion object {
+        fun fromId(id: String): FileData {
+            return values().first { it.id == id }
+        }
+    }
 }
 
 interface D2StorybookPageNode: PageNode, WithFileData

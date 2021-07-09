@@ -2,6 +2,7 @@ package d2.dokka.storybook.renderer
 
 import d2.dokka.storybook.builder.ReactFileBuilder
 import d2.dokka.storybook.model.code.BasicImportedElement
+import d2.dokka.storybook.model.code.CodeElement
 import d2.dokka.storybook.model.code.imports.CodeImport
 import d2.dokka.storybook.model.code.react.BasicComponent
 import d2.dokka.storybook.model.code.react.CodeHighlighterComponent
@@ -13,6 +14,7 @@ import org.jetbrains.dokka.pages.ContentGroup
 import org.jetbrains.dokka.pages.ContentKind
 import org.jetbrains.dokka.pages.ContentNode
 import org.jetbrains.dokka.pages.ContentPage
+import org.jetbrains.dokka.pages.ContentText
 
 open class ModelMainRenderer: D2ContentRenderer {
 
@@ -52,24 +54,48 @@ open class ModelMainRenderer: D2ContentRenderer {
     open fun ReactFileBuilder.buildGroup(node: ContentGroup, pageContext: ContentPage) {
         when (node.dci.kind) {
             ContentKind.Main -> node.children.forEach { child -> buildContentNode(child, pageContext) }
-            ContentKind.Source -> buildDescriptedCodeComponent(node, pageContext)
+            ContentKind.Source -> importSources(node, pageContext)
             ContentKind.Extensions -> importExtensions(node, pageContext)
             else -> TODO()
         }
     }
 
-    open fun ReactFileBuilder.buildDescriptedCodeComponent(node: ContentGroup, pageContext: ContentPage) {
-        val descriptionImport = buildLocalImport(node, FileData.DESCRIPTION)
-        val sampleImport = buildLocalImport(node, FileData.SAMPLE)
+    open fun ReactFileBuilder.importSources(node: ContentGroup, pageContext: ContentPage) {
+        when (node.children.size) {
+            0 -> return
+            1 -> buildOneColumnSources(node, pageContext)
+            2 -> buildTwoColumnsSources(node, pageContext)
+            else -> throw IllegalArgumentException("A page cannot have more than 2 columns ATM")
+        }
 
-        val description = BasicComponent(importData = descriptionImport)
-        val sample = BasicImportedElement(importData = sampleImport)
+    }
+
+    open fun ReactFileBuilder.buildOneColumnSources(node: ContentGroup, pageContext: ContentPage) {
+        val element = node.children.first() as ContentText
+        append(element.toSourceComponent(node))
+    }
+
+    open fun ReactFileBuilder.buildTwoColumnsSources(node: ContentGroup, pageContext: ContentPage) {
+        val (leftElement, rightElement) = node.children as List<ContentText>
 
         val component = DescriptedCodeComponent(
-            leftElement = description,
-            rightElement = CodeHighlighterComponent(displayed = sample, language = "json", title = "Example")
+            leftElement = leftElement.toSourceComponent(node),
+            rightElement = rightElement.toSourceComponent(node)
         )
         append(component)
+    }
+
+    private fun ContentText.toSourceComponent(parent: ContentGroup): CodeElement {
+        val codeImport = buildLocalImport(parent, FileData.fromId(this.text))
+
+        return when (this.dci.kind) {
+            ContentKind.Comment -> BasicComponent(importData = codeImport)
+            ContentKind.Sample -> {
+                val sample = BasicImportedElement(importData = codeImport)
+                CodeHighlighterComponent(displayed = sample, language = "json", title = "Example")
+            }
+            else -> throw IllegalArgumentException("Unsupported ContentKind[${this.dci.kind}] for source files")
+        }
     }
 
     open fun ReactFileBuilder.importExtensions(node: ContentGroup, pageContext: ContentPage) {
@@ -88,11 +114,11 @@ open class ModelMainRenderer: D2ContentRenderer {
     }
 
 
-    open fun ReactFileBuilder.buildLocalImport(node: ContentNode, fileData: FileData): CodeImport {
+    open fun buildLocalImport(node: ContentNode, fileData: FileData): CodeImport {
         return buildImport(node.dci.dri.first(), fileData, "./$fileData")
     }
 
-    open fun ReactFileBuilder.buildImport(target: DRI, fileData: FileData, path: String): CodeImport {
+    open fun buildImport(target: DRI, fileData: FileData, path: String): CodeImport {
         val nodeId = target.classNames?.capitalize() ?: ""
         val elementId = fileData.id.capitalize()
         val elementName = "$nodeId$elementId"
