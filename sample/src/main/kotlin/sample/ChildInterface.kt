@@ -1,14 +1,10 @@
 package sample
 
-import d2.dsl.annotation.D2
-import d2.dsl.annotation.D2Type
-
 /**
  * The child
- *
+ * @D2 model
  * @parent [BoringInterface]
  */
-@D2(D2Type.MODEL)
 interface ChildInterface {
 
     /**

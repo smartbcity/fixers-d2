@@ -24,11 +24,13 @@ sealed class SimpleLinkTagWrapper: D2DocTagWrapper() {
         get() = root.firstMemberOfTypeOrNull<DocumentationLink>()?.dri
 }
 
+data class D2(override val root: DocTag): D2DocTagWrapper()
 data class Example(override val root: DocTag): SimpleTextTagWrapper()
 data class Parent(override val root: DocTag): SimpleLinkTagWrapper()
 
 fun CustomTagWrapper.toD2DocTagWrapper(): D2DocTagWrapper? {
-    return when (name) {
+    return when (name.lowercase()) {
+        "d2" -> D2(root = root)
         "example" -> Example(root = root)
         "parent" -> Parent(root = root)
         else -> null
