@@ -18,8 +18,8 @@ import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.DClasslike
 import org.jetbrains.dokka.model.DInterface
 import org.jetbrains.dokka.model.DModule
-import org.jetbrains.dokka.model.DPackage
 import org.jetbrains.dokka.model.DProperty
+import org.jetbrains.dokka.model.DTypeAlias
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.WithScope
 import org.jetbrains.dokka.pages.ContentGroup
@@ -41,35 +41,50 @@ class D2StorybookPageCreator(
     private val pageIndex = HashMap<DRI, ModelPageNode>()
 
     override fun pageForModule(m: DModule): ModulePageNode {
-        val classlikes = m.packages.flatMap(DPackage::classlikes)
-        buildChildrenMap(classlikes)
+        val documentables = m.packages.flatMap { pack -> pack.classlikes + pack.typealiases }
+        buildChildrenMap(documentables)
 
         return ModulePageNode(
             name = m.name.ifEmpty { "<root>" },
             content = contentForModule(m),
             documentable = m,
-            children = classlikes.flatMap(::pagesForClasslike).withChildren()
+            children = documentables.flatMap(::pagesForDocumentable).withChildren()
         )
     }
 
-    private fun buildChildrenMap(classlikes: List<DClasslike>) {
-        childrenMap = classlikes.mapNotNull { classlike ->
+    private fun buildChildrenMap(documentables: List<Documentable>) {
+        childrenMap = documentables.mapNotNull { classlike ->
             classlike.documentation.firstD2TagOfTypeOrNull<Parent>()
                 ?.target
                 ?.let { it to classlike.dri }
         }.groupBy(Pair<DRI, DRI>::first, Pair<DRI, DRI>::second)
     }
 
-    private fun pagesForClasslike(c: DClasslike): List<ModelPageNode> {
-        val pages = listOf(
-            c.toMainPage(),
-            c.toDescriptionPage(),
-            c.toSamplePage()
-        )
+    private fun pagesForDocumentable(documentable: Documentable): List<ModelPageNode> {
+        val pages = when (documentable) {
+            is DClasslike -> pagesForClasslike(documentable)
+            is DTypeAlias -> pagesForTypeAlias(documentable)
+            else -> emptyList()
+        }
 
         pages.forEach { page -> pageIndex[page.dri.first()] = page }
 
         return pages
+    }
+
+    private fun pagesForTypeAlias(t: DTypeAlias): List<ModelPageNode> {
+        return listOf(
+            t.toMainPage(),
+            t.toDescriptionPage()
+        )
+    }
+
+    private fun pagesForClasslike(c: DClasslike): List<ModelPageNode> {
+        return listOf(
+            c.toMainPage(),
+            c.toDescriptionPage(),
+            c.toSamplePage()
+        )
     }
 
     private fun List<ModelPageNode>.withChildren(): List<ModelPageNode> {
@@ -111,6 +126,22 @@ class D2StorybookPageCreator(
         return contentBuilder.contentFor(c, kind = ContentKind.Empty)
     }
 
+    private fun DTypeAlias.toMainPage(): ModelPageNode {
+        return toModelPageNode(
+            content = mainContentForTypeAlias(this),
+            fileData = FileData.MAIN
+        )
+    }
+
+    private fun mainContentForTypeAlias(t: DTypeAlias): ContentGroup {
+        return contentBuilder.contentFor(t, kind = ContentKind.Main)  {
+            group(setOf(t.dri), kind = ContentKind.Source) {
+                text(FileData.DESCRIPTION.id, kind = ContentKind.Comment)
+            }
+            group(childrenMap[t.dri]?.toSet() ?: emptySet(), kind = ContentKind.Extensions) {}
+        }
+    }
+
     private fun DClasslike.toDescriptionPage(): ModelPageNode {
         return toModelPageNode(
             content = descriptionContentForClasslike(this),
@@ -134,6 +165,22 @@ class D2StorybookPageCreator(
         }
 
         return super.contentForClasslike(c)
+    }
+
+    private fun DTypeAlias.toDescriptionPage(): ModelPageNode {
+        return toModelPageNode(
+            content = descriptionContentForTypeAlias(this),
+            fileData = FileData.DESCRIPTION
+        )
+    }
+
+    private fun descriptionContentForTypeAlias(t: DTypeAlias): ContentGroup {
+        return contentBuilder.contentFor(t)  {
+            group(kind = ContentKind.Cover) {
+                header(2, t.name)
+                +contentForDescription(t)
+            }
+        }
     }
 
     override fun contentForScope(
@@ -197,7 +244,7 @@ class D2StorybookPageCreator(
         }
     }
 
-    private fun DClasslike.toModelPageNode(content: ContentNode, fileData: FileData): ModelPageNode {
+    private fun Documentable.toModelPageNode(content: ContentNode, fileData: FileData): ModelPageNode {
         return ModelPageNode(
             name = this.name.orEmpty(),
             content = content,
