@@ -24,7 +24,7 @@ sealed class SimpleLinkTagWrapper: D2DocTagWrapper() {
         get() = root.firstMemberOfTypeOrNull<DocumentationLink>()?.dri
 }
 
-data class D2(override val root: DocTag): D2DocTagWrapper()
+data class D2(override val root: DocTag): SimpleTextTagWrapper()
 data class Example(override val root: DocTag): SimpleTextTagWrapper()
 data class Parent(override val root: DocTag): SimpleLinkTagWrapper()
 
