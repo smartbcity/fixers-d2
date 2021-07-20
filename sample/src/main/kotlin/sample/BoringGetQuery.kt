@@ -10,7 +10,7 @@ import f2.dsl.function.F2Function
 typealias BoringGetQueryFunction = F2Function<BoringGetQuery, BoringGetQueryResult>
 
 /**
- * @D2 query
+ * @D2 command
  * @parent [BoringGetQueryFunction]
  */
 interface BoringGetQuery {

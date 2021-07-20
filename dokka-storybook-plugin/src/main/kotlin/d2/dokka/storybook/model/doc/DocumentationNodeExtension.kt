@@ -16,10 +16,18 @@ fun SourceSetDependent<DocumentationNode>.docTagWrappers(): Pair<List<TagWrapper
     return dokkaTagWrappers to d2TagWrappers
 }
 
+inline fun <reified T: D2DocTagWrapper> SourceSetDependent<DocumentationNode>.firstD2TagOfType(): T {
+    return docTagWrappers().second.filterIsInstance<T>().first()
+}
+
 inline fun <reified T: D2DocTagWrapper> SourceSetDependent<DocumentationNode>.firstD2TagOfTypeOrNull(): T? {
     return docTagWrappers().second.filterIsInstance<T>().firstOrNull()
 }
 
-inline fun <reified T: TagWrapper> SourceSetDependent<DocumentationNode>.firstDokkaTagOfType(): T? {
+inline fun <reified T: TagWrapper> SourceSetDependent<DocumentationNode>.firstDokkaTagOfType(): T {
+    return docTagWrappers().first.filterIsInstance<T>().first()
+}
+
+inline fun <reified T: TagWrapper> SourceSetDependent<DocumentationNode>.firstDokkaTagOfTypeOrNull(): T? {
     return docTagWrappers().first.filterIsInstance<T>().firstOrNull()
 }

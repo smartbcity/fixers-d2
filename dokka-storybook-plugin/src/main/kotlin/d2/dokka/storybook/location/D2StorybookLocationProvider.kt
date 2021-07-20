@@ -40,6 +40,4 @@ class D2StorybookLocationProvider(
             .plus(endOfPath)
             .joinToString("/")
     }
-
-    private fun PageNode.parent() = pageGraphRoot.parentMap[this]
 }

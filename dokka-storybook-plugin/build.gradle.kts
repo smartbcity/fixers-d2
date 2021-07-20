@@ -3,8 +3,6 @@ plugins {
 }
 
 dependencies {
-    implementation(project(":d2-dsl"))
-
     compileOnly("org.jetbrains.dokka:dokka-core:${PluginVersions.dokka}")
     implementation("org.jetbrains.dokka:dokka-base:${PluginVersions.dokka}")
     implementation("org.jetbrains.dokka:gfm-plugin:${PluginVersions.dokka}")

@@ -23,8 +23,6 @@ plugins {
 
 Then create the task within the module you wish to generate documentation for:
 
-> NB: Multi-module generation is not supported ATM
-
 *build.gradle.kts of the module*
 ```kotlin
 tasks {
@@ -35,6 +33,8 @@ tasks {
     }
 }
 ```
+
+> NB: Multi-module generation is not supported ATM
 
 #### Write documentation
 
