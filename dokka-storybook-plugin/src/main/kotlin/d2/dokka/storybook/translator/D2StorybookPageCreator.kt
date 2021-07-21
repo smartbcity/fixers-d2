@@ -1,33 +1,20 @@
 package d2.dokka.storybook.translator
 
-import d2.dokka.storybook.model.doc.Example
 import d2.dokka.storybook.model.doc.Parent
-import d2.dokka.storybook.model.doc.docTagWrappers
 import d2.dokka.storybook.model.doc.firstD2TagOfTypeOrNull
 import d2.dokka.storybook.model.page.FileData
 import d2.dokka.storybook.model.page.ModelPageNode
-import d2.dokka.storybook.model.render.D2TextStyle
-import d2.dokka.storybook.model.render.toTypeString
-import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.base.DokkaBaseConfiguration
 import org.jetbrains.dokka.base.signatures.SignatureProvider
 import org.jetbrains.dokka.base.transformers.pages.comments.CommentsToContentConverter
 import org.jetbrains.dokka.base.translators.documentables.DefaultPageCreator
-import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder.DocumentableContentBuilder
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.DClasslike
-import org.jetbrains.dokka.model.DInterface
 import org.jetbrains.dokka.model.DModule
-import org.jetbrains.dokka.model.DProperty
 import org.jetbrains.dokka.model.DTypeAlias
 import org.jetbrains.dokka.model.Documentable
-import org.jetbrains.dokka.model.WithScope
-import org.jetbrains.dokka.pages.ContentGroup
-import org.jetbrains.dokka.pages.ContentKind
 import org.jetbrains.dokka.pages.ContentNode
-import org.jetbrains.dokka.pages.ContentStyle
 import org.jetbrains.dokka.pages.ModulePageNode
-import org.jetbrains.dokka.pages.TextStyle
 import org.jetbrains.dokka.utilities.DokkaLogger
 
 class D2StorybookPageCreator(
@@ -61,158 +48,46 @@ class D2StorybookPageCreator(
     }
 
     private fun pagesForDocumentable(documentable: Documentable): List<ModelPageNode> {
-        val pages = when (documentable) {
-            is DClasslike -> pagesForClasslike(documentable)
-            is DTypeAlias -> pagesForTypeAlias(documentable)
+        val pagesToGenerate = when (documentable) {
+            is DClasslike -> listOf(FileData.MAIN, FileData.DESCRIPTION, FileData.SAMPLE)
+            is DTypeAlias -> listOf(FileData.MAIN, FileData.DESCRIPTION)
             else -> emptyList()
         }
 
+        val pages = documentable.toPageNodes(pagesToGenerate)
         pages.forEach { page -> pageIndex[page.dri.first()] = page }
-
         return pages
     }
 
-    private fun pagesForTypeAlias(t: DTypeAlias): List<ModelPageNode> {
-        return listOf(
-            t.toMainPage(),
-            t.toDescriptionPage()
-        )
+    private fun Documentable.toPageNodes(files: List<FileData>): List<ModelPageNode> {
+        return files.mapNotNull { toModelPageNode(it) }
     }
 
-    private fun pagesForClasslike(c: DClasslike): List<ModelPageNode> {
-        return listOf(
-            c.toMainPage(),
-            c.toDescriptionPage(),
-            c.toSamplePage()
-        )
-    }
-
-    private fun DClasslike.toMainPage(): ModelPageNode {
-        return toModelPageNode(
-            content = MainPageCreator().contentFor(this),
-            fileData = FileData.MAIN
-        )
-    }
-
-    private fun DTypeAlias.toMainPage(): ModelPageNode {
-        return toModelPageNode(
-            content = MainPageCreator().contentFor(this),
-            fileData = FileData.MAIN
-        )
-    }
-
-    private fun DClasslike.toDescriptionPage(): ModelPageNode {
-        return toModelPageNode(
-            content = descriptionContentForClasslike(this),
-            fileData = FileData.DESCRIPTION
-        )
-    }
-
-    private fun descriptionContentForClasslike(c: DClasslike): ContentGroup {
-        if (c is DInterface) {
-            return contentBuilder.contentFor(c)  {
-                group(kind = ContentKind.Cover) {
-                    header(2, c.name)
-                    +contentForDescription(c)
-                }
-
-                group(styles = setOf(ContentStyle.TabbedContent)) {
-                    +contentForComments(c)
-                    +contentForScope(c, c.dri, c.sourceSets)
-                }
+    private fun Documentable.toModelPageNode(fileData: FileData): ModelPageNode? {
+        return fileData.contentBuilder().contentFor(this)
+            ?.let { content ->
+                ModelPageNode(
+                    name = this.name.orEmpty(),
+                    content = content,
+                    dri = setOf(this.dri.copy(extra = fileData.id)),
+                    documentable = this,
+                    children = emptyList(),
+                    fileData = fileData
+                )
             }
-        }
-
-        return super.contentForClasslike(c)
     }
 
-    private fun DTypeAlias.toDescriptionPage(): ModelPageNode {
-        return toModelPageNode(
-            content = descriptionContentForTypeAlias(this),
-            fileData = FileData.DESCRIPTION
-        )
+    private fun FileData.contentBuilder() = when (this) {
+        FileData.ROOT -> TODO()
+        FileData.MAIN -> InnerMainPageContentBuilder()
+        FileData.DESCRIPTION -> InnerDescriptionPageContentBuilder()
+        FileData.SAMPLE -> InnerSamplePageContentBuilder()
     }
 
-    private fun descriptionContentForTypeAlias(t: DTypeAlias): ContentGroup {
-        return contentBuilder.contentFor(t)  {
-            group(kind = ContentKind.Cover) {
-                header(2, t.name)
-                +contentForDescription(t)
-            }
-        }
+    private inner class InnerMainPageContentBuilder: MainPageContentBuilder(contentBuilder, childrenMap)
+    private inner class InnerDescriptionPageContentBuilder: DescriptionPageContentBuilder(contentBuilder) {
+        override fun contentForComments(d: Documentable): List<ContentNode> = this@D2StorybookPageCreator.contentForComments(d)
+        override fun contentForDescription(d: Documentable): List<ContentNode> = this@D2StorybookPageCreator.contentForDescription(d)
     }
-
-    override fun contentForScope(
-        s: WithScope, dri: DRI, sourceSets: Set<DokkaConfiguration.DokkaSourceSet>
-    ): ContentGroup {
-        if (s is DInterface) {
-            return contentBuilder.contentFor(s as Documentable)  {
-                propertiesBlock(s.properties)
-            }
-        }
-
-        return super.contentForScope(s, dri, sourceSets)
-    }
-
-    private fun DocumentableContentBuilder.propertiesBlock(
-        properties: Collection<DProperty>,
-    ) {
-        block(kind = ContentKind.Properties, elements = properties) { property ->
-            text(property.name, styles = setOf(TextStyle.Italic))
-            text(property.type.toTypeString(), styles = setOf(D2TextStyle.Code))
-            group(setOf(property.dri), property.sourceSets.toSet(), ContentKind.Main) {
-                property.sourceSets.forEach { sourceSet ->
-                    property.documentation[sourceSet]?.children?.firstOrNull()?.root?.let {
-                        group(kind = ContentKind.Comment) {
-                            comment(it)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    private fun DClasslike.toSamplePage(): ModelPageNode {
-        return toModelPageNode(
-            content = sampleContentForClasslike(this),
-            fileData = FileData.SAMPLE
-        )
-    }
-
-    private fun sampleContentForClasslike(c: DClasslike): ContentGroup {
-        if (c is DInterface) {
-            return contentBuilder.contentFor(c, kind = ContentKind.Properties)  {
-                +contentForExamples(c)
-            }
-        }
-
-        return contentBuilder.contentFor(c, kind = ContentKind.Empty)
-    }
-
-    private fun contentForExamples(c: DClasslike): List<ContentGroup> {
-        return c.properties.mapNotNull { property ->
-            val (_, d2TagWrappers) = property.documentation.docTagWrappers()
-            val exampleTag = (d2TagWrappers.firstOrNull { it is Example } as Example?)
-
-            exampleTag?.body?.let { exampleTagBody ->
-                contentBuilder.contentFor(property, sourceSets = property.sourceSets, kind = ContentKind.Main) {
-                    text(property.name)
-                    text(exampleTagBody)
-                }
-            }
-        }
-    }
-
-    private fun Documentable.toModelPageNode(content: ContentNode, fileData: FileData): ModelPageNode {
-        return ModelPageNode(
-            name = this.name.orEmpty(),
-            content = content,
-            dri = setOf(this.dri.copy(extra = fileData.id)),
-            documentable = this,
-            children = emptyList(),
-            fileData = fileData
-        )
-    }
-
-    inner class MainPageCreator: D2StorybookMainPageCreator(contentBuilder, childrenMap)
+    private inner class InnerSamplePageContentBuilder: SamplePageContentBuilder(contentBuilder)
 }

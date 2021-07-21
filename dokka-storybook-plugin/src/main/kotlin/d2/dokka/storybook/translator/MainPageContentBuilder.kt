@@ -13,33 +13,41 @@ import org.jetbrains.dokka.pages.ContentKind
 import org.jetbrains.dokka.pages.ContentNode
 import java.util.SortedSet
 
-abstract class D2StorybookMainPageCreator(
+internal abstract class MainPageContentBuilder(
     protected val contentBuilder: PageContentBuilder,
     protected val childrenMap: Map<DRI, List<Documentable>>
-) {
+): D2StorybookPageContentBuilder {
 
-    fun contentFor(c: DClasslike): ContentNode {
-        if (c is DInterface) {
-            return mainContentFor(c)  {
-                group(setOf(c.dri), kind = ContentKind.Source) {
-                    text(FileData.DESCRIPTION.id, kind = ContentKind.Comment)
-                    text(FileData.SAMPLE.id, kind = ContentKind.Sample)
-                }
-            }
+    override fun contentFor(d: Documentable): ContentNode? {
+        return when (d) {
+            is DClasslike -> contentFor(d)
+            is DTypeAlias -> contentFor(d)
+            else -> null
         }
-
-        return contentBuilder.contentFor(c, kind = ContentKind.Empty)
     }
 
-    fun contentFor(t: DTypeAlias): ContentNode {
-        return mainContentFor(t) {
+    private fun contentFor(c: DClasslike): ContentNode? {
+        if (c !is DInterface) {
+            return null
+        }
+
+        return contentFor(c)  {
+            group(setOf(c.dri), kind = ContentKind.Source) {
+                text(FileData.DESCRIPTION.id, kind = ContentKind.Comment)
+                text(FileData.SAMPLE.id, kind = ContentKind.Sample)
+            }
+        }
+    }
+
+    private fun contentFor(t: DTypeAlias): ContentNode {
+        return contentFor(t) {
             group(setOf(t.dri), kind = ContentKind.Source) {
                 text(FileData.DESCRIPTION.id, kind = ContentKind.Comment)
             }
         }
     }
 
-    private fun mainContentFor(d: Documentable, block: PageContentBuilder.DocumentableContentBuilder.() -> Unit = {}): ContentGroup {
+    private fun contentFor(d: Documentable, block: PageContentBuilder.DocumentableContentBuilder.() -> Unit = {}): ContentGroup {
         return contentBuilder.contentFor(d, kind = ContentKind.Main)  {
             block()
             +contentForChildrenOf(d)
