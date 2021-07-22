@@ -12,6 +12,7 @@ import org.jetbrains.dokka.DokkaException
 import org.jetbrains.dokka.base.renderers.OutputWriter
 import org.jetbrains.dokka.base.resolvers.local.LocationProvider
 import org.jetbrains.dokka.pages.ContentPage
+import org.jetbrains.dokka.pages.ModulePageNode
 import org.jetbrains.dokka.pages.PageNode
 import org.jetbrains.dokka.pages.RendererSpecificPage
 import org.jetbrains.dokka.pages.RenderingStrategy
@@ -32,9 +33,10 @@ open class D2StorybookRenderer(
     protected open val preprocessors = context.plugin<D2StorybookPlugin>().query { storybookPreprocessors }
 
     private val renderers = mutableMapOf<Any, D2ContentRenderer>(
-        FileData.MAIN to ModelMainRenderer(),
-        FileData.DESCRIPTION to ModelDescriptionRenderer(context),
-        FileData.SAMPLE to ModelSampleRenderer(),
+        FileData.ROOT to MainPageContentRenderer(),
+        FileData.MAIN to MainPageContentRenderer(),
+        FileData.DESCRIPTION to DescriptionPageContentRenderer(context),
+        FileData.SAMPLE to SamplePageContentRenderer(),
         "Default" to MarkdownRenderer(context)
     )
 
@@ -73,6 +75,7 @@ open class D2StorybookRenderer(
         }
 
         when (page) {
+            is ModulePageNode -> Unit
             is D2StorybookContentPage -> outputWriter.write(page, path, page.fileData.extension, page.renderer())
             is ContentPage -> outputWriter.write(page, path, ".md", page.renderer())
             is RendererSpecificPage -> when (val strategy = page.strategy) {

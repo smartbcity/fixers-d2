@@ -6,7 +6,7 @@ import org.jetbrains.dokka.pages.ContentPage
 import org.jetbrains.dokka.pages.ContentTable
 import org.jetbrains.dokka.plugability.DokkaContext
 
-class ModelDescriptionRenderer(context: DokkaContext): MarkdownRenderer(context) {
+class DescriptionPageContentRenderer(context: DokkaContext): MarkdownRenderer(context) {
 
     override fun StringBuilder.buildTableProperties(node: ContentTable, pageContext: ContentPage) {
         node.children.forEach { property ->

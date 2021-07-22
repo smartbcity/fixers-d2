@@ -1,6 +1,7 @@
 package d2.dokka.storybook.location
 
 import d2.dokka.storybook.model.page.D2StorybookPageNode
+import d2.dokka.storybook.model.page.FileData
 import org.jetbrains.dokka.base.resolvers.local.DokkaLocationProvider
 import org.jetbrains.dokka.base.resolvers.local.LocationProviderFactory
 import org.jetbrains.dokka.pages.ClasslikePageNode
@@ -19,6 +20,10 @@ class D2StorybookLocationProvider(
     }
 
     override fun pathTo(node: PageNode, context: PageNode?): String {
+        if (node is D2StorybookPageNode && node.fileData == FileData.ROOT) {
+            return pathForRootPage(node)
+        }
+
         fun pathFor(page: PageNode) = pathsIndex[page] ?: throw AssertionError(
             "${page::class.simpleName}(${page.name}) does not belong to the current page graph so it is impossible to compute its path"
         )
@@ -40,4 +45,6 @@ class D2StorybookLocationProvider(
             .plus(endOfPath)
             .joinToString("/")
     }
+
+    private fun pathForRootPage(node: D2StorybookPageNode) = node.name
 }

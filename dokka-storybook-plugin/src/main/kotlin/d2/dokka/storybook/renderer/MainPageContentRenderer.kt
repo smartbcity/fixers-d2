@@ -10,13 +10,14 @@ import d2.dokka.storybook.model.code.react.DescriptedCodeComponent
 import d2.dokka.storybook.model.page.FileData
 import org.jetbrains.dokka.base.resolvers.local.LocationProvider
 import org.jetbrains.dokka.links.DRI
+import org.jetbrains.dokka.links.sureClassNames
 import org.jetbrains.dokka.pages.ContentGroup
 import org.jetbrains.dokka.pages.ContentKind
 import org.jetbrains.dokka.pages.ContentNode
 import org.jetbrains.dokka.pages.ContentPage
 import org.jetbrains.dokka.pages.ContentText
 
-open class ModelMainRenderer: D2ContentRenderer {
+open class MainPageContentRenderer: D2ContentRenderer {
 
     override lateinit var d2LocationProvider: LocationProvider
 
@@ -33,21 +34,7 @@ open class ModelMainRenderer: D2ContentRenderer {
     ) {
         when (node) {
             is ContentGroup -> buildGroup(node, pageContext)
-            else -> TODO()
-//            is ContentText -> buildText(node)
-//            is ContentHeader -> buildHeader(node, pageContext, sourceSetRestriction)
-//            is ContentCodeBlock -> buildCodeBlock(node, pageContext)
-//            is ContentCodeInline -> buildCodeInline(node, pageContext)
-//            is ContentDRILink -> buildDRILink(node, pageContext, sourceSetRestriction)
-//            is ContentResolvedLink -> buildResolvedLink(node, pageContext, sourceSetRestriction)
-//            is ContentEmbeddedResource -> buildResource(node, pageContext)
-//            is ContentList -> buildList(node, pageContext, sourceSetRestriction)
-//            is ContentTable -> buildTable(node, pageContext, sourceSetRestriction)
-//            is ContentBreakLine -> buildNewLine()
-//            is PlatformHintedContent -> buildPlatformDependent(node, pageContext, sourceSetRestriction)
-//            is ContentDivergentGroup -> buildDivergent(node, pageContext)
-//            is ContentDivergentInstance -> buildDivergentInstance(node, pageContext)
-//            else -> buildError(node)
+            else -> throw IllegalArgumentException("Cannot render content of type [${node::class.java}] in a Main page")
         }
     }
 
@@ -56,7 +43,8 @@ open class ModelMainRenderer: D2ContentRenderer {
             ContentKind.Main -> node.children.forEach { child -> buildContentNode(child, pageContext) }
             ContentKind.Source -> importSources(node, pageContext)
             ContentKind.Extensions -> importExtensions(node, pageContext)
-            else -> TODO()
+            ContentKind.Empty -> Unit
+            else -> throw IllegalArgumentException("Cannot render ContentGroup of kind [${node.dci.kind}] in a Main page")
         }
     }
 
@@ -119,7 +107,7 @@ open class ModelMainRenderer: D2ContentRenderer {
     }
 
     open fun buildImport(target: DRI, fileData: FileData, path: String): CodeImport {
-        val nodeId = target.classNames?.capitalize() ?: ""
+        val nodeId = target.sureClassNames.capitalize()
         val elementId = fileData.id.capitalize()
         val elementName = "$nodeId$elementId"
         return CodeImport(
@@ -129,7 +117,7 @@ open class ModelMainRenderer: D2ContentRenderer {
     }
 
     open fun ReactFileBuilder.buildFileHeader(pageContext: ContentPage) {
-        val name = pageContext.dri.first().classNames ?: "Unknown"
+        val name = pageContext.dri.first().sureClassNames
         addImport(CodeImport(path = "@storybook/addon-docs/blocks", element = "Meta", isComposite = true))
         write {
             append("<Meta title=\"$name\" parameters={{ previewTabs: { canvas: { hidden: true } } }} />")
