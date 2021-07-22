@@ -1,5 +1,6 @@
 package d2.dokka.storybook.translator
 
+import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.d2Type
 import d2.dokka.storybook.model.page.FileData
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
@@ -22,6 +23,7 @@ internal abstract class MainPageContentBuilder(
         return when (d) {
             is DClasslike -> contentFor(d)
             is DTypeAlias -> contentFor(d)
+            is RootDocumentable -> contentFor(d)
             else -> null
         }
     }
@@ -43,6 +45,19 @@ internal abstract class MainPageContentBuilder(
         return contentFor(t) {
             group(setOf(t.dri), kind = ContentKind.Source) {
                 text(FileData.DESCRIPTION.id, kind = ContentKind.Comment)
+            }
+        }
+    }
+
+    private fun contentFor(r: RootDocumentable): ContentNode {
+        return contentFor(r) {
+            group(setOf(r.dri), kind = ContentKind.Source) {
+                if (r.hasDescription) {
+                    text(FileData.DESCRIPTION.id, kind = ContentKind.Comment)
+                }
+                if (r.hasExample) {
+                    text(FileData.SAMPLE.id, kind = ContentKind.Sample)
+                }
             }
         }
     }

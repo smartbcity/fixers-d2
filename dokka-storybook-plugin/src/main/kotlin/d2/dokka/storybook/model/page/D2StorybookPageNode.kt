@@ -10,6 +10,7 @@ interface WithFileData {
 }
 
 enum class FileData(val id: String, val extension: String) {
+    ROOT("root", ".stories.mdx"),
     MAIN("index", ".mdx"),
     DESCRIPTION("desc", ".md"),
     SAMPLE("sample", ".json");

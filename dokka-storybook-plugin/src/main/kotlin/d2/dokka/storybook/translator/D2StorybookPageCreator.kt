@@ -1,7 +1,9 @@
 package d2.dokka.storybook.translator
 
 import d2.dokka.storybook.model.doc.Parent
+import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.firstD2TagOfTypeOrNull
+import d2.dokka.storybook.model.doc.toRootDocumentable
 import d2.dokka.storybook.model.page.FileData
 import d2.dokka.storybook.model.page.ModelPageNode
 import org.jetbrains.dokka.base.DokkaBaseConfiguration
@@ -31,32 +33,56 @@ class D2StorybookPageCreator(
         val documentables = m.packages.flatMap { pack -> pack.classlikes + pack.typealiases }
         buildChildrenMap(documentables)
 
+        val rootPages = childrenMap[DRI.topLevel]
+            ?.flatMap(::pagesFor)
+            ?: emptyList()
+
         return ModulePageNode(
             name = m.name.ifEmpty { "<root>" },
             content = contentForModule(m),
             documentable = m,
-            children = documentables.flatMap(::pagesForDocumentable)
+            children = documentables.flatMap(this::pagesFor).plus(rootPages)
         )
     }
 
     private fun buildChildrenMap(documentables: List<Documentable>) {
-        childrenMap = documentables.groupBy { documentable ->
-            documentable.documentation.firstD2TagOfTypeOrNull<Parent>()
+        childrenMap = documentables.flatMap { documentable ->
+            val parentDri = documentable.documentation
+                .firstD2TagOfTypeOrNull<Parent>()
                 ?.target
-                ?: DRI.topLevel
-        }
+
+            if (parentDri != null) {
+                listOf(parentDri to documentable)
+            } else {
+                val rootDocumentable = documentable.toRootDocumentable()
+                listOf(
+                    DRI.topLevel to rootDocumentable,
+                    rootDocumentable.dri to documentable
+                )
+            }
+        }.groupBy(Pair<DRI, Documentable>::first, Pair<DRI, Documentable>::second)
     }
 
-    private fun pagesForDocumentable(documentable: Documentable): List<ModelPageNode> {
+    private fun pagesFor(documentable: Documentable): List<ModelPageNode> {
         val pagesToGenerate = when (documentable) {
             is DClasslike -> listOf(FileData.MAIN, FileData.DESCRIPTION, FileData.SAMPLE)
             is DTypeAlias -> listOf(FileData.MAIN, FileData.DESCRIPTION)
+            is RootDocumentable -> pagesFor(documentable)
             else -> emptyList()
         }
 
         val pages = documentable.toPageNodes(pagesToGenerate)
         pages.forEach { page -> pageIndex[page.dri.first()] = page }
         return pages
+    }
+
+    private fun pagesFor(r: RootDocumentable): List<FileData> {
+        return listOfNotNull(
+            FileData.ROOT,
+            FileData.MAIN.takeIf { r.hasDescription || r.hasExample },
+            FileData.DESCRIPTION.takeIf { r.hasDescription },
+            FileData.SAMPLE.takeIf { r.hasExample }
+        )
     }
 
     private fun Documentable.toPageNodes(files: List<FileData>): List<ModelPageNode> {
@@ -78,7 +104,7 @@ class D2StorybookPageCreator(
     }
 
     private fun FileData.contentBuilder() = when (this) {
-        FileData.ROOT -> TODO()
+        FileData.ROOT -> InnerRootPageContentBuilder()
         FileData.MAIN -> InnerMainPageContentBuilder()
         FileData.DESCRIPTION -> InnerDescriptionPageContentBuilder()
         FileData.SAMPLE -> InnerSamplePageContentBuilder()
@@ -90,4 +116,5 @@ class D2StorybookPageCreator(
         override fun contentForDescription(d: Documentable): List<ContentNode> = this@D2StorybookPageCreator.contentForDescription(d)
     }
     private inner class InnerSamplePageContentBuilder: SamplePageContentBuilder(contentBuilder)
+    private inner class InnerRootPageContentBuilder: RootPageContentBuilder(contentBuilder)
 }

@@ -7,10 +7,12 @@ import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.properties.PropertyContainer
 import org.jetbrains.dokka.model.properties.plus
 import org.jetbrains.dokka.model.toDisplaySourceSets
+import org.jetbrains.dokka.pages.ContentCodeBlock
 import org.jetbrains.dokka.pages.ContentGroup
 import org.jetbrains.dokka.pages.ContentKind
 import org.jetbrains.dokka.pages.ContentNode
 import org.jetbrains.dokka.pages.ContentTable
+import org.jetbrains.dokka.pages.ContentText
 import org.jetbrains.dokka.pages.DCI
 import org.jetbrains.dokka.pages.Kind
 import org.jetbrains.dokka.pages.Style
@@ -48,4 +50,24 @@ fun <T: Documentable> PageContentBuilder.DocumentableContentBuilder.block(
             extra = extra
         )
     }
+}
+
+fun PageContentBuilder.DocumentableContentBuilder.codeBlock(
+    code: String,
+    language: String,
+    kind: ContentKind = ContentKind.Main,
+    sourceSets: Set<DokkaConfiguration.DokkaSourceSet> = mainSourcesetData,
+    styles: Set<Style> = mainStyles,
+    extra: PropertyContainer<ContentNode> = mainExtra,
+) {
+    val dci = DCI(mainDRI, kind)
+    val displaySourceSets = sourceSets.toDisplaySourceSets()
+    +ContentCodeBlock(
+        language = language,
+        children = listOf(ContentText(code, dci = dci, sourceSets = displaySourceSets)),
+        dci = dci,
+        sourceSets = displaySourceSets,
+        style = styles,
+        extra = extra
+    )
 }

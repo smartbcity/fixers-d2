@@ -1,5 +1,6 @@
 package d2.dokka.storybook.model.doc
 
+import org.jetbrains.dokka.links.sureClassNames
 import org.jetbrains.dokka.model.Documentable
 
 val Documentable.d2Type
@@ -7,3 +8,12 @@ val Documentable.d2Type
         .firstD2TagOfTypeOrNull<D2>()
         ?.body
         ?.let(D2Type::get)
+
+fun Documentable.toRootDocumentable() = RootDocumentable(
+    name = "${name.orEmpty()}Page",
+    dri = dri.copy(classNames = "${dri.sureClassNames}Page"),
+    documentation = documentation,
+    sourceSets = sourceSets,
+    expectPresentInSet = expectPresentInSet,
+    children = listOf(this)
+)

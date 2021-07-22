@@ -1,6 +1,7 @@
 package d2.dokka.storybook.translator
 
 import d2.dokka.storybook.model.doc.Example
+import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.firstD2TagOfTypeOrNull
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.model.DClasslike
@@ -17,6 +18,7 @@ abstract class SamplePageContentBuilder(
     override fun contentFor(d: Documentable): ContentNode? {
         return when (d) {
             is DClasslike -> contentFor(d)
+            is RootDocumentable -> contentFor(d)
             else -> null
         }
     }
@@ -28,6 +30,12 @@ abstract class SamplePageContentBuilder(
 
         return contentBuilder.contentFor(c, kind = ContentKind.Properties)  {
             +contentForExamples(c)
+        }
+    }
+
+    private fun contentFor(r: RootDocumentable): ContentNode {
+        return contentBuilder.contentFor(r, kind = ContentKind.Sample) {
+            codeBlock(r.pageDocumentation!!.example!!.body, "json")
         }
     }
 

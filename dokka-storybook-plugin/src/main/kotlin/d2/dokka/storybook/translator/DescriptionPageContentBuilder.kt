@@ -1,5 +1,6 @@
 package d2.dokka.storybook.translator
 
+import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.render.D2TextStyle
 import d2.dokka.storybook.model.render.toTypeString
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
@@ -24,6 +25,7 @@ internal abstract class DescriptionPageContentBuilder(
         return when (d) {
             is DClasslike -> contentFor(d)
             is DTypeAlias -> contentFor(d)
+            is RootDocumentable -> contentFor(d)
             else -> null
         }
     }
@@ -51,6 +53,15 @@ internal abstract class DescriptionPageContentBuilder(
             group(kind = ContentKind.Cover) {
                 header(2, t.name)
                 +contentForDescription(t)
+            }
+        }
+    }
+
+    private fun contentFor(r: RootDocumentable): ContentNode {
+        return contentBuilder.contentFor(r)  {
+            group(kind = ContentKind.Cover) {
+                header(2, r.name)
+                comment(r.pageDocumentation!!.description!!.root)
             }
         }
     }
