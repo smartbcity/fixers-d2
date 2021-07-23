@@ -77,7 +77,7 @@ class ReactFileBuilder(
         val importBuilder = StringBuilder()
 
         imports.distinct()
-            .sortedBy { import -> "${import.path}///${import.element}" }
+            .sortedBy { import -> "${import.element}///${import.path}" }
             .groupBy(CodeImport::path)
             .forEach { (path, imports) ->
                 val (compositeImports, globalImports) = imports.partition(CodeImport::isComposite)

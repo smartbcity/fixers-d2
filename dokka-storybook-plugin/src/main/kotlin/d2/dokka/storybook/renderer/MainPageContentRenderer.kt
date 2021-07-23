@@ -60,21 +60,21 @@ open class MainPageContentRenderer: D2ContentRenderer {
 
     open fun ReactFileBuilder.buildOneColumnSources(node: ContentGroup, pageContext: ContentPage) {
         val element = node.children.first() as ContentText
-        append(element.toSourceComponent(node))
+        append(element.toSourceComponent(node, pageContext))
     }
 
     open fun ReactFileBuilder.buildTwoColumnsSources(node: ContentGroup, pageContext: ContentPage) {
         val (leftElement, rightElement) = node.children as List<ContentText>
 
         val component = DescriptedCodeComponent(
-            leftElement = leftElement.toSourceComponent(node),
-            rightElement = rightElement.toSourceComponent(node)
+            leftElement = leftElement.toSourceComponent(node, pageContext),
+            rightElement = rightElement.toSourceComponent(node, pageContext)
         )
         append(component)
     }
 
-    private fun ContentText.toSourceComponent(parent: ContentGroup): CodeElement {
-        val codeImport = buildLocalImport(parent, FileData.fromId(this.text))
+    private fun ContentText.toSourceComponent(parent: ContentGroup, pageContext: ContentPage): CodeElement {
+        val codeImport = buildImport(parent.dci.dri.first(), FileData.fromId(this.text), parent.sourceSets, pageContext)!!
 
         return when (this.dci.kind) {
             ContentKind.Comment -> BasicComponent(importData = codeImport)
@@ -88,9 +88,8 @@ open class MainPageContentRenderer: D2ContentRenderer {
 
     open fun ReactFileBuilder.importExtensions(node: ContentGroup, pageContext: ContentPage) {
         node.dci.dri.forEach { childDri ->
-            val fullDri = childDri.copy(extra = FileData.MAIN.id)
-            val path = d2LocationProvider.resolve(fullDri, node.sourceSets, pageContext)!!
-            val import = buildImport(fullDri, FileData.MAIN, path)
+            val import = buildImport(childDri, FileData.MAIN, node.sourceSets, pageContext)
+                ?: return@forEach
             val component = BasicComponent(
                 identifier = import.element,
                 importData = import
@@ -102,8 +101,12 @@ open class MainPageContentRenderer: D2ContentRenderer {
     }
 
 
-    open fun buildLocalImport(node: ContentNode, fileData: FileData): CodeImport {
-        return buildImport(node.dci.dri.first(), fileData, "./$fileData")
+    open fun buildImport(target: DRI, fileData: FileData, sourceSets: Set<DisplaySourceSet>, pageContext: ContentPage): CodeImport? {
+        val fullDri = target.copy(extra = fileData.id)
+        return d2LocationProvider.resolve(fullDri, sourceSets, pageContext)
+            ?.let { path ->
+                buildImport(fullDri, fileData, path)
+            }
     }
 
     open fun buildImport(target: DRI, fileData: FileData, path: String): CodeImport {

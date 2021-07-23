@@ -76,12 +76,12 @@ open class D2StorybookRenderer(
 
         when (page) {
             is ModulePageNode -> Unit
-            is D2StorybookContentPage -> outputWriter.write(page, path, page.fileData.extension, page.renderer())
-            is ContentPage -> outputWriter.write(page, path, ".md", page.renderer())
+            is D2StorybookContentPage -> outputWriter.write(page, path, page.renderer())
+            is ContentPage -> outputWriter.write(page, path, page.renderer())
             is RendererSpecificPage -> when (val strategy = page.strategy) {
                 is RenderingStrategy.Copy -> outputWriter.writeResources(strategy.from, path)
                 is RenderingStrategy.Write -> outputWriter.write(path, strategy.text, "")
-                is RenderingStrategy.Callback -> outputWriter.write(path, strategy.instructions(this, page), ".md")
+                is RenderingStrategy.Callback -> outputWriter.write(path, strategy.instructions(this, page), "")
                 RenderingStrategy.DoNothing -> Unit
             }
             else -> throw AssertionError(
@@ -90,8 +90,8 @@ open class D2StorybookRenderer(
         }
     }
 
-    private suspend fun OutputWriter.write(page: ContentPage, path: String, extension: String, renderer: D2ContentRenderer) {
-        write(path, renderer.buildPage(page, locationProvider, renderer::buildPageContent), extension)
+    private suspend fun OutputWriter.write(page: ContentPage, path: String, renderer: D2ContentRenderer) {
+        write(path, renderer.buildPage(page, locationProvider, renderer::buildPageContent), "")
     }
 }
 
