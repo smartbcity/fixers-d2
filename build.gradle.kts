@@ -17,6 +17,25 @@ allprojects {
         maven("https://repo.spring.io/snapshot")
         maven("https://repo.spring.io/milestone")
     }
+
+    tasks {
+        val dokkaD2 = "dokkaD2"
+        val dokkaD2Partial = "${dokkaD2}Partial"
+
+        register<org.jetbrains.dokka.gradle.DokkaCollectorTask>(dokkaD2) {
+            dependencies {
+                plugins(project(":dokka-storybook-plugin"))
+            }
+            addChildTask(dokkaD2Partial)
+            addSubprojectChildTasks(dokkaD2Partial)
+        }
+
+        register<org.jetbrains.dokka.gradle.DokkaTask>(dokkaD2Partial) {
+            dependencies {
+                plugins(project(":dokka-storybook-plugin"))
+            }
+        }
+    }
 }
 
 subprojects {
