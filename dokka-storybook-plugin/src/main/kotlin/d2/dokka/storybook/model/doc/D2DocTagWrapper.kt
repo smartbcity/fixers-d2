@@ -38,10 +38,12 @@ data class Example(override val root: DocTag): D2DocTagWrapper() {
             .joinToString("", transform = Text::hrefOrBody)
 }
 data class Parent(override val root: DocTag): SimpleLinkTagWrapper()
+data class Title(override val root: DocTag): SimpleTextTagWrapper()
 
 data class Page(
     override val root: DocTag
 ): D2DocTagWrapper() {
+    val title: Title?
     val description: Description?
     val example: Example?
 
@@ -62,6 +64,7 @@ data class Page(
                 if (child is CustomTagWrapper) child.toD2DocTagWrapper() ?: child else child
             }
 
+        title = tags.firstIsInstanceOrNull()
         description = tags.firstIsInstanceOrNull()
         example = tags.firstIsInstanceOrNull()
     }
@@ -73,6 +76,7 @@ fun CustomTagWrapper.toD2DocTagWrapper(): D2DocTagWrapper? {
         "example" -> Example(root = root)
         "parent" -> Parent(root = root)
         "page" -> Page(root = root)
+        "title" -> Title(root = root)
         else -> null
     }
 }
