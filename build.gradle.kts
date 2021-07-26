@@ -8,7 +8,7 @@ plugins {
 
 allprojects {
     group = "city.smartb.d2"
-    version = System.getenv("VERSION") ?: "local"
+    version = System.getenv("VERSION") ?: "latest"
     repositories {
         mavenLocal()
         jcenter()
@@ -17,26 +17,10 @@ allprojects {
         maven("https://repo.spring.io/snapshot")
         maven("https://repo.spring.io/milestone")
     }
-
-    tasks {
-        val dokkaStorybook = "dokkaStorybook"
-        val dokkaStorybookPartial = "${dokkaStorybook}Partial"
-
-        register<org.jetbrains.dokka.gradle.DokkaCollectorTask>(dokkaStorybook) {
-            dependencies {
-                plugins(project(":dokka-storybook-plugin"))
-            }
-            addChildTask(dokkaStorybookPartial)
-            addSubprojectChildTasks(dokkaStorybookPartial)
-        }
-
-        register<org.jetbrains.dokka.gradle.DokkaTask>(dokkaStorybookPartial) {
-            dependencies {
-                plugins(project(":dokka-storybook-plugin"))
-            }
-        }
-    }
 }
+
+val dokkaStorybook = "dokkaStorybook"
+val dokkaStorybookPartial = "${dokkaStorybook}Partial"
 
 subprojects {
     plugins.withType(org.jetbrains.kotlin.gradle.plugin.KotlinMultiplatformPluginWrapper::class.java).whenPluginAdded {
@@ -110,5 +94,23 @@ subprojects {
             val implementation by configurations
             implementation(kotlin("reflect"))
         }
+    }
+
+    tasks {
+        register<org.jetbrains.dokka.gradle.DokkaTask>(dokkaStorybookPartial) {
+            dependencies {
+                plugins(project(":dokka-storybook-plugin"))
+            }
+        }
+    }
+}
+
+tasks {
+    register<org.jetbrains.dokka.gradle.DokkaCollectorTask>(dokkaStorybook) {
+        dependencies {
+            plugins(project(":dokka-storybook-plugin"))
+        }
+        addChildTask(dokkaStorybookPartial)
+        addSubprojectChildTasks(dokkaStorybookPartial)
     }
 }

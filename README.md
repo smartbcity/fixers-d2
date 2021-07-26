@@ -45,24 +45,26 @@ plugins {
     id("org.jetbrains.dokka") version "1.4.32"
 }
 
-allprojects {
+val dokkaStorybook = "dokkaStorybook"
+val dokkaStorybookPartial = "${dokkaStorybook}Partial"
+
+subprojects {
     tasks {
-        val dokkaStorybook = "dokkaStorybook"
-        val dokkaStorybookPartial = "${dokkaStorybook}Partial"
-
-        register<org.jetbrains.dokka.gradle.DokkaCollectorTask>(dokkaStorybook) {
-            dependencies {
-                plugins("city.smartb.d2:dokka-storybook-plugin")
-            }
-            addChildTask(dokkaStorybookPartial)
-            addSubprojectChildTasks(dokkaStorybookPartial)
-        }
-
         register<org.jetbrains.dokka.gradle.DokkaTask>(dokkaStorybookPartial) {
             dependencies {
                 plugins("city.smartb.d2:dokka-storybook-plugin")
             }
         }
+    }
+}
+
+tasks {
+    register<org.jetbrains.dokka.gradle.DokkaCollectorTask>(dokkaStorybook) {
+        dependencies {
+            plugins("city.smartb.d2:dokka-storybook-plugin")
+        }
+        addChildTask(dokkaStorybookPartial)
+        addSubprojectChildTasks(dokkaStorybookPartial)
     }
 }
 ```
