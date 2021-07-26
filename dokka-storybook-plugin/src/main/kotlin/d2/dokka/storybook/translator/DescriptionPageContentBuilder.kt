@@ -1,8 +1,7 @@
 package d2.dokka.storybook.translator
 
 import d2.dokka.storybook.model.doc.RootDocumentable
-import d2.dokka.storybook.model.doc.Title
-import d2.dokka.storybook.model.doc.firstD2TagOfTypeOrNull
+import d2.dokka.storybook.model.doc.title
 import d2.dokka.storybook.model.render.D2TextStyle
 import d2.dokka.storybook.model.render.toTypeString
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
@@ -69,12 +68,7 @@ internal abstract class DescriptionPageContentBuilder(
     }
 
     private fun PageContentBuilder.DocumentableContentBuilder.buildTitle(d: Documentable) {
-        val title = when (d) {
-            is RootDocumentable -> d.pageDocumentation?.title?.body
-            else -> d.documentation.firstD2TagOfTypeOrNull<Title>()?.body
-        } ?: d.name!!
-
-        header(2, title)
+        header(2, d.title)
     }
 
     private fun PageContentBuilder.DocumentableContentBuilder.propertiesBlock(

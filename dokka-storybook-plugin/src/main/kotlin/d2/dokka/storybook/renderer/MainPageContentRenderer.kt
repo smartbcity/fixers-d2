@@ -7,6 +7,7 @@ import d2.dokka.storybook.model.code.imports.CodeImport
 import d2.dokka.storybook.model.code.react.BasicComponent
 import d2.dokka.storybook.model.code.react.CodeHighlighterComponent
 import d2.dokka.storybook.model.code.react.DescriptedCodeComponent
+import d2.dokka.storybook.model.doc.title
 import d2.dokka.storybook.model.page.FileData
 import org.jetbrains.dokka.base.resolvers.local.LocationProvider
 import org.jetbrains.dokka.links.DRI
@@ -121,7 +122,7 @@ open class MainPageContentRenderer: D2ContentRenderer {
     }
 
     open fun ReactFileBuilder.buildFileHeader(pageContext: ContentPage) {
-        val name = pageContext.dri.first().sureClassNames
+        val name = pageContext.documentable!!.title
         addImport(CodeImport(path = "@storybook/addon-docs/blocks", element = "Meta", isComposite = true))
         write {
             append("<Meta title=\"$name\" parameters={{ previewTabs: { canvas: { hidden: true } } }} />")

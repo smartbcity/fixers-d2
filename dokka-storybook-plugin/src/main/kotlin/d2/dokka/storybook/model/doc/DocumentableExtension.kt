@@ -17,3 +17,9 @@ fun Documentable.toRootDocumentable() = RootDocumentable(
     expectPresentInSet = expectPresentInSet,
     children = listOf(this)
 )
+
+val Documentable.title
+    get() = when (this) {
+        is RootDocumentable -> pageDocumentation?.title?.body ?: name.removeSuffix("Page")
+        else -> documentation.firstD2TagOfTypeOrNull<Title>()?.body ?: name!!
+    }
