@@ -27,7 +27,6 @@ class D2StorybookPageCreator(
 ): DefaultPageCreator(configuration, commentsToContentConverter, signatureProvider, logger) {
 
     private lateinit var childrenMap: Map<DRI, List<Documentable>>
-    private val pageIndex = HashMap<DRI, ModelPageNode>()
 
     override fun pageForModule(m: DModule): ModulePageNode {
         val documentables = m.packages.flatMap { pack -> pack.classlikes + pack.typealiases }
@@ -71,15 +70,13 @@ class D2StorybookPageCreator(
             else -> emptyList()
         }
 
-        val pages = documentable.toPageNodes(pagesToGenerate)
-        pages.forEach { page -> pageIndex[page.dri.first()] = page }
-        return pages
+        return documentable.toPageNodes(pagesToGenerate)
     }
 
     private fun pagesFor(r: RootDocumentable): List<FileData> {
         return listOfNotNull(
             FileData.ROOT,
-            FileData.MAIN.takeIf { r.hasDescription || r.hasExample },
+            FileData.MAIN,
             FileData.DESCRIPTION.takeIf { r.hasDescription },
             FileData.SAMPLE.takeIf { r.hasExample }
         )

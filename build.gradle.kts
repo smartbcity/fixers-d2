@@ -19,18 +19,18 @@ allprojects {
     }
 
     tasks {
-        val dokkaD2 = "dokkaD2"
-        val dokkaD2Partial = "${dokkaD2}Partial"
+        val dokkaStorybook = "dokkaStorybook"
+        val dokkaStorybookPartial = "${dokkaStorybook}Partial"
 
-        register<org.jetbrains.dokka.gradle.DokkaCollectorTask>(dokkaD2) {
+        register<org.jetbrains.dokka.gradle.DokkaCollectorTask>(dokkaStorybook) {
             dependencies {
                 plugins(project(":dokka-storybook-plugin"))
             }
-            addChildTask(dokkaD2Partial)
-            addSubprojectChildTasks(dokkaD2Partial)
+            addChildTask(dokkaStorybookPartial)
+            addSubprojectChildTasks(dokkaStorybookPartial)
         }
 
-        register<org.jetbrains.dokka.gradle.DokkaTask>(dokkaD2Partial) {
+        register<org.jetbrains.dokka.gradle.DokkaTask>(dokkaStorybookPartial) {
             dependencies {
                 plugins(project(":dokka-storybook-plugin"))
             }

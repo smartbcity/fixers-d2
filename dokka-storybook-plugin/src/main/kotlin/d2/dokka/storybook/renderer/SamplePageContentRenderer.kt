@@ -57,7 +57,7 @@ open class SamplePageContentRenderer: D2ContentRenderer {
             val builder = StringBuilder()
             builder.append((it.children[0] as ContentText).text)
             builder.append(":")
-            builder.append((it.children[1] as ContentText).text.replace("\\", ""))
+            builder.append((it.children[1] as ContentText).text)
         })
         append("}")
     }
