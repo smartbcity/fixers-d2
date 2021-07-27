@@ -63,7 +63,7 @@ internal abstract class DescriptionPageContentBuilder(
     }
 
     private fun PageContentBuilder.DocumentableContentBuilder.buildTitle(d: Documentable) {
-        header(2, d.title)
+        header(2, d.title.substringAfterLast("/"))
     }
 
     private fun PageContentBuilder.DocumentableContentBuilder.propertiesBlock(

@@ -16,7 +16,7 @@ package sample
  *   "description": "Phrase describing the stuff",
  *   "things": ["Weird thingy", "Eww wat is dis"]
  * }
- * @@title Boring Documentation
+ * @@title d2/Boring Documentation
  */
 interface BoringInterface {
     /**
@@ -37,3 +37,29 @@ interface BoringInterface {
      */
     val things: List<String?>
 }
+
+
+/**
+ * Impl
+ * @d2 model
+ * @parent [BoringInterface]
+ */
+class BoringStuff(
+    /**
+     * name
+     * @example "a"
+     */
+    override val name: String,
+
+    /**
+     * description
+     * @example "blblbl"
+     */
+    override val description: String,
+
+    /**
+     * things
+     * @example ["ablblbl"]
+     */
+    override val things: List<String?>
+) : BoringInterface
