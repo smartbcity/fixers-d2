@@ -26,10 +26,12 @@ class D2StorybookPageCreator(
     logger: DokkaLogger
 ): DefaultPageCreator(configuration, commentsToContentConverter, signatureProvider, logger) {
 
+    private lateinit var documentablesMap: Map<DRI, Documentable>
     private lateinit var childrenMap: Map<DRI, List<Documentable>>
 
     override fun pageForModule(m: DModule): ModulePageNode {
         val documentables = m.packages.flatMap { pack -> pack.classlikes + pack.typealiases }
+        documentablesMap = documentables.associateBy(Documentable::dri)
         buildChildrenMap(documentables)
 
         val rootPages = childrenMap[DRI.topLevel]
@@ -112,6 +114,6 @@ class D2StorybookPageCreator(
         override fun contentForComments(d: Documentable): List<ContentNode> = this@D2StorybookPageCreator.contentForComments(d)
         override fun contentForDescription(d: Documentable): List<ContentNode> = this@D2StorybookPageCreator.contentForDescription(d)
     }
-    private inner class InnerSamplePageContentBuilder: SamplePageContentBuilder(contentBuilder)
+    private inner class InnerSamplePageContentBuilder: SamplePageContentBuilder(contentBuilder, documentablesMap)
     private inner class InnerRootPageContentBuilder: RootPageContentBuilder(contentBuilder)
 }

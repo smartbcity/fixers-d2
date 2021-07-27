@@ -97,7 +97,8 @@ A documentable without parent means that it will have its own dedicated page.
 
 #### @example jsonValue
 
-Specifies an example json value for a property inside a classlike.
+Specifies an example json value for a property inside a classlike.\
+If a property with a d2 documentable type misses an @example tag, it will attempt to use the generated sample of the type if it exists.
 
 #### @title
 

@@ -9,7 +9,9 @@ import org.jetbrains.dokka.pages.ContentGroup
 import org.jetbrains.dokka.pages.ContentKind
 import org.jetbrains.dokka.pages.ContentNode
 import org.jetbrains.dokka.pages.ContentPage
+import org.jetbrains.dokka.pages.ContentStyle
 import org.jetbrains.dokka.pages.ContentText
+import org.jetbrains.dokka.pages.Style
 
 open class SamplePageContentRenderer: D2ContentRenderer {
 
@@ -55,9 +57,12 @@ open class SamplePageContentRenderer: D2ContentRenderer {
         append("{")
         append(node.children.map { it as ContentGroup }.joinToString(",") {
             val builder = StringBuilder()
-            builder.append((it.children[0] as ContentText).text)
+            builder.buildContentNode(it.children[0], pageContext)
             builder.append(":")
-            builder.append((it.children[1] as ContentText).text)
+            builder.decorateWith(it.style) {
+                buildContentNode(it.children[1], pageContext)
+            }
+            builder
         })
         append("}")
     }
@@ -81,5 +86,19 @@ open class SamplePageContentRenderer: D2ContentRenderer {
             .enable(JsonParser.Feature.ALLOW_UNQUOTED_FIELD_NAMES)
         val json = mapper.readValue(this.toString(), Any::class.java)
         return mapper.writerWithDefaultPrettyPrinter().writeValueAsString(json)
+    }
+
+    protected open fun StringBuilder.decorateWith(styles: Set<Style>, block: StringBuilder.() -> Unit) {
+        val (opens, closes) = styles.mapNotNull { it.decorators() }.unzip()
+        opens.forEach(::append)
+        block()
+        closes.reversed().forEach(::append)
+    }
+
+    private fun Style.decorators(): Pair<String, String>? {
+        return when (this) {
+            ContentStyle.TabbedContent -> "[" to "]"
+            else -> null
+        }
     }
 }

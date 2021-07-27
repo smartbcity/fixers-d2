@@ -1,5 +1,6 @@
 package d2.dokka.storybook.model.render
 
+import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.driOrNull
 import org.jetbrains.dokka.model.Bound
 import org.jetbrains.dokka.model.Contravariance
 import org.jetbrains.dokka.model.Covariance
@@ -50,3 +51,6 @@ private fun TypeConstructor.toTypeString(): String {
 }
 
 private fun String?.orUnknown() = this ?: "Unknown"
+
+fun Bound.isCollection() = this.driOrNull?.toString().orEmpty().contains("kotlin.collections/")
+fun Bound.isMap() = this.driOrNull?.toString().orEmpty().contains("Map///")
