@@ -6,7 +6,6 @@ import d2.dokka.storybook.model.page.FileData
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.DClasslike
-import org.jetbrains.dokka.model.DInterface
 import org.jetbrains.dokka.model.DTypeAlias
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.pages.ContentGroup
@@ -28,11 +27,7 @@ internal abstract class MainPageContentBuilder(
         }
     }
 
-    private fun contentFor(c: DClasslike): ContentNode? {
-        if (c !is DInterface) {
-            return null
-        }
-
+    private fun contentFor(c: DClasslike): ContentNode {
         return contentFor(c)  {
             group(setOf(c.dri), kind = ContentKind.Source) {
                 text(FileData.DESCRIPTION.id, kind = ContentKind.Comment)

@@ -79,9 +79,6 @@ The dokkaStorybook will collect the results of every Partial task within the sub
 
 This plugin follows the same syntax as the official [KDoc](https://kotlinlang.org/docs/kotlin-doc.html) with a few extra tags.
 
-> NB: Documentation generation is currently supported for Interface and Typealias nodes.
-> Any other object might generate either unstable results or no result at all. 
-
 > NB: All tags specified bellow are case-insensitive
 
 #### @d2 type

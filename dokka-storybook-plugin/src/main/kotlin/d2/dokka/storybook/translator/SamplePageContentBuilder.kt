@@ -5,7 +5,6 @@ import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.firstD2TagOfTypeOrNull
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.model.DClasslike
-import org.jetbrains.dokka.model.DInterface
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.pages.ContentGroup
 import org.jetbrains.dokka.pages.ContentKind
@@ -23,11 +22,7 @@ abstract class SamplePageContentBuilder(
         }
     }
 
-    private fun contentFor(c: DClasslike): ContentNode? {
-        if (c !is DInterface) {
-            return null
-        }
-
+    private fun contentFor(c: DClasslike): ContentNode {
         return contentBuilder.contentFor(c, kind = ContentKind.Properties)  {
             +contentForExamples(c)
         }

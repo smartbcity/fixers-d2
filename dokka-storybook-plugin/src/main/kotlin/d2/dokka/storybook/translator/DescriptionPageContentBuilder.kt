@@ -6,7 +6,6 @@ import d2.dokka.storybook.model.render.D2TextStyle
 import d2.dokka.storybook.model.render.toTypeString
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.model.DClasslike
-import org.jetbrains.dokka.model.DInterface
 import org.jetbrains.dokka.model.DProperty
 import org.jetbrains.dokka.model.DTypeAlias
 import org.jetbrains.dokka.model.Documentable
@@ -31,11 +30,7 @@ internal abstract class DescriptionPageContentBuilder(
         }
     }
 
-    private fun contentFor(c: DClasslike): ContentNode? {
-        if (c !is DInterface) {
-            return null
-        }
-
+    private fun contentFor(c: DClasslike): ContentNode {
         return contentBuilder.contentFor(c)  {
             group(kind = ContentKind.Cover) {
                 buildTitle(c)
