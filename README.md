@@ -132,7 +132,7 @@ package sample
  *   "description": "Phrase describing the stuff",
  *   "things": ["Weird thingy", "Eww wat is dis"]
  * }
- * @@title Boring Documentation
+ * @@title d2/Boring Documentation
  */
 interface BoringInterface {
     /**
@@ -178,7 +178,7 @@ interface ChildInterface {
 typealias BoringGetQueryFunction = F2Function<BoringGetQuery, BoringGetQueryResult>
 
 /**
- * @D2 command
+ * @D2 query
  * @parent [BoringGetQueryFunction]
  */
 interface BoringGetQuery {

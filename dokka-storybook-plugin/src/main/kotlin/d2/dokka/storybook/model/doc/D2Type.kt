@@ -6,6 +6,7 @@ enum class D2Type(val id: String, val order: Int) {
     MODEL("model", 10),
     FUNCTION("function", 20),
     COMMAND("command", 30),
+    QUERY("query", 30),
     EVENT("event", 40);
 
     companion object {
