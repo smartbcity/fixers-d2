@@ -1,13 +1,19 @@
 package d2.dokka.storybook.location
 
+import d2.dokka.storybook.model.doc.Parent
+import d2.dokka.storybook.model.doc.firstD2TagOfTypeOrNull
+import d2.dokka.storybook.model.doc.title
+import d2.dokka.storybook.model.doc.toRootDocumentable
 import d2.dokka.storybook.model.page.D2StorybookPageNode
 import d2.dokka.storybook.model.page.FileData
 import org.jetbrains.dokka.base.resolvers.local.DokkaLocationProvider
 import org.jetbrains.dokka.base.resolvers.local.LocationProviderFactory
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.DisplaySourceSet
+import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.toDisplaySourceSets
 import org.jetbrains.dokka.pages.ClasslikePageNode
+import org.jetbrains.dokka.pages.ContentPage
 import org.jetbrains.dokka.pages.ModulePageNode
 import org.jetbrains.dokka.pages.PackagePageNode
 import org.jetbrains.dokka.pages.PageNode
@@ -20,7 +26,7 @@ class D2StorybookLocationProvider(
     dokkaContext: DokkaContext
 ): DokkaLocationProvider(pageGraphRoot, dokkaContext, "") {
 
-    class Factory(private val context: DokkaContext): LocationProviderFactory {
+    class Factory(private val context: DokkaContext) : LocationProviderFactory {
         override fun getLocationProvider(pageNode: RootPageNode) =
             D2StorybookLocationProvider(pageNode, context)
     }
@@ -39,6 +45,24 @@ class D2StorybookLocationProvider(
         }
         put(pageGraphRoot, emptyList())
         pageGraphRoot.children.forEach { registerPath(it, emptyList()) }
+    }
+
+    private val documentableIndex = HashMap<DRI, Documentable>().apply {
+        fun registerDocumentable(page: PageNode) {
+            if (page is ContentPage) {
+                page.documentable
+                    ?.takeIf { it.dri != DRI.topLevel }
+                    ?.let { put(it.dri, it) }
+            }
+            page.children.forEach(::registerDocumentable)
+        }
+        registerDocumentable(pageGraphRoot)
+    }
+
+    private val parentMap = documentableIndex.mapValues { (_, documentable) ->
+        val parentDri = documentable.documentation.firstD2TagOfTypeOrNull<Parent>()?.target
+            ?: documentable.toRootDocumentable().dri
+        documentableIndex[parentDri]
     }
 
     override fun resolve(dri: DRI, sourceSets: Set<DisplaySourceSet>, context: PageNode?): String? {
@@ -70,10 +94,37 @@ class D2StorybookLocationProvider(
             .joinToString("/")
     }
 
-    private fun pathForRootPage(node: D2StorybookPageNode) = node.name
+    fun resolveAnchor(dri: DRI, context: PageNode): String? {
+        if (context !is ContentPage) {
+            return null
+        }
+
+        val targetDocumentable = documentableIndex[dri] ?: return null
+        val targetRoot = targetDocumentable.firstAncestor()
+        val contextRoot = context.documentable!!.firstAncestor()
+
+        val pathBuilder = StringBuilder()
+        if (targetRoot !== contextRoot) {
+            pathBuilder.append("/docs/${targetRoot.sanitizedTitle}--page")
+        }
+        pathBuilder.append("#${targetDocumentable.sanitizedTitle}")
+
+        return pathBuilder.toString()
+    }
 
     private val PageNode.pathName: String
         get() = if (this is PackagePageNode) name else identifierToFilename(name)
+
+    private fun Documentable.parent(): Documentable? {
+        return parentMap[dri]
+    }
+
+    private fun Documentable.firstAncestor(): Documentable {
+        return this.parent()?.firstAncestor() ?: this
+    }
+
+    private val Documentable.sanitizedTitle
+        get() = title.lowercase().replace(Regex("[^\\p{L}\\p{N}]+"), "-")
 
     companion object {
         private val reservedFilenames = setOf("index", "con", "aux", "lst", "prn", "nul", "eof", "inp", "out")
