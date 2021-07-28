@@ -3,28 +3,19 @@ package d2.dokka.storybook.translator
 import d2.dokka.storybook.model.doc.Example
 import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.firstD2TagOfTypeOrNull
+import d2.dokka.storybook.model.render.documentableIn
 import d2.dokka.storybook.model.render.isCollection
 import d2.dokka.storybook.model.render.isMap
-import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.driOrNull
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.model.Bound
 import org.jetbrains.dokka.model.DClasslike
 import org.jetbrains.dokka.model.DProperty
 import org.jetbrains.dokka.model.Documentable
-import org.jetbrains.dokka.model.Nullable
-import org.jetbrains.dokka.model.Projection
-import org.jetbrains.dokka.model.Star
-import org.jetbrains.dokka.model.TypeAliased
-import org.jetbrains.dokka.model.TypeConstructor
-import org.jetbrains.dokka.model.TypeParameter
-import org.jetbrains.dokka.model.Variance
 import org.jetbrains.dokka.pages.ContentGroup
 import org.jetbrains.dokka.pages.ContentKind
 import org.jetbrains.dokka.pages.ContentNode
 import org.jetbrains.dokka.pages.ContentStyle
 import org.jetbrains.dokka.pages.Style
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 abstract class SamplePageContentBuilder(
     protected val contentBuilder: PageContentBuilder,
@@ -71,7 +62,7 @@ abstract class SamplePageContentBuilder(
             ContentStyle.TabbedContent.takeIf { property.type.isCollection() && !property.type.isMap() }
         )
 
-        val propertyType = property.type.documentableType()
+        val propertyType = property.type.documentableIn(documentables)
         if (propertyType == null || propertyType !is DClasslike) {
             return null
         }
@@ -84,24 +75,6 @@ abstract class SamplePageContentBuilder(
         return contentBuilder.contentFor(property, sourceSets = property.sourceSets, kind = ContentKind.Main, styles = styles) {
             text(property.name)
             +contentForPropertyType
-        }
-    }
-
-    private fun Projection.documentableType(): Documentable? {
-        return when (this) {
-            is Bound -> documentableType()
-            is Star -> null
-            is Variance<*> -> inner.documentableType()
-        }
-    }
-
-    private fun Bound.documentableType(): Documentable? {
-        return when (this) {
-            is TypeParameter -> documentables[dri]
-            is TypeConstructor -> documentables[driOrNull] ?: projections.firstNotNullResult { it.documentableType() }
-            is Nullable -> inner.documentableType()
-            is TypeAliased -> typeAlias.documentableType() ?: inner.documentableType()
-            else -> null
         }
     }
 

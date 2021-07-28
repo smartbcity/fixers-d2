@@ -2,7 +2,7 @@ package d2.dokka.storybook.renderer
 
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.ObjectMapper
-import org.jetbrains.dokka.base.resolvers.local.LocationProvider
+import d2.dokka.storybook.location.D2StorybookLocationProvider
 import org.jetbrains.dokka.model.DisplaySourceSet
 import org.jetbrains.dokka.pages.ContentCodeBlock
 import org.jetbrains.dokka.pages.ContentGroup
@@ -15,7 +15,7 @@ import org.jetbrains.dokka.pages.Style
 
 open class SamplePageContentRenderer: D2ContentRenderer {
 
-    override lateinit var d2LocationProvider: LocationProvider
+    override lateinit var d2LocationProvider: D2StorybookLocationProvider
 
     override fun buildPageContent(context: StringBuilder, page: ContentPage) {
         page.content.build(context, page)

@@ -1,9 +1,11 @@
 package d2.dokka.storybook.model.render
 
 import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.driOrNull
+import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.Bound
 import org.jetbrains.dokka.model.Contravariance
 import org.jetbrains.dokka.model.Covariance
+import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.Dynamic
 import org.jetbrains.dokka.model.Invariance
 import org.jetbrains.dokka.model.JavaObject
@@ -15,7 +17,9 @@ import org.jetbrains.dokka.model.TypeAliased
 import org.jetbrains.dokka.model.TypeConstructor
 import org.jetbrains.dokka.model.TypeParameter
 import org.jetbrains.dokka.model.UnresolvedBound
+import org.jetbrains.dokka.model.Variance
 import org.jetbrains.dokka.model.Void
+import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 fun Projection.toTypeString(): String {
     return when (this) {
@@ -54,3 +58,21 @@ private fun String?.orUnknown() = this ?: "Unknown"
 
 fun Bound.isCollection() = this.driOrNull?.toString().orEmpty().contains("kotlin.collections/")
 fun Bound.isMap() = this.driOrNull?.toString().orEmpty().contains("Map///")
+
+fun Projection.documentableIn(documentables: Map<DRI, Documentable>): Documentable? {
+    return when (this) {
+        is Bound -> documentableIn(documentables)
+        is Star -> null
+        is Variance<*> -> inner.documentableIn(documentables)
+    }
+}
+
+private fun Bound.documentableIn(documentables: Map<DRI, Documentable>): Documentable? {
+    return when (this) {
+        is TypeParameter -> documentables[dri]
+        is TypeConstructor -> documentables[driOrNull] ?: projections.firstNotNullResult { it.documentableIn(documentables) }
+        is Nullable -> inner.documentableIn(documentables)
+        is TypeAliased -> typeAlias.documentableIn(documentables) ?: inner.documentableIn(documentables)
+        else -> null
+    }
+}

@@ -1,6 +1,7 @@
 package d2.dokka.storybook.renderer
 
 import d2.dokka.storybook.builder.ReactFileBuilder
+import d2.dokka.storybook.location.D2StorybookLocationProvider
 import d2.dokka.storybook.model.code.BasicImportedElement
 import d2.dokka.storybook.model.code.CodeElement
 import d2.dokka.storybook.model.code.imports.CodeImport
@@ -9,7 +10,6 @@ import d2.dokka.storybook.model.code.react.CodeHighlighterComponent
 import d2.dokka.storybook.model.code.react.DescriptedCodeComponent
 import d2.dokka.storybook.model.doc.title
 import d2.dokka.storybook.model.page.FileData
-import org.jetbrains.dokka.base.resolvers.local.LocationProvider
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.sureClassNames
 import org.jetbrains.dokka.model.DisplaySourceSet
@@ -21,7 +21,7 @@ import org.jetbrains.dokka.pages.ContentText
 
 open class MainPageContentRenderer: D2ContentRenderer {
 
-    override lateinit var d2LocationProvider: LocationProvider
+    override lateinit var d2LocationProvider: D2StorybookLocationProvider
 
     override fun buildPageContent(context: StringBuilder, page: ContentPage) {
         val builder = ReactFileBuilder(context)

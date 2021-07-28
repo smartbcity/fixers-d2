@@ -1,6 +1,7 @@
 package d2.dokka.storybook.renderer
 
 import d2.dokka.storybook.D2StorybookPlugin
+import d2.dokka.storybook.location.D2StorybookLocationProvider
 import d2.dokka.storybook.model.page.D2StorybookContentPage
 import d2.dokka.storybook.model.page.FileData
 import d2.dokka.storybook.model.page.ModelPageNode
@@ -10,7 +11,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import org.jetbrains.dokka.DokkaException
 import org.jetbrains.dokka.base.renderers.OutputWriter
-import org.jetbrains.dokka.base.resolvers.local.LocationProvider
 import org.jetbrains.dokka.pages.ContentPage
 import org.jetbrains.dokka.pages.ModulePageNode
 import org.jetbrains.dokka.pages.PageNode
@@ -28,7 +28,7 @@ open class D2StorybookRenderer(
 ): Renderer {
     protected open val outputWriter = context.plugin<D2StorybookPlugin>().querySingle { outputWriter }
 
-    protected open lateinit var locationProvider: LocationProvider
+    protected open lateinit var locationProvider: D2StorybookLocationProvider
 
     protected open val preprocessors = context.plugin<D2StorybookPlugin>().query { storybookPreprocessors }
 
@@ -51,7 +51,7 @@ open class D2StorybookRenderer(
         val newRoot = preprocessors.fold(root) { acc, t -> t(acc) }
 
         locationProvider =
-            context.plugin<D2StorybookPlugin>().querySingle { locationProviderFactory }.getLocationProvider(newRoot)
+            context.plugin<D2StorybookPlugin>().querySingle { locationProviderFactory }.getLocationProvider(newRoot) as D2StorybookLocationProvider
 
         runBlocking(Dispatchers.Default) {
             renderPages(newRoot)

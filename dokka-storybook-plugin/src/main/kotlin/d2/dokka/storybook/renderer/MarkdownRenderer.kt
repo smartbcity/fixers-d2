@@ -1,8 +1,8 @@
 package d2.dokka.storybook.renderer
 
+import d2.dokka.storybook.location.D2StorybookLocationProvider
 import d2.dokka.storybook.model.render.D2TextStyle
 import d2.dokka.storybook.model.render.WrapperTag
-import org.jetbrains.dokka.base.resolvers.local.LocationProvider
 import org.jetbrains.dokka.gfm.renderer.CommonmarkRenderer
 import org.jetbrains.dokka.model.DisplaySourceSet
 import org.jetbrains.dokka.pages.ContentDRILink
@@ -10,7 +10,6 @@ import org.jetbrains.dokka.pages.ContentKind
 import org.jetbrains.dokka.pages.ContentPage
 import org.jetbrains.dokka.pages.ContentTable
 import org.jetbrains.dokka.pages.ContentText
-import org.jetbrains.dokka.pages.PageNode
 import org.jetbrains.dokka.pages.Style
 import org.jetbrains.dokka.pages.TextStyle
 import org.jetbrains.dokka.plugability.DokkaContext
@@ -19,7 +18,7 @@ open class MarkdownRenderer(
     context: DokkaContext,
 ): CommonmarkRenderer(context), D2ContentRenderer {
 
-    override lateinit var d2LocationProvider: LocationProvider
+    override lateinit var d2LocationProvider: D2StorybookLocationProvider
 
     override fun buildPageContent(context: StringBuilder, page: ContentPage) {
         page.content.build(context, page)
@@ -135,23 +134,15 @@ open class MarkdownRenderer(
         .replace("\n[\n]+".toRegex(), "<br>")
         .replace("\n", " ")
 
-    /*
-     * TODO links
-     */
-
-    override fun StringBuilder.buildLink(address: String, content: StringBuilder.() -> Unit) {
-        append(" -Link- ")
-    }
-
     override fun StringBuilder.buildDRILink(
         node: ContentDRILink,
         pageContext: ContentPage,
         sourceSetRestriction: Set<DisplaySourceSet>?
     ) {
-        append(" -DRILink- ")
-    }
-
-    override fun StringBuilder.buildNavigation(page: PageNode) {
-        append(" -Navigation- ")
+        d2LocationProvider.resolveAnchor(node.address, pageContext)?.let {
+            buildLink(it) {
+                buildText(node.children, pageContext, sourceSetRestriction)
+            }
+        } ?: buildText(node.children, pageContext, sourceSetRestriction)
     }
 }

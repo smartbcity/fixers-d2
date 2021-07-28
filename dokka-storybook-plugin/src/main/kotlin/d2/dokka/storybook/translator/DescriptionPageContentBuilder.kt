@@ -3,8 +3,10 @@ package d2.dokka.storybook.translator
 import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.title
 import d2.dokka.storybook.model.render.D2TextStyle
+import d2.dokka.storybook.model.render.documentableIn
 import d2.dokka.storybook.model.render.toTypeString
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
+import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.DClasslike
 import org.jetbrains.dokka.model.DProperty
 import org.jetbrains.dokka.model.DTypeAlias
@@ -15,7 +17,8 @@ import org.jetbrains.dokka.pages.ContentStyle
 import org.jetbrains.dokka.pages.TextStyle
 
 internal abstract class DescriptionPageContentBuilder(
-    protected val contentBuilder: PageContentBuilder
+    protected val contentBuilder: PageContentBuilder,
+    protected val documentables: Map<DRI, Documentable>
 ): D2StorybookPageContentBuilder {
 
     protected abstract fun contentForComments(d: Documentable): List<ContentNode>
@@ -71,7 +74,14 @@ internal abstract class DescriptionPageContentBuilder(
     ) {
         block(kind = ContentKind.Properties, elements = properties) { property ->
             text(property.name, styles = setOf(TextStyle.Italic))
-            text(property.type.toTypeString(), styles = setOf(D2TextStyle.Code))
+
+            val propertyTypeDocumentable = property.type.documentableIn(documentables)
+            if (propertyTypeDocumentable == null) {
+                text(property.type.toTypeString(), styles = setOf(D2TextStyle.Code))
+            } else {
+                link(text = property.type.toTypeString(), address = propertyTypeDocumentable.dri, styles = setOf(D2TextStyle.Code))
+            }
+
             group(setOf(property.dri), property.sourceSets.toSet(), ContentKind.Main) {
                 property.sourceSets.forEach { sourceSet ->
                     property.documentation[sourceSet]?.children?.firstOrNull()?.root?.let {
