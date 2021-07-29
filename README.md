@@ -95,9 +95,10 @@ Available types (case-insensitive):
 Identifies another D2 documentable as a parent. The current object will then be integrated inside the documentation page of its parent. \
 A documentable without parent means that it will have its own dedicated page.
 
-#### @example jsonValue
+#### @example jsonValue or identifier
 
 Specifies an example json value for a property inside a classlike.\
+If an identifier is given instead, the example of the targeted documentable will be used.\
 If a property with a d2 documentable type misses an @example tag, it will attempt to use the generated sample of the type if it exists.
 
 #### @title
@@ -168,6 +169,12 @@ interface ChildInterface {
      * @example "a cube"
      */
     val toy: String
+
+    /**
+     * The same things as you'd find in a BoringInterface
+     * @example [sample.BoringInterface.things]
+     */
+    val things: List<String?>
 }
 ```
 ```kotlin
