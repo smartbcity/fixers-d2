@@ -7,6 +7,7 @@ import org.jetbrains.dokka.gfm.renderer.CommonmarkRenderer
 import org.jetbrains.dokka.model.DisplaySourceSet
 import org.jetbrains.dokka.pages.ContentDRILink
 import org.jetbrains.dokka.pages.ContentKind
+import org.jetbrains.dokka.pages.ContentList
 import org.jetbrains.dokka.pages.ContentPage
 import org.jetbrains.dokka.pages.ContentTable
 import org.jetbrains.dokka.pages.ContentText
@@ -145,4 +146,17 @@ open class MarkdownRenderer(
             }
         } ?: buildText(node.children, pageContext, sourceSetRestriction)
     }
+
+    override fun StringBuilder.buildList(
+        node: ContentList,
+        pageContext: ContentPage,
+        sourceSetRestriction: Set<DisplaySourceSet>?
+    ) {
+        node.children.forEach { child ->
+            append(" - ")
+            append(buildString { child.build(this, pageContext, sourceSetRestriction) }.trim())
+            append("\n")
+        }
+    }
+
 }
