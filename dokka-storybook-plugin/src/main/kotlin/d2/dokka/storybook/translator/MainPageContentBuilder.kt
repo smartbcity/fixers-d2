@@ -1,5 +1,6 @@
 package d2.dokka.storybook.translator
 
+import com.intellij.util.containers.BidirectionalMap
 import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.d2Type
 import d2.dokka.storybook.model.page.FileData
@@ -15,7 +16,8 @@ import java.util.SortedSet
 
 internal abstract class MainPageContentBuilder(
     protected val contentBuilder: PageContentBuilder,
-    protected val childrenMap: Map<DRI, List<Documentable>>
+    protected val documentables: Map<DRI, Documentable>,
+    protected val childToParentBiMap: BidirectionalMap<DRI, DRI>
 ): D2StorybookPageContentBuilder {
 
     override fun contentFor(d: Documentable): ContentNode? {
@@ -66,7 +68,7 @@ internal abstract class MainPageContentBuilder(
 
     private fun contentForChildrenOf(d: Documentable): ContentNode {
         return contentBuilder.contentFor(
-            dri = childrenMap[d.dri].orEmpty().driSortedByD2Type(),
+            dri = childToParentBiMap.getKeysByValue(d.dri).orEmpty().mapNotNull(documentables::get).driSortedByD2Type(),
             sourceSets = d.sourceSets,
             kind = ContentKind.Extensions
         ) {}

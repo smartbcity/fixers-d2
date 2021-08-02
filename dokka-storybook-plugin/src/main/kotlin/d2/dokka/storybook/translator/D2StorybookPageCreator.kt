@@ -1,5 +1,6 @@
 package d2.dokka.storybook.translator
 
+import com.intellij.util.containers.BidirectionalMap
 import d2.dokka.storybook.model.doc.Parent
 import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.firstD2TagOfTypeOrNull
@@ -26,15 +27,16 @@ class D2StorybookPageCreator(
     logger: DokkaLogger
 ): DefaultPageCreator(configuration, commentsToContentConverter, signatureProvider, logger) {
 
-    private lateinit var documentablesMap: Map<DRI, Documentable>
-    private lateinit var childrenMap: Map<DRI, List<Documentable>>
+    private lateinit var documentablesMap: MutableMap<DRI, Documentable>
+    private val childToParentBiMap = BidirectionalMap<DRI, DRI>()
 
     override fun pageForModule(m: DModule): ModulePageNode {
         val documentables = m.packages.flatMap { pack -> pack.classlikes + pack.typealiases }
-        documentablesMap = documentables.associateBy(Documentable::dri)
+        documentablesMap = documentables.associateBy(Documentable::dri).toMutableMap()
         buildChildrenMap(documentables)
 
-        val rootPages = childrenMap[DRI.topLevel]
+        val rootPages = childToParentBiMap.getKeysByValue(DRI.topLevel)
+            ?.mapNotNull(documentablesMap::get)
             ?.flatMap(::pagesFor)
             ?: emptyList()
 
@@ -47,21 +49,23 @@ class D2StorybookPageCreator(
     }
 
     private fun buildChildrenMap(documentables: List<Documentable>) {
-        childrenMap = documentables.flatMap { documentable ->
+        val parentMap = documentables.flatMap { documentable ->
             val parentDri = documentable.documentation
                 .firstD2TagOfTypeOrNull<Parent>()
                 ?.target
 
             if (parentDri != null) {
-                listOf(parentDri to documentable)
+                listOf(documentable.dri to parentDri)
             } else {
                 val rootDocumentable = documentable.toRootDocumentable()
+                documentablesMap[rootDocumentable.dri] = rootDocumentable
                 listOf(
-                    DRI.topLevel to rootDocumentable,
-                    rootDocumentable.dri to documentable
+                    documentable.dri to rootDocumentable.dri,
+                    rootDocumentable.dri to DRI.topLevel
                 )
             }
-        }.groupBy(Pair<DRI, Documentable>::first, Pair<DRI, Documentable>::second)
+        }.toMap()
+        childToParentBiMap.putAll(parentMap)
     }
 
     private fun pagesFor(documentable: Documentable): List<ModelPageNode> {
@@ -109,8 +113,8 @@ class D2StorybookPageCreator(
         FileData.SAMPLE -> InnerSamplePageContentBuilder()
     }
 
-    private inner class InnerMainPageContentBuilder: MainPageContentBuilder(contentBuilder, childrenMap)
-    private inner class InnerDescriptionPageContentBuilder: DescriptionPageContentBuilder(contentBuilder, documentablesMap) {
+    private inner class InnerMainPageContentBuilder: MainPageContentBuilder(contentBuilder, documentablesMap, childToParentBiMap)
+    private inner class InnerDescriptionPageContentBuilder: DescriptionPageContentBuilder(contentBuilder, documentablesMap, childToParentBiMap) {
         override fun contentForComments(d: Documentable): List<ContentNode> = this@D2StorybookPageCreator.contentForComments(d)
         override fun contentForDescription(d: Documentable): List<ContentNode> = this@D2StorybookPageCreator.contentForDescription(d)
     }

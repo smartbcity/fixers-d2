@@ -1,5 +1,6 @@
 package d2.dokka.storybook.translator
 
+import com.intellij.util.containers.BidirectionalMap
 import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.title
 import d2.dokka.storybook.model.render.D2TextStyle
@@ -18,7 +19,8 @@ import org.jetbrains.dokka.pages.TextStyle
 
 internal abstract class DescriptionPageContentBuilder(
     protected val contentBuilder: PageContentBuilder,
-    protected val documentables: Map<DRI, Documentable>
+    protected val documentables: Map<DRI, Documentable>,
+    protected val childToParentMap: BidirectionalMap<DRI, DRI>
 ): D2StorybookPageContentBuilder {
 
     protected abstract fun contentForComments(d: Documentable): List<ContentNode>
@@ -66,7 +68,15 @@ internal abstract class DescriptionPageContentBuilder(
     }
 
     private fun PageContentBuilder.DocumentableContentBuilder.buildTitle(d: Documentable) {
-        header(2, d.title.substringAfterLast("/"))
+        header(d.pageLevel(), d.title.substringAfterLast("/"))
+    }
+
+    private fun Documentable.pageLevel(): Int {
+        return childToParentMap[dri]
+            ?.let(documentables::get)
+            ?.pageLevel()
+            ?.plus(1)
+            ?: 1
     }
 
     private fun PageContentBuilder.DocumentableContentBuilder.propertiesBlock(
