@@ -72,11 +72,17 @@ internal abstract class DescriptionPageContentBuilder(
     }
 
     private fun Documentable.pageLevel(): Int {
-        return childToParentMap[dri]
-            ?.let(documentables::get)
-            ?.pageLevel()
-            ?.plus(1)
-            ?: 1
+        val parent = childToParentMap[dri]?.let(documentables::get)
+            ?: return 1
+
+        // do not increment level if the parent is the first child of a RootDocumentable
+        val headerInc = if (parent.parentIsRoot()) 0 else 1
+
+        return parent.pageLevel() + headerInc
+    }
+
+    private fun Documentable.parentIsRoot(): Boolean {
+        return childToParentMap[dri]?.let(documentables::get) is RootDocumentable
     }
 
     private fun PageContentBuilder.DocumentableContentBuilder.propertiesBlock(
