@@ -161,6 +161,7 @@ interface BoringInterface {
  * The child
  * @D2 model
  * @parent [sample.BoringInterface]
+ * @order 10
  */
 interface ChildInterface {
 

@@ -129,7 +129,7 @@ class D2StorybookLocationProvider(
     companion object {
         private val reservedFilenames = setOf("index", "con", "aux", "lst", "prn", "nul", "eof", "inp", "out")
 
-        //Taken from: https://stackoverflow.com/questions/1976007/what-characters-are-forbidden-in-windows-and-linux-directory-names
+        // Taken from: https://stackoverflow.com/questions/1976007/what-characters-are-forbidden-in-windows-and-linux-directory-names
         private val reservedCharacters = setOf('|', '>', '<', '*', ':', '"', '?', '%')
 
         fun identifierToFilename(name: String): String {

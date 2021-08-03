@@ -4,6 +4,7 @@ package sample
  * The child
  * @D2 model
  * @parent [BoringInterface]
+ * @order 10
  */
 interface ChildInterface {
 

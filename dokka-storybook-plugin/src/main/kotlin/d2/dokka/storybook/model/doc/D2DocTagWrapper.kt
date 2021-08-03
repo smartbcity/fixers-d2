@@ -37,7 +37,9 @@ sealed interface WithTarget: D2DocTagWrapper {
     fun isEmpty() = target == null
 }
 
-data class D2(override val root: DocTag): WithTextBody
+data class D2(override val root: DocTag): WithTextBody {
+    val type = body?.let(D2Type::get)
+}
 
 sealed interface Example: D2DocTagWrapper
 data class ExampleText(override val root: DocTag): Example, WithTextBody
@@ -45,6 +47,9 @@ data class ExampleLink(override val root: DocTag): Example, WithTarget
 
 data class Parent(override val root: DocTag): WithTarget
 data class Title(override val root: DocTag): WithTextBody
+data class Order(override val root: DocTag): WithTextBody {
+    val weight = body?.let(String::toInt)
+}
 
 data class Page(
     override val root: DocTag
@@ -90,6 +95,7 @@ fun CustomTagWrapper.toD2DocTagWrapper(): D2DocTagWrapper? {
             root.firstMemberOfTypeOrNull<DocumentationLink>() != null -> ::ExampleLink
             else -> ::ExampleText
         }
+        "order" -> ::Order
         "parent" -> ::Parent
         "page" -> ::Page
         "title" -> ::Title

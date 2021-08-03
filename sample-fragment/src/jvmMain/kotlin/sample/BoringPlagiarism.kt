@@ -6,6 +6,7 @@ package sample
  * @author me
  * @D2 model
  * @parent [BoringInterface]
+ * @order 20
  */
 interface BoringPlagiarism {
     /**

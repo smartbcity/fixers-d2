@@ -3,9 +3,11 @@ package d2.dokka.storybook.translator
 import com.intellij.util.containers.BidirectionalMap
 import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.d2Type
+import d2.dokka.storybook.model.doc.weight
 import d2.dokka.storybook.model.page.FileData
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.links.DRI
+import org.jetbrains.dokka.links.sureClassNames
 import org.jetbrains.dokka.model.DClasslike
 import org.jetbrains.dokka.model.DTypeAlias
 import org.jetbrains.dokka.model.Documentable
@@ -76,14 +78,13 @@ internal abstract class MainPageContentBuilder(
 
     private fun List<Documentable>.driSortedByD2Type(): SortedSet<DRI> {
         val typeMap = this.associate { d -> d.dri to d.d2Type }
+        val weightMap = this.associate { d -> d.dri to (d.weight ?: Int.MAX_VALUE) }
 
         return this.map(Documentable::dri)
             .toSortedSet { dri1, dri2 ->
-                val doc1Type = typeMap[dri1]!!
-                val doc2Type = typeMap[dri2]!!
-                (doc1Type.order - doc2Type.order)
-                    .takeIf { it != 0 }
-                    ?: dri1.classNames!!.compareTo(dri2.classNames ?: "", true)
+                (typeMap[dri1]!!.order - typeMap[dri2]!!.order).takeIf { it != 0 }
+                    ?: (weightMap[dri1]!! - weightMap[dri2]!!).takeIf { it != 0 }
+                    ?: dri1.sureClassNames.compareTo(dri2.sureClassNames, true)
             }
     }
 }
