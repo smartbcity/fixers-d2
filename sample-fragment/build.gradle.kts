@@ -1,10 +1,10 @@
 plugins {
-    kotlin("jvm")
+    kotlin("multiplatform")
     id("org.jetbrains.dokka")
 }
 
 dependencies {
-    implementation("city.smartb.f2:f2-dsl-cqrs:${Versions.f2}")
-    implementation("city.smartb.f2:f2-dsl-function:${Versions.f2}")
-    implementation(project(":sample"))
+    commonMainImplementation("city.smartb.f2:f2-dsl-cqrs:${Versions.f2}")
+    commonMainImplementation("city.smartb.f2:f2-dsl-function:${Versions.f2}")
+    jvmImplementation(project(":sample"))
 }

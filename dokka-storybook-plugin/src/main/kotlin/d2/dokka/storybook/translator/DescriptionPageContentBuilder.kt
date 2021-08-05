@@ -99,8 +99,8 @@ internal abstract class DescriptionPageContentBuilder(
             }
 
             group(setOf(property.dri), property.sourceSets.toSet(), ContentKind.Main) {
-                property.sourceSets.forEach { sourceSet ->
-                    property.documentation[sourceSet]?.children?.firstOrNull()?.root?.let {
+                property.documentation.forEach { (_, docNode) ->
+                    docNode.children.firstOrNull()?.root?.let {
                         group(kind = ContentKind.Comment) {
                             comment(it)
                         }

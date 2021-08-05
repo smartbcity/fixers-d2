@@ -31,3 +31,6 @@ inline fun <reified T: TagWrapper> SourceSetDependent<DocumentationNode>.firstDo
 inline fun <reified T: TagWrapper> SourceSetDependent<DocumentationNode>.firstDokkaTagOfTypeOrNull(): T? {
     return docTagWrappers().first.filterIsInstance<T>().firstOrNull()
 }
+
+fun SourceSetDependent<DocumentationNode>.isEmptyDoc() = all { (_, node) -> node.children.isEmpty() }
+fun SourceSetDependent<DocumentationNode>.isNotEmptyDoc() = any { (_, node) -> node.children.isNotEmpty() }

@@ -28,7 +28,13 @@ class D2TagFilterTransformer: PreMergeDocumentableTransformer {
         val taggedTypeAliases = this.typealiases.filter { typeAlias ->
             typeAlias.isTaggedWithD2()
         }
-        return this.copy(classlikes = taggedClassLikes, typealiases = taggedTypeAliases)
+
+        return this.copy(
+            classlikes = taggedClassLikes,
+            typealiases = taggedTypeAliases,
+            functions = emptyList(),
+            properties = emptyList()
+        )
     }
 
     private fun Documentable.isTaggedWithD2(): Boolean {
