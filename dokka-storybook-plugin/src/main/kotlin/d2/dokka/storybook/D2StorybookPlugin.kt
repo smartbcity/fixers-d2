@@ -29,14 +29,14 @@ class D2StorybookPlugin: DokkaPlugin() {
     val locationProviderFactory by lazy { dokkaBase.locationProviderFactory }
     val outputWriter by lazy { dokkaBase.outputWriter }
 
-    val d2AnnotationFilter by extending {
-        dokkaBase.preMergeDocumentableTransformer with D2TagFilterTransformer() order {
-            before(dokkaBase.emptyPackagesFilter)
-        }
+    val inheritedDocExtractor by extending {
+        CoreExtensions.documentableTransformer with InheritedDocExtractorTransformer()
     }
 
-    val inheritedExpectActualDocExtractor by extending {
-        CoreExtensions.documentableTransformer with InheritedDocExtractorTransformer()
+    val d2AnnotationFilter by extending {
+        CoreExtensions.documentableTransformer with D2TagFilterTransformer() order {
+            after(inheritedDocExtractor)
+        }
     }
 
     val documentableToPageTranslator by extending {

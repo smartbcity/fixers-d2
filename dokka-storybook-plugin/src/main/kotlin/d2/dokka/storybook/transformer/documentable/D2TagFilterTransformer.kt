@@ -5,13 +5,12 @@ import d2.dokka.storybook.model.doc.firstD2TagOfTypeOrNull
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.DPackage
 import org.jetbrains.dokka.model.Documentable
-import org.jetbrains.dokka.transformers.documentation.PreMergeDocumentableTransformer
+import org.jetbrains.dokka.plugability.DokkaContext
+import org.jetbrains.dokka.transformers.documentation.DocumentableTransformer
 
-class D2TagFilterTransformer: PreMergeDocumentableTransformer {
-    override fun invoke(modules: List<DModule>): List<DModule> {
-        return modules.map { module ->
-            module.onlyD2TaggedElements()
-        }
+class D2TagFilterTransformer: DocumentableTransformer {
+    override fun invoke(original: DModule, context: DokkaContext): DModule {
+        return original.onlyD2TaggedElements()
     }
 
     private fun DModule.onlyD2TaggedElements(): DModule {
