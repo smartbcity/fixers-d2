@@ -1,7 +1,9 @@
 package d2.dokka.storybook.translator
 
 import com.intellij.util.containers.BidirectionalMap
+import d2.dokka.storybook.model.doc.D2Type
 import d2.dokka.storybook.model.doc.RootDocumentable
+import d2.dokka.storybook.model.doc.isOfType
 import d2.dokka.storybook.model.doc.title
 import d2.dokka.storybook.model.render.D2TextStyle
 import d2.dokka.storybook.model.render.documentableIn
@@ -75,14 +77,10 @@ internal abstract class DescriptionPageContentBuilder(
         val parent = childToParentMap[dri]?.let(documentables::get)
             ?: return 1
 
-        // do not increment level if the parent is the first child of a RootDocumentable
-        val headerInc = if (parent.parentIsRoot()) 0 else 1
+        val parentIsModelAndNotRoot = parent.isOfType(D2Type.MODEL) && parent !is RootDocumentable
+        val headerInc = if (this.isOfType(D2Type.MODEL) && parentIsModelAndNotRoot) 0 else 1
 
         return parent.pageLevel() + headerInc
-    }
-
-    private fun Documentable.parentIsRoot(): Boolean {
-        return childToParentMap[dri]?.let(documentables::get) is RootDocumentable
     }
 
     private fun PageContentBuilder.DocumentableContentBuilder.propertiesBlock(
