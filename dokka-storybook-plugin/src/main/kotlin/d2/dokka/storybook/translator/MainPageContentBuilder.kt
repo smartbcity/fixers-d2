@@ -1,8 +1,10 @@
 package d2.dokka.storybook.translator
 
 import com.intellij.util.containers.BidirectionalMap
+import d2.dokka.storybook.model.doc.Example
 import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.d2Type
+import d2.dokka.storybook.model.doc.hasD2TagOfType
 import d2.dokka.storybook.model.doc.weight
 import d2.dokka.storybook.model.page.FileData
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
@@ -44,6 +46,9 @@ internal abstract class MainPageContentBuilder(
         return contentFor(t) {
             group(setOf(t.dri), kind = ContentKind.Source) {
                 text(FileData.DESCRIPTION.id, kind = ContentKind.Comment)
+                if (t.hasD2TagOfType<Example>()) {
+                    text(FileData.SAMPLE.id, kind = ContentKind.Sample)
+                }
             }
         }
     }

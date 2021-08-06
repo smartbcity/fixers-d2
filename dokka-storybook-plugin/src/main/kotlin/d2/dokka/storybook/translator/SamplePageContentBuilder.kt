@@ -12,6 +12,7 @@ import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.DClasslike
 import org.jetbrains.dokka.model.DProperty
+import org.jetbrains.dokka.model.DTypeAlias
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.pages.ContentGroup
 import org.jetbrains.dokka.pages.ContentKind
@@ -27,6 +28,7 @@ abstract class SamplePageContentBuilder(
     override fun contentFor(d: Documentable): ContentNode? {
         return when (d) {
             is DClasslike -> contentFor(d)
+            is DTypeAlias -> contentFor(d)
             is RootDocumentable -> contentFor(d)
             is DProperty -> contentFor(d)
             else -> null
@@ -39,12 +41,21 @@ abstract class SamplePageContentBuilder(
         }
     }
 
+    private fun contentFor(t: DTypeAlias): ContentNode {
+        val exampleTag = t.documentation.firstD2TagOfTypeOrNull<Example>()!!
+        return rawContentForExampleTag(t, exampleTag)
+    }
+
     private fun contentFor(r: RootDocumentable): ContentNode {
-        return contentBuilder.contentFor(r, kind = ContentKind.Sample) {
-            val exampleTag = r.pageDocumentation!!.example!!
+        val exampleTag = r.pageDocumentation!!.example!!
+        return rawContentForExampleTag(r, exampleTag)
+    }
+
+    private fun rawContentForExampleTag(d: Documentable, exampleTag: Example): ContentNode {
+        return contentBuilder.contentFor(d, kind = ContentKind.Sample) {
             when (exampleTag) {
                 is ExampleText -> codeBlock(exampleTag.body ?: "{}", "json")
-                is ExampleLink -> contentForLinkedExample(r, exampleTag)?.let { +it }
+                is ExampleLink -> contentForLinkedExample(d, exampleTag)?.let { +it }
             }
         }
     }
@@ -85,14 +96,11 @@ abstract class SamplePageContentBuilder(
         )
 
         val propertyType = property.type.documentableIn(documentables)
-        if (propertyType == null || propertyType !is DClasslike) {
-            return null
-        }
+            ?: return null
 
         val contentForPropertyType = contentFor(propertyType)
-        if (contentForPropertyType.children.isEmpty()) {
-            return null
-        }
+            ?.takeIf { it.children.isNotEmpty() }
+            ?: return null
 
         return contentFor(property, styles = styles) { +contentForPropertyType }
     }
