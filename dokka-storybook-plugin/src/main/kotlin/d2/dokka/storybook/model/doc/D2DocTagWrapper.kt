@@ -46,6 +46,7 @@ data class ExampleText(override val root: DocTag): Example, WithTextBody
 data class ExampleLink(override val root: DocTag): Example, WithTarget
 
 data class Parent(override val root: DocTag): WithTarget
+data class Child(override val root: DocTag): WithTarget
 data class Title(override val root: DocTag): WithTextBody
 data class Order(override val root: DocTag): WithTextBody {
     val weight = body?.let(String::toInt)
@@ -90,14 +91,15 @@ data class Page(
 
 fun CustomTagWrapper.toD2DocTagWrapper(): D2DocTagWrapper? {
     return when (name.lowercase()) {
+        "child" -> ::Child
         "d2" -> ::D2
         "example" -> when {
             root.firstMemberOfTypeOrNull<DocumentationLink>() != null -> ::ExampleLink
             else -> ::ExampleText
         }
         "order" -> ::Order
-        "parent" -> ::Parent
         "page" -> ::Page
+        "parent" -> ::Parent
         "title" -> ::Title
         else -> null
     }?.invoke(root)

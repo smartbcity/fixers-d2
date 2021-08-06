@@ -27,3 +27,11 @@ val Documentable.title
         is RootDocumentable -> pageDocumentation?.title?.body ?: name.removeSuffix("Page")
         else -> documentation.firstD2TagOfTypeOrNull<Title>()?.body ?: name!!
     }
+
+inline fun <reified T: D2DocTagWrapper> Documentable.hasD2TagOfType(): Boolean {
+    return documentation.firstD2TagOfTypeOrNull<T>() != null
+}
+
+fun Documentable.isOfType(type: D2Type): Boolean {
+    return documentation.firstD2TagOfType<D2>().type == type
+}

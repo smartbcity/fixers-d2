@@ -1,9 +1,13 @@
 package d2.dokka.storybook.translator
 
 import com.intellij.util.containers.BidirectionalMap
+import d2.dokka.storybook.model.doc.Child
+import d2.dokka.storybook.model.doc.Example
 import d2.dokka.storybook.model.doc.Parent
 import d2.dokka.storybook.model.doc.RootDocumentable
+import d2.dokka.storybook.model.doc.filterD2TagsOfType
 import d2.dokka.storybook.model.doc.firstD2TagOfTypeOrNull
+import d2.dokka.storybook.model.doc.hasD2TagOfType
 import d2.dokka.storybook.model.doc.toRootDocumentable
 import d2.dokka.storybook.model.page.FileData
 import d2.dokka.storybook.model.page.ModelPageNode
@@ -54,38 +58,48 @@ class D2StorybookPageCreator(
                 .firstD2TagOfTypeOrNull<Parent>()
                 ?.target
 
+            val childrenDri = documentable.documentation
+                .filterD2TagsOfType<Child>()
+                .mapNotNull(Child::target)
+
             if (parentDri != null) {
                 listOf(documentable.dri to parentDri)
             } else {
+                emptyList()
+            }.plus(childrenDri.map { it to documentable.dri })
+        }.toMap().toMutableMap()
+
+        documentables.forEach { documentable ->
+            if (!parentMap.contains(documentable.dri)) {
                 val rootDocumentable = documentable.toRootDocumentable()
                 documentablesMap[rootDocumentable.dri] = rootDocumentable
-                listOf(
+                parentMap.putAll(listOf(
                     documentable.dri to rootDocumentable.dri,
                     rootDocumentable.dri to DRI.topLevel
-                )
+                ))
             }
-        }.toMap()
+        }
         childToParentBiMap.putAll(parentMap)
     }
 
-    private fun pagesFor(documentable: Documentable): List<ModelPageNode> {
-        val pagesToGenerate = when (documentable) {
+    private fun pagesFor(d: Documentable): List<ModelPageNode> {
+        val pagesToGenerate = when (d) {
             is DClasslike -> listOf(FileData.MAIN, FileData.DESCRIPTION, FileData.SAMPLE)
-            is DTypeAlias -> listOf(FileData.MAIN, FileData.DESCRIPTION)
-            is RootDocumentable -> pagesFor(documentable)
+            is DTypeAlias -> listOfNotNull(
+                FileData.MAIN,
+                FileData.DESCRIPTION,
+                FileData.SAMPLE.takeIf { d.hasD2TagOfType<Example>() }
+            )
+            is RootDocumentable -> listOfNotNull(
+                FileData.ROOT,
+                FileData.MAIN,
+                FileData.DESCRIPTION.takeIf { d.hasDescription },
+                FileData.SAMPLE.takeIf { d.hasExample }
+            )
             else -> emptyList()
         }
 
-        return documentable.toPageNodes(pagesToGenerate)
-    }
-
-    private fun pagesFor(r: RootDocumentable): List<FileData> {
-        return listOfNotNull(
-            FileData.ROOT,
-            FileData.MAIN,
-            FileData.DESCRIPTION.takeIf { r.hasDescription },
-            FileData.SAMPLE.takeIf { r.hasExample }
-        )
+        return d.toPageNodes(pagesToGenerate)
     }
 
     private fun Documentable.toPageNodes(files: List<FileData>): List<ModelPageNode> {

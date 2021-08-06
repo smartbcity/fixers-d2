@@ -16,20 +16,24 @@ fun SourceSetDependent<DocumentationNode>.docTagWrappers(): Pair<List<TagWrapper
     return dokkaTagWrappers to d2TagWrappers
 }
 
+inline fun <reified T: D2DocTagWrapper> SourceSetDependent<DocumentationNode>.filterD2TagsOfType(): List<T> {
+    return docTagWrappers().second.filterIsInstance<T>()
+}
+
 inline fun <reified T: D2DocTagWrapper> SourceSetDependent<DocumentationNode>.firstD2TagOfType(): T {
-    return docTagWrappers().second.filterIsInstance<T>().first()
+    return filterD2TagsOfType<T>().first()
 }
 
 inline fun <reified T: D2DocTagWrapper> SourceSetDependent<DocumentationNode>.firstD2TagOfTypeOrNull(): T? {
-    return docTagWrappers().second.filterIsInstance<T>().firstOrNull()
+    return filterD2TagsOfType<T>().firstOrNull()
 }
 
-inline fun <reified T: TagWrapper> SourceSetDependent<DocumentationNode>.firstDokkaTagOfType(): T {
-    return docTagWrappers().first.filterIsInstance<T>().first()
+inline fun <reified T: TagWrapper> SourceSetDependent<DocumentationNode>.filterDokkaTagsOfType(): List<T> {
+    return docTagWrappers().first.filterIsInstance<T>()
 }
 
 inline fun <reified T: TagWrapper> SourceSetDependent<DocumentationNode>.firstDokkaTagOfTypeOrNull(): T? {
-    return docTagWrappers().first.filterIsInstance<T>().firstOrNull()
+    return filterDokkaTagsOfType<T>().firstOrNull()
 }
 
 fun SourceSetDependent<DocumentationNode>.isEmptyDoc() = all { (_, node) -> node.children.isEmpty() }
