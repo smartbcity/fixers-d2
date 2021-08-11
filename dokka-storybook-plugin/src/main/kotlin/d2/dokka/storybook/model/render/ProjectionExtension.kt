@@ -56,7 +56,11 @@ private fun TypeConstructor.toTypeString(): String {
 
 private fun String?.orUnknown() = this ?: "Unknown"
 
-fun Bound.isCollection() = this.driOrNull?.toString().orEmpty().contains("kotlin.collections/")
+fun Bound.isCollection(): Boolean {
+    val collectionMarks = listOf("kotlin.collections/", "/Array///")
+    val driString = driOrNull?.toString().orEmpty()
+    return collectionMarks.any(driString::contains)
+}
 fun Bound.isMap() = this.driOrNull?.toString().orEmpty().contains("Map///")
 
 fun Projection.documentableIn(documentables: Map<DRI, Documentable>): Documentable? {
