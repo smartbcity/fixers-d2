@@ -4,12 +4,16 @@ import org.jetbrains.dokka.base.parsers.MarkdownParser
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.WithChildren
 import org.jetbrains.dokka.model.childrenOfType
+import org.jetbrains.dokka.model.doc.Br
 import org.jetbrains.dokka.model.doc.CustomTagWrapper
 import org.jetbrains.dokka.model.doc.Description
 import org.jetbrains.dokka.model.doc.DocTag
 import org.jetbrains.dokka.model.doc.DocumentationLink
+import org.jetbrains.dokka.model.doc.Li
+import org.jetbrains.dokka.model.doc.Ol
 import org.jetbrains.dokka.model.doc.P
 import org.jetbrains.dokka.model.doc.Text
+import org.jetbrains.dokka.model.doc.Ul
 import org.jetbrains.dokka.model.firstMemberOfType
 import org.jetbrains.dokka.model.firstMemberOfTypeOrNull
 import org.jetbrains.dokka.model.withDescendants
@@ -62,19 +66,24 @@ data class Page(
     init {
         fun DocTag.parse(): String {
             return when (this) {
-                is DocumentationLink -> listOf(href())
-                is Text -> hrefOrBody()
-                    .replace("@@", "\n@")
-                    .split("\n")
-                    .filter(String::isNotBlank)
-                else -> children.map(DocTag::parse)
-            }.joinToString("\n")
+                is DocumentationLink -> "[${children.first().parse()}]${href()}"
+                is Text -> hrefOrBody().replace("@@", "\n@")
+                is P -> "\n\n${children.joinToString("", transform = DocTag::parse)}"
+                is Br -> "\\\n"
+                is Ul -> children.joinToString("", postfix = "\n") { "\n- ${it.parse()}" }
+                is Ol -> children.mapIndexed { i, docTag ->
+                    val listIndex = i + (params["start"]?.toInt() ?: 1)
+                    "\n$listIndex. ${docTag.parse()}"
+                }.joinToString("", postfix = "\n")
+                is Li -> children.joinToString("", transform = DocTag::parse).trim()
+                else -> children.joinToString("" , transform = DocTag::parse)
+            }
         }
 
         val childrenTags = root.parse()
         val docLinks = root.withDescendants()
             .filterIsInstance<DocumentationLink>()
-            .associateBy { docLink -> docLink.firstMemberOfTypeOrNull<Text>()?.body }
+            .associateBy { docLink -> docLink.href()?.removeSurrounding("[", "]") }
 
         val tags = MarkdownParser({ text -> docLinks[text]?.dri }, null)
             .parse(childrenTags)
