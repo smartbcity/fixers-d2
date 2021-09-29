@@ -37,7 +37,7 @@ internal abstract class MainPageContentBuilder(
         return contentFor(c)  {
             group(setOf(c.dri), kind = ContentKind.Source) {
                 text(FileData.DESCRIPTION.id, kind = ContentKind.Comment)
-                text(FileData.SAMPLE.id, kind = ContentKind.Sample)
+                text(FileData.VISUAL.id, kind = ContentKind.Sample)
             }
         }
     }
@@ -47,7 +47,7 @@ internal abstract class MainPageContentBuilder(
             group(setOf(t.dri), kind = ContentKind.Source) {
                 text(FileData.DESCRIPTION.id, kind = ContentKind.Comment)
                 if (t.hasD2TagOfType<Example>()) {
-                    text(FileData.SAMPLE.id, kind = ContentKind.Sample)
+                    text(FileData.VISUAL.id, kind = ContentKind.Sample)
                 }
             }
         }
@@ -60,7 +60,7 @@ internal abstract class MainPageContentBuilder(
                     text(FileData.DESCRIPTION.id, kind = ContentKind.Comment)
                 }
                 if (r.hasExample) {
-                    text(FileData.SAMPLE.id, kind = ContentKind.Sample)
+                    text(FileData.VISUAL.id, kind = ContentKind.Sample)
                 }
             }
         }

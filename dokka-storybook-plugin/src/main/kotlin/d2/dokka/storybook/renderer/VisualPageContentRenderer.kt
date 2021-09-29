@@ -13,7 +13,7 @@ import org.jetbrains.dokka.pages.ContentStyle
 import org.jetbrains.dokka.pages.ContentText
 import org.jetbrains.dokka.pages.Style
 
-open class SamplePageContentRenderer: D2ContentRenderer {
+open class VisualPageContentRenderer: D2ContentRenderer {
 
     override lateinit var d2LocationProvider: D2StorybookLocationProvider
 
@@ -40,7 +40,7 @@ open class SamplePageContentRenderer: D2ContentRenderer {
                 is ContentGroup -> buildGroup(node, pageContext)
                 is ContentCodeBlock -> buildCodeBlock(node, pageContext)
                 is ContentText -> buildText(node, pageContext)
-                else -> throw IllegalArgumentException("Cannot render content of type [${node::class.java}] in a Sample page")
+                else -> throw IllegalArgumentException("Cannot render content of type [${node::class.java}] in a Visual page")
             }
         }
     }
@@ -49,7 +49,7 @@ open class SamplePageContentRenderer: D2ContentRenderer {
         when (node.dci.kind) {
             ContentKind.Properties -> buildProperties(node, pageContext)
             ContentKind.Sample -> buildContentNode(node.children.first(), pageContext)
-            else -> throw IllegalArgumentException("Cannot render ContentGroup of kind [${node.dci.kind}] in a Sample page")
+            else -> throw IllegalArgumentException("Cannot render ContentGroup of kind [${node.dci.kind}] in a Visual page")
         }
     }
 

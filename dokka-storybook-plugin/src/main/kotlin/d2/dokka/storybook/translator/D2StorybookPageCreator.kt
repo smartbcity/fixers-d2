@@ -83,17 +83,17 @@ class D2StorybookPageCreator(
 
     private fun pagesFor(d: Documentable): List<ModelPageNode> {
         val pagesToGenerate = when (d) {
-            is DClasslike -> listOf(FileData.MAIN, FileData.DESCRIPTION, FileData.SAMPLE)
+            is DClasslike -> listOf(FileData.MAIN, FileData.DESCRIPTION, FileData.VISUAL)
             is DTypeAlias -> listOfNotNull(
                 FileData.MAIN,
                 FileData.DESCRIPTION,
-                FileData.SAMPLE.takeIf { d.hasD2TagOfType<Example>() }
+                FileData.VISUAL.takeIf { d.hasD2TagOfType<Example>() }
             )
             is RootDocumentable -> listOfNotNull(
                 FileData.ROOT,
                 FileData.MAIN,
                 FileData.DESCRIPTION.takeIf { d.hasDescription },
-                FileData.SAMPLE.takeIf { d.hasExample }
+                FileData.VISUAL.takeIf { d.hasExample }
             )
             else -> emptyList()
         }
@@ -123,7 +123,7 @@ class D2StorybookPageCreator(
         FileData.ROOT -> InnerRootPageContentBuilder()
         FileData.MAIN -> InnerMainPageContentBuilder()
         FileData.DESCRIPTION -> InnerDescriptionPageContentBuilder()
-        FileData.SAMPLE -> InnerSamplePageContentBuilder()
+        FileData.VISUAL -> InnerVisualPageContentBuilder()
     }
 
     private inner class InnerMainPageContentBuilder: MainPageContentBuilder(contentBuilder, documentablesMap, childToParentBiMap)
@@ -131,6 +131,6 @@ class D2StorybookPageCreator(
         override fun contentForComments(d: Documentable): List<ContentNode> = this@D2StorybookPageCreator.contentForComments(d)
         override fun contentForDescription(d: Documentable): List<ContentNode> = this@D2StorybookPageCreator.contentForDescription(d)
     }
-    private inner class InnerSamplePageContentBuilder: SamplePageContentBuilder(contentBuilder, documentablesMap)
+    private inner class InnerVisualPageContentBuilder: VisualPageContentBuilder(contentBuilder, documentablesMap)
     private inner class InnerRootPageContentBuilder: RootPageContentBuilder(contentBuilder)
 }

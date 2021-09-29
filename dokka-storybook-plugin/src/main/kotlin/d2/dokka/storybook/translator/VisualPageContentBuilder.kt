@@ -20,7 +20,7 @@ import org.jetbrains.dokka.pages.ContentNode
 import org.jetbrains.dokka.pages.ContentStyle
 import org.jetbrains.dokka.pages.Style
 
-abstract class SamplePageContentBuilder(
+abstract class VisualPageContentBuilder(
     protected val contentBuilder: PageContentBuilder,
     protected val documentables: Map<DRI, Documentable>
 ): D2StorybookPageContentBuilder {
@@ -37,12 +37,12 @@ abstract class SamplePageContentBuilder(
 
     private fun contentFor(c: DClasslike): ContentNode {
         return contentBuilder.contentFor(c, kind = ContentKind.Properties)  {
-            +c.properties.mapNotNull(this@SamplePageContentBuilder::contentFor)
+            +c.properties.mapNotNull(this@VisualPageContentBuilder::contentFor)
         }
     }
 
     private fun contentFor(t: DTypeAlias): ContentNode {
-        val exampleTag = t.d2DocTagExtra().firstTagOfTypeOrNull<Example>()!!
+        val exampleTag = t.d2DocTagExtra().firstTagOfType<Example>()
         return rawContentForExampleTag(t, exampleTag)
     }
 

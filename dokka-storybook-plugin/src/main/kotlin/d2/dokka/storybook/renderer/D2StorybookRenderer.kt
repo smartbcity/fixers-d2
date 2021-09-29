@@ -36,7 +36,7 @@ open class D2StorybookRenderer(
         FileData.ROOT to MainPageContentRenderer(),
         FileData.MAIN to MainPageContentRenderer(),
         FileData.DESCRIPTION to DescriptionPageContentRenderer(context),
-        FileData.SAMPLE to SamplePageContentRenderer(),
+        FileData.VISUAL to VisualPageContentRenderer(),
         "Default" to MarkdownRenderer(context)
     )
 

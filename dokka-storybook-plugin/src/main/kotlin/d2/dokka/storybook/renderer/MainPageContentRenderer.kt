@@ -81,8 +81,8 @@ open class MainPageContentRenderer: D2ContentRenderer {
         return when (this.dci.kind) {
             ContentKind.Comment -> BasicComponent(importData = codeImport)
             ContentKind.Sample -> {
-                val sample = BasicImportedElement(importData = codeImport)
-                CodeHighlighterComponent(displayed = sample, language = "json", title = "Example")
+                val visual = BasicImportedElement(importData = codeImport)
+                CodeHighlighterComponent(displayed = visual, language = "json", title = "Example")
             }
             else -> throw IllegalArgumentException("Unsupported ContentKind[${this.dci.kind}] for source files")
         }
