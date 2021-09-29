@@ -1,7 +1,7 @@
 package d2.dokka.storybook.location
 
 import d2.dokka.storybook.model.doc.Parent
-import d2.dokka.storybook.model.doc.firstD2TagOfTypeOrNull
+import d2.dokka.storybook.model.doc.d2DocTagExtra
 import d2.dokka.storybook.model.doc.title
 import d2.dokka.storybook.model.doc.toRootDocumentable
 import d2.dokka.storybook.model.page.D2StorybookPageNode
@@ -60,7 +60,7 @@ class D2StorybookLocationProvider(
     }
 
     private val parentMap = documentableIndex.mapValues { (_, documentable) ->
-        val parentDri = documentable.documentation.firstD2TagOfTypeOrNull<Parent>()?.target
+        val parentDri = documentable.d2DocTagExtra().firstTagOfTypeOrNull<Parent>()?.target
             ?: documentable.toRootDocumentable().dri
         documentableIndex[parentDri]
     }

@@ -3,6 +3,7 @@ package d2.dokka.storybook
 import d2.dokka.storybook.location.D2StorybookLocationProvider
 import d2.dokka.storybook.renderer.D2StorybookRenderer
 import d2.dokka.storybook.transformer.documentable.D2TagFilterTransformer
+import d2.dokka.storybook.transformer.documentable.DocTagWrapperExtractorTransformer
 import d2.dokka.storybook.transformer.documentable.InheritedDocExtractorTransformer
 import d2.dokka.storybook.translator.D2StorybookDocumentableToPageTranslator
 import org.jetbrains.dokka.CoreExtensions
@@ -33,9 +34,15 @@ class D2StorybookPlugin: DokkaPlugin() {
         CoreExtensions.documentableTransformer with InheritedDocExtractorTransformer()
     }
 
+    val docTagExtractor by extending {
+        CoreExtensions.documentableTransformer with DocTagWrapperExtractorTransformer() order {
+            after(inheritedDocExtractor)
+        }
+    }
+
     val d2AnnotationFilter by extending {
         CoreExtensions.documentableTransformer with D2TagFilterTransformer() order {
-            after(inheritedDocExtractor)
+            after(docTagExtractor)
         }
     }
 

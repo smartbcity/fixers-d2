@@ -2,15 +2,17 @@ package d2.dokka.storybook.model.doc
 
 import org.jetbrains.dokka.links.sureClassNames
 import org.jetbrains.dokka.model.Documentable
+import org.jetbrains.dokka.model.properties.PropertyContainer
+import org.jetbrains.dokka.model.properties.WithExtraProperties
 
 val Documentable.d2Type
-    get() = documentation
-        .firstD2TagOfTypeOrNull<D2>()
+    get() = d2DocTagExtra()
+        .firstTagOfTypeOrNull<D2>()
         ?.type
 
 val Documentable.weight
-  get() = documentation
-      .firstD2TagOfTypeOrNull<Order>()
+  get() = d2DocTagExtra()
+      .firstTagOfTypeOrNull<Order>()
       ?.weight
 
 fun Documentable.toRootDocumentable() = RootDocumentable(
@@ -19,19 +21,24 @@ fun Documentable.toRootDocumentable() = RootDocumentable(
     documentation = documentation,
     sourceSets = sourceSets,
     expectPresentInSet = expectPresentInSet,
-    children = listOf(this)
+    children = listOf(this),
+    extra = (this as? WithExtraProperties<Documentable>)?.extra ?: PropertyContainer.empty()
 )
 
 val Documentable.title
     get() = when (this) {
         is RootDocumentable -> pageDocumentation?.title?.body ?: name.removeSuffix("Page")
-        else -> documentation.firstD2TagOfTypeOrNull<Title>()?.body ?: name!!
+        else -> d2DocTagExtra().firstTagOfTypeOrNull<Title>()?.body ?: name!!
     }
 
 inline fun <reified T: D2DocTagWrapper> Documentable.hasD2TagOfType(): Boolean {
-    return documentation.firstD2TagOfTypeOrNull<T>() != null
+    return d2DocTagExtra().firstTagOfTypeOrNull<T>() != null
 }
 
 fun Documentable.isOfType(type: D2Type): Boolean {
-    return documentation.firstD2TagOfType<D2>().type == type
+    return d2DocTagExtra().firstTagOfType<D2>().type == type
 }
+
+fun Documentable.d2DocTagExtra() = (this as? WithExtraProperties<Documentable>)
+    ?.extra?.get(D2DocTagExtra)
+    ?: D2DocTagExtra(emptyList())

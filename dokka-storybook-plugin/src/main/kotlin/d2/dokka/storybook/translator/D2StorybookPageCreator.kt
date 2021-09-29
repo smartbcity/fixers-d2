@@ -5,8 +5,7 @@ import d2.dokka.storybook.model.doc.Child
 import d2.dokka.storybook.model.doc.Example
 import d2.dokka.storybook.model.doc.Parent
 import d2.dokka.storybook.model.doc.RootDocumentable
-import d2.dokka.storybook.model.doc.filterD2TagsOfType
-import d2.dokka.storybook.model.doc.firstD2TagOfTypeOrNull
+import d2.dokka.storybook.model.doc.d2DocTagExtra
 import d2.dokka.storybook.model.doc.hasD2TagOfType
 import d2.dokka.storybook.model.doc.toRootDocumentable
 import d2.dokka.storybook.model.page.FileData
@@ -54,12 +53,12 @@ class D2StorybookPageCreator(
 
     private fun buildChildrenMap(documentables: List<Documentable>) {
         val parentMap = documentables.flatMap { documentable ->
-            val parentDri = documentable.documentation
-                .firstD2TagOfTypeOrNull<Parent>()
+            val parentDri = documentable.d2DocTagExtra()
+                .firstTagOfTypeOrNull<Parent>()
                 ?.target
 
-            val childrenDri = documentable.documentation
-                .filterD2TagsOfType<Child>()
+            val childrenDri = documentable.d2DocTagExtra()
+                .filterTagsOfType<Child>()
                 .mapNotNull(Child::target)
 
             if (parentDri != null) {

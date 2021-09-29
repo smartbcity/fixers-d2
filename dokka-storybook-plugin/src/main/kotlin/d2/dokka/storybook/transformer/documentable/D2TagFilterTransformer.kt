@@ -1,10 +1,11 @@
 package d2.dokka.storybook.transformer.documentable
 
 import d2.dokka.storybook.model.doc.D2
-import d2.dokka.storybook.model.doc.firstD2TagOfTypeOrNull
+import d2.dokka.storybook.model.doc.D2DocTagExtra
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.DPackage
 import org.jetbrains.dokka.model.Documentable
+import org.jetbrains.dokka.model.properties.WithExtraProperties
 import org.jetbrains.dokka.plugability.DokkaContext
 import org.jetbrains.dokka.transformers.documentation.DocumentableTransformer
 
@@ -37,6 +38,9 @@ class D2TagFilterTransformer: DocumentableTransformer {
     }
 
     private fun Documentable.isTaggedWithD2(): Boolean {
-        return this.documentation.firstD2TagOfTypeOrNull<D2>() != null
+        return (this as? WithExtraProperties<Documentable>)
+            ?.extra
+            ?.get(D2DocTagExtra)
+            ?.firstTagOfTypeOrNull<D2>() != null
     }
 }

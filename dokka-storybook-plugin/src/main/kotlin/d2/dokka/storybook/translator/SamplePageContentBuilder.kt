@@ -4,7 +4,7 @@ import d2.dokka.storybook.model.doc.Example
 import d2.dokka.storybook.model.doc.ExampleLink
 import d2.dokka.storybook.model.doc.ExampleText
 import d2.dokka.storybook.model.doc.RootDocumentable
-import d2.dokka.storybook.model.doc.firstD2TagOfTypeOrNull
+import d2.dokka.storybook.model.doc.d2DocTagExtra
 import d2.dokka.storybook.model.render.documentableIn
 import d2.dokka.storybook.model.render.isCollection
 import d2.dokka.storybook.model.render.isMap
@@ -42,7 +42,7 @@ abstract class SamplePageContentBuilder(
     }
 
     private fun contentFor(t: DTypeAlias): ContentNode {
-        val exampleTag = t.documentation.firstD2TagOfTypeOrNull<Example>()!!
+        val exampleTag = t.d2DocTagExtra().firstTagOfTypeOrNull<Example>()!!
         return rawContentForExampleTag(t, exampleTag)
     }
 
@@ -61,7 +61,7 @@ abstract class SamplePageContentBuilder(
     }
 
     private fun contentFor(property: DProperty): ContentNode? {
-        return property.documentation.firstD2TagOfTypeOrNull<Example>()
+        return property.d2DocTagExtra().firstTagOfTypeOrNull<Example>()
             ?.let { exampleTag -> contentForTaggedProperty(property, exampleTag) }
             ?: contentForUntaggedProperty(property)
     }
