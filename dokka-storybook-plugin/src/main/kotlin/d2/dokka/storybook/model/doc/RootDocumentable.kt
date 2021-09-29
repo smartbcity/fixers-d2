@@ -1,5 +1,6 @@
 package d2.dokka.storybook.model.doc
 
+import d2.dokka.storybook.model.doc.tag.Page
 import org.jetbrains.dokka.DokkaConfiguration
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.Documentable

@@ -1,9 +1,6 @@
-package d2.dokka.storybook.model.doc
+package d2.dokka.storybook.model.doc.tag
 
 import org.jetbrains.dokka.base.parsers.MarkdownParser
-import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.model.WithChildren
-import org.jetbrains.dokka.model.childrenOfType
 import org.jetbrains.dokka.model.doc.Br
 import org.jetbrains.dokka.model.doc.CustomTagWrapper
 import org.jetbrains.dokka.model.doc.Description
@@ -14,47 +11,9 @@ import org.jetbrains.dokka.model.doc.Ol
 import org.jetbrains.dokka.model.doc.P
 import org.jetbrains.dokka.model.doc.Text
 import org.jetbrains.dokka.model.doc.Ul
-import org.jetbrains.dokka.model.firstMemberOfType
-import org.jetbrains.dokka.model.firstMemberOfTypeOrNull
 import org.jetbrains.dokka.model.withDescendants
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-sealed interface D2DocTagWrapper: WithChildren<DocTag> {
-    val root: DocTag
-    override val children: List<DocTag>
-        get() = root.children
-}
-
-sealed interface WithTextBody: D2DocTagWrapper {
-    val body: String?
-        get() = root.firstMemberOfType<P>()
-            .childrenOfType<Text>() // text between [] is parsed as a reference and stored in a dedicated Text tag wrapper
-            .joinToString("", transform = Text::hrefOrBody)
-
-    fun isEmpty() = body == null
-}
-
-sealed interface WithTarget: D2DocTagWrapper {
-    val target: DRI?
-        get() = root.firstMemberOfTypeOrNull<DocumentationLink>()?.dri
-
-    fun isEmpty() = target == null
-}
-
-data class D2(override val root: DocTag): WithTextBody {
-    val type = body?.let(D2Type::get)
-}
-
-sealed interface Example: D2DocTagWrapper
-data class ExampleText(override val root: DocTag): Example, WithTextBody
-data class ExampleLink(override val root: DocTag): Example, WithTarget
-
-data class Parent(override val root: DocTag): WithTarget
-data class Child(override val root: DocTag): WithTarget
-data class Title(override val root: DocTag): WithTextBody
-data class Order(override val root: DocTag): WithTextBody {
-    val weight = body?.let(String::toInt)
-}
 
 data class Page(
     override val root: DocTag
@@ -97,22 +56,3 @@ data class Page(
         example = tags.firstIsInstanceOrNull()
     }
 }
-
-fun CustomTagWrapper.toD2DocTagWrapper(): D2DocTagWrapper? {
-    return when (name.lowercase()) {
-        "child" -> ::Child
-        "d2" -> ::D2
-        "example" -> when {
-            root.firstMemberOfTypeOrNull<DocumentationLink>() != null -> ::ExampleLink
-            else -> ::ExampleText
-        }
-        "order" -> ::Order
-        "page" -> ::Page
-        "parent" -> ::Parent
-        "title" -> ::Title
-        else -> null
-    }?.invoke(root)
-}
-
-fun Text.hrefOrBody() = params["href"] ?: body
-fun DocumentationLink.href() = params["href"]

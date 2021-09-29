@@ -1,6 +1,11 @@
-package d2.dokka.storybook.model.doc
+package d2.dokka.storybook.model.doc.tag
 
+import org.jetbrains.dokka.model.doc.DocTag
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+
+data class D2(override val root: DocTag): WithTextBody {
+    val type = body?.let(D2Type::get)
+}
 
 enum class D2Type(val id: String, val order: Int) {
     MODEL("model", 10),

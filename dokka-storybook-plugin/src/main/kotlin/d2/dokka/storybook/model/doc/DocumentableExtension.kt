@@ -1,5 +1,10 @@
 package d2.dokka.storybook.model.doc
 
+import d2.dokka.storybook.model.doc.tag.D2
+import d2.dokka.storybook.model.doc.tag.D2DocTagWrapper
+import d2.dokka.storybook.model.doc.tag.D2Type
+import d2.dokka.storybook.model.doc.tag.Order
+import d2.dokka.storybook.model.doc.tag.Title
 import org.jetbrains.dokka.links.sureClassNames
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.properties.PropertyContainer

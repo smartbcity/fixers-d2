@@ -1,7 +1,7 @@
 package d2.dokka.storybook.transformer.documentable
 
-import d2.dokka.storybook.model.doc.D2
 import d2.dokka.storybook.model.doc.D2DocTagExtra
+import d2.dokka.storybook.model.doc.tag.D2
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.DPackage
 import org.jetbrains.dokka.model.Documentable

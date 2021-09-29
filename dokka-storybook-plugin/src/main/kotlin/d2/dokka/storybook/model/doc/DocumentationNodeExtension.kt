@@ -1,5 +1,7 @@
 package d2.dokka.storybook.model.doc
 
+import d2.dokka.storybook.model.doc.tag.D2DocTagWrapper
+import d2.dokka.storybook.model.doc.tag.toD2DocTagWrapper
 import org.jetbrains.dokka.model.SourceSetDependent
 import org.jetbrains.dokka.model.doc.CustomTagWrapper
 import org.jetbrains.dokka.model.doc.DocumentationNode

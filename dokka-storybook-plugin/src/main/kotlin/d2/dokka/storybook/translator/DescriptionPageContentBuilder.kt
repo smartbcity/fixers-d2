@@ -1,9 +1,9 @@
 package d2.dokka.storybook.translator
 
 import com.intellij.util.containers.BidirectionalMap
-import d2.dokka.storybook.model.doc.D2Type
 import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.isOfType
+import d2.dokka.storybook.model.doc.tag.D2Type
 import d2.dokka.storybook.model.doc.title
 import d2.dokka.storybook.model.render.D2TextStyle
 import d2.dokka.storybook.model.render.documentableIn

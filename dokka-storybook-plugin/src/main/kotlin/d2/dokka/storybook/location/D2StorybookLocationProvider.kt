@@ -1,7 +1,7 @@
 package d2.dokka.storybook.location
 
-import d2.dokka.storybook.model.doc.Parent
 import d2.dokka.storybook.model.doc.d2DocTagExtra
+import d2.dokka.storybook.model.doc.tag.Parent
 import d2.dokka.storybook.model.doc.title
 import d2.dokka.storybook.model.doc.toRootDocumentable
 import d2.dokka.storybook.model.page.D2StorybookPageNode

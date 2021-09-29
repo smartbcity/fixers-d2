@@ -1,10 +1,10 @@
 package d2.dokka.storybook.translator
 
-import d2.dokka.storybook.model.doc.Example
-import d2.dokka.storybook.model.doc.ExampleLink
-import d2.dokka.storybook.model.doc.ExampleText
 import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.d2DocTagExtra
+import d2.dokka.storybook.model.doc.tag.Example
+import d2.dokka.storybook.model.doc.tag.ExampleLink
+import d2.dokka.storybook.model.doc.tag.ExampleText
 import d2.dokka.storybook.model.render.documentableIn
 import d2.dokka.storybook.model.render.isCollection
 import d2.dokka.storybook.model.render.isMap

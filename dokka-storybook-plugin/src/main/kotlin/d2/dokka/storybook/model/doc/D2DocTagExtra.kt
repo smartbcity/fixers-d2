@@ -1,5 +1,6 @@
 package d2.dokka.storybook.model.doc
 
+import d2.dokka.storybook.model.doc.tag.D2DocTagWrapper
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.properties.ExtraProperty
 

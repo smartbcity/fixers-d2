@@ -1,12 +1,12 @@
 package d2.dokka.storybook.translator
 
 import com.intellij.util.containers.BidirectionalMap
-import d2.dokka.storybook.model.doc.Child
-import d2.dokka.storybook.model.doc.Example
-import d2.dokka.storybook.model.doc.Parent
 import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.d2DocTagExtra
 import d2.dokka.storybook.model.doc.hasD2TagOfType
+import d2.dokka.storybook.model.doc.tag.Child
+import d2.dokka.storybook.model.doc.tag.Example
+import d2.dokka.storybook.model.doc.tag.Parent
 import d2.dokka.storybook.model.doc.toRootDocumentable
 import d2.dokka.storybook.model.page.FileData
 import d2.dokka.storybook.model.page.ModelPageNode
