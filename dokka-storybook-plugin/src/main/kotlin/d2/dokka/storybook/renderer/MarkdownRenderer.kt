@@ -158,5 +158,4 @@ open class MarkdownRenderer(
             append("\n")
         }
     }
-
 }

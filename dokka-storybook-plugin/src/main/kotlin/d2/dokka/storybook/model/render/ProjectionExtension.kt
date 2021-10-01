@@ -19,7 +19,6 @@ import org.jetbrains.dokka.model.TypeParameter
 import org.jetbrains.dokka.model.UnresolvedBound
 import org.jetbrains.dokka.model.Variance
 import org.jetbrains.dokka.model.Void
-import org.jetbrains.kotlin.utils.addToStdlib.firstNotNullResult
 
 fun Projection.toTypeString(): String {
     return when (this) {
@@ -74,7 +73,7 @@ fun Projection.documentableIn(documentables: Map<DRI, Documentable>): Documentab
 private fun Bound.documentableIn(documentables: Map<DRI, Documentable>): Documentable? {
     return when (this) {
         is TypeParameter -> documentables[dri]
-        is TypeConstructor -> documentables[driOrNull] ?: projections.firstNotNullResult { it.documentableIn(documentables) }
+        is TypeConstructor -> documentables[driOrNull] ?: projections.firstNotNullOfOrNull { it.documentableIn(documentables) }
         is Nullable -> inner.documentableIn(documentables)
         is TypeAliased -> typeAlias.documentableIn(documentables) ?: inner.documentableIn(documentables)
         else -> null

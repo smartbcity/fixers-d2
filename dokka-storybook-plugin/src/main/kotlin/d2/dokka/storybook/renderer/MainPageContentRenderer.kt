@@ -21,6 +21,10 @@ import org.jetbrains.dokka.pages.ContentText
 
 open class MainPageContentRenderer: D2ContentRenderer {
 
+    companion object {
+        val RAW_LOADED_FILES = listOf(FileData.VISUAL_KOTLIN, FileData.VISUAL_YAML)
+    }
+
     override lateinit var d2LocationProvider: D2StorybookLocationProvider
 
     override fun buildPageContent(context: StringBuilder, page: ContentPage) {
@@ -76,13 +80,14 @@ open class MainPageContentRenderer: D2ContentRenderer {
     }
 
     private fun ContentText.toSourceComponent(parent: ContentGroup, pageContext: ContentPage): CodeElement {
-        val codeImport = buildImport(parent.dci.dri.first(), FileData.fromId(this.text), parent.sourceSets, pageContext)!!
+        val fileData = FileData.fromId(this.text)
+        val codeImport = buildImport(parent.dci.dri.first(), fileData, parent.sourceSets, pageContext)
 
         return when (this.dci.kind) {
-            ContentKind.Comment -> BasicComponent(importData = codeImport)
+            ContentKind.Comment -> BasicComponent(importData = codeImport!!)
             ContentKind.Sample -> {
-                val visual = BasicImportedElement(importData = codeImport)
-                CodeHighlighterComponent(displayed = visual, language = "json", title = "Example")
+                val visual = BasicImportedElement(importData = codeImport!!)
+                CodeHighlighterComponent(displayed = visual, language = fileData.language.id, title = "Example")
             }
             else -> throw IllegalArgumentException("Unsupported ContentKind[${this.dci.kind}] for source files")
         }
@@ -117,7 +122,8 @@ open class MainPageContentRenderer: D2ContentRenderer {
         val elementName = "$nodeId$elementId"
         return CodeImport(
             path = path,
-            element = elementName
+            element = elementName,
+            withRawLoader = fileData in RAW_LOADED_FILES
         )
     }
 

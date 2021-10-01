@@ -78,7 +78,7 @@ class ReactFileBuilder(
 
         imports.distinct()
             .sortedBy { import -> "${import.element}///${import.path}" }
-            .groupBy(CodeImport::path)
+            .groupBy { import -> import.fullPath() }
             .forEach { (path, imports) ->
                 val (compositeImports, globalImports) = imports.partition(CodeImport::isComposite)
                 importBuilder.append("import ")
@@ -100,4 +100,6 @@ class ReactFileBuilder(
 
         return importBuilder.toString()
     }
+
+    private fun CodeImport.fullPath() = if (withRawLoader) "!!raw-loader!$path" else path
 }
