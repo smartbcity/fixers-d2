@@ -9,11 +9,13 @@ interface WithFileData {
     val fileData: FileData
 }
 
-enum class FileData(val id: String, val extension: String) {
-    ROOT("root", ".stories.mdx"),
-    MAIN("index", ".mdx"),
-    DESCRIPTION("desc", ".md"),
-    VISUAL("visual", ".json");
+enum class FileData(val id: String, val extension: String, val language: CodeLanguage) {
+    ROOT("root", ".stories.mdx", CodeLanguage.REACT),
+    MAIN("index", ".mdx", CodeLanguage.REACT),
+    DESCRIPTION("desc", ".md", CodeLanguage.MARKDOWN),
+    VISUAL_JSON("visualJson", ".json", CodeLanguage.JSON),
+    VISUAL_KOTLIN("visualKotlin", ".kt", CodeLanguage.KOTLIN),
+    VISUAL_YAML("visualYaml", ".yml", CodeLanguage.YAML);
 
     override fun toString() = "$id$extension"
 
@@ -22,6 +24,14 @@ enum class FileData(val id: String, val extension: String) {
             return values().first { it.id == id }
         }
     }
+}
+
+enum class CodeLanguage(val id: String) {
+    MARKDOWN("markdown"),
+    JSON("json"),
+    KOTLIN("kotlin"),
+    REACT("react"),
+    YAML("yaml")
 }
 
 interface D2StorybookPageNode: PageNode, WithFileData

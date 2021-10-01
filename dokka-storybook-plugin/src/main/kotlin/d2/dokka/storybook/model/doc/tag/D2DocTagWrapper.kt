@@ -22,6 +22,16 @@ sealed interface WithTextBody: D2DocTagWrapper {
         get() = root.asPlainText()
 }
 
+sealed interface WithOneParam: D2DocTagWrapper {
+    val param: String?
+        get() = root.asPlainText()?.substringBefore(' ')
+}
+
+sealed interface WithOneParamAndTextBody: WithTextBody, WithOneParam {
+    override val body: String?
+        get() = super.body?.substringAfter(' ')
+}
+
 sealed interface WithTarget: D2DocTagWrapper {
     val target: DRI?
         get() = root.firstMemberOfTypeOrNull<DocumentationLink>()?.dri
@@ -39,6 +49,11 @@ fun CustomTagWrapper.toD2DocTagWrapper(): D2DocTagWrapper? {
         "page" -> ::Page
         "parent" -> ::Parent
         "title" -> ::Title
+        "visual" -> when {
+            root.hasDocumentationLink() -> ::VisualLink
+            root.hasContentAfterFirstParameter() -> ::VisualText
+            else -> ::VisualSimple
+        }
         else -> null
     }?.invoke(root)
 }
@@ -50,6 +65,8 @@ fun DocTag.asPlainText() = firstMemberOfType<P>()
     .ifBlank { null }
 
 fun DocTag.hasDocumentationLink() = firstMemberOfTypeOrNull<DocumentationLink>() != null
+
+fun DocTag.hasContentAfterFirstParameter() = !asPlainText()?.substringAfter(' ', "").isNullOrBlank()
 
 fun Text.hrefOrBody() = params["href"] ?: body
 fun DocumentationLink.href() = params["href"]

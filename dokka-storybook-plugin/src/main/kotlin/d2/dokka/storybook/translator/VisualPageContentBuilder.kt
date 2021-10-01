@@ -5,6 +5,11 @@ import d2.dokka.storybook.model.doc.d2DocTagExtra
 import d2.dokka.storybook.model.doc.tag.Example
 import d2.dokka.storybook.model.doc.tag.ExampleLink
 import d2.dokka.storybook.model.doc.tag.ExampleText
+import d2.dokka.storybook.model.doc.tag.Visual
+import d2.dokka.storybook.model.doc.tag.VisualLink
+import d2.dokka.storybook.model.doc.tag.VisualSimple
+import d2.dokka.storybook.model.doc.tag.VisualText
+import d2.dokka.storybook.model.doc.tag.WithTarget
 import d2.dokka.storybook.model.render.documentableIn
 import d2.dokka.storybook.model.render.isCollection
 import d2.dokka.storybook.model.render.isMap
@@ -36,26 +41,34 @@ abstract class VisualPageContentBuilder(
     }
 
     private fun contentFor(c: DClasslike): ContentNode {
-        return contentBuilder.contentFor(c, kind = ContentKind.Properties)  {
-            +c.properties.mapNotNull(this@VisualPageContentBuilder::contentFor)
+        val visualTag = c.d2DocTagExtra().firstTagOfTypeOrNull<Visual>()
+
+        return if (visualTag == null || visualTag is VisualSimple) {
+            contentBuilder.contentFor(c, kind = ContentKind.Properties)  {
+                header(0, c.name!!, kind = ContentKind.Symbol)
+                +c.properties.mapNotNull(this@VisualPageContentBuilder::contentFor)
+            }
+        } else {
+            rawContentForVisualTag(c, visualTag)
         }
     }
 
     private fun contentFor(t: DTypeAlias): ContentNode {
-        val exampleTag = t.d2DocTagExtra().firstTagOfType<Example>()
-        return rawContentForExampleTag(t, exampleTag)
+        val visualTag = t.d2DocTagExtra().firstTagOfType<Visual>()
+        return rawContentForVisualTag(t, visualTag)
     }
 
     private fun contentFor(r: RootDocumentable): ContentNode {
-        val exampleTag = r.pageDocumentation!!.example!!
-        return rawContentForExampleTag(r, exampleTag)
+        val visualTag = r.pageDocumentation!!.visual!!
+        return rawContentForVisualTag(r, visualTag)
     }
 
-    private fun rawContentForExampleTag(d: Documentable, exampleTag: Example): ContentNode {
+    private fun rawContentForVisualTag(d: Documentable, visualTag: Visual): ContentNode {
         return contentBuilder.contentFor(d, kind = ContentKind.Sample) {
-            when (exampleTag) {
-                is ExampleText -> codeBlock(exampleTag.body ?: "{}", "json")
-                is ExampleLink -> contentForLinkedExample(d, exampleTag)?.let { +it }
+            when (visualTag) {
+                is VisualSimple -> Unit
+                is VisualText -> codeBlock(visualTag.body ?: "", "")
+                is VisualLink -> contentForLinkedSample(d, visualTag)?.let { +it }
             }
         }
     }
@@ -68,15 +81,15 @@ abstract class VisualPageContentBuilder(
 
     private fun contentForTaggedProperty(property: DProperty, exampleTag: Example): ContentNode? {
         return when (exampleTag) {
-            is ExampleLink -> contentForLinkedExample(property, exampleTag)
+            is ExampleLink -> contentForLinkedSample(property, exampleTag)
             is ExampleText -> exampleTag.body?.let { body ->
                 contentFor(property) { text(body) }
             }
         }
     }
 
-    private fun contentForLinkedExample(d: Documentable, exampleTag: ExampleLink): ContentNode? {
-        val targetDri = exampleTag.target ?: return null
+    private fun contentForLinkedSample(d: Documentable, targetTag: WithTarget): ContentNode? {
+        val targetDri = targetTag.target ?: return null
 
         if (targetDri.callable == null) {
             return documentables[targetDri]?.let(this::contentFor)

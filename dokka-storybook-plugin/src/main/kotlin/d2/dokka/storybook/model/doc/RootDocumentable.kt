@@ -20,7 +20,7 @@ data class RootDocumentable(
 ): Documentable(), WithExtraProperties<Documentable> {
     val pageDocumentation: Page? = extra[D2DocTagExtra]?.firstTagOfTypeOrNull()
     val hasDescription = pageDocumentation?.description != null
-    val hasExample = pageDocumentation?.example != null
+    val hasVisual = pageDocumentation?.visual != null
 
     override fun withNewExtras(newExtras: PropertyContainer<Documentable>) = copy(extra = newExtras)
 }

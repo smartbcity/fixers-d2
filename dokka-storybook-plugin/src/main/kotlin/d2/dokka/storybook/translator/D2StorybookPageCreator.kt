@@ -3,11 +3,10 @@ package d2.dokka.storybook.translator
 import com.intellij.util.containers.BidirectionalMap
 import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.d2DocTagExtra
-import d2.dokka.storybook.model.doc.hasD2TagOfType
 import d2.dokka.storybook.model.doc.tag.Child
-import d2.dokka.storybook.model.doc.tag.Example
 import d2.dokka.storybook.model.doc.tag.Parent
 import d2.dokka.storybook.model.doc.toRootDocumentable
+import d2.dokka.storybook.model.doc.visualType
 import d2.dokka.storybook.model.page.FileData
 import d2.dokka.storybook.model.page.ModelPageNode
 import org.jetbrains.dokka.base.DokkaBaseConfiguration
@@ -82,18 +81,23 @@ class D2StorybookPageCreator(
     }
 
     private fun pagesFor(d: Documentable): List<ModelPageNode> {
+        val visualFileData = d.visualType()?.fileData
         val pagesToGenerate = when (d) {
-            is DClasslike -> listOf(FileData.MAIN, FileData.DESCRIPTION, FileData.VISUAL)
+            is DClasslike -> listOfNotNull(
+                FileData.MAIN,
+                FileData.DESCRIPTION,
+                visualFileData
+            )
             is DTypeAlias -> listOfNotNull(
                 FileData.MAIN,
                 FileData.DESCRIPTION,
-                FileData.VISUAL.takeIf { d.hasD2TagOfType<Example>() }
+                visualFileData
             )
             is RootDocumentable -> listOfNotNull(
                 FileData.ROOT,
                 FileData.MAIN,
                 FileData.DESCRIPTION.takeIf { d.hasDescription },
-                FileData.VISUAL.takeIf { d.hasExample }
+                visualFileData
             )
             else -> emptyList()
         }
@@ -123,7 +127,9 @@ class D2StorybookPageCreator(
         FileData.ROOT -> InnerRootPageContentBuilder()
         FileData.MAIN -> InnerMainPageContentBuilder()
         FileData.DESCRIPTION -> InnerDescriptionPageContentBuilder()
-        FileData.VISUAL -> InnerVisualPageContentBuilder()
+        FileData.VISUAL_JSON,
+        FileData.VISUAL_KOTLIN,
+        FileData.VISUAL_YAML -> InnerVisualPageContentBuilder()
     }
 
     private inner class InnerMainPageContentBuilder: MainPageContentBuilder(contentBuilder, documentablesMap, childToParentBiMap)

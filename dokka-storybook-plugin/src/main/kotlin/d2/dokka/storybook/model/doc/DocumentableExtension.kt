@@ -5,7 +5,11 @@ import d2.dokka.storybook.model.doc.tag.D2DocTagWrapper
 import d2.dokka.storybook.model.doc.tag.D2Type
 import d2.dokka.storybook.model.doc.tag.Order
 import d2.dokka.storybook.model.doc.tag.Title
+import d2.dokka.storybook.model.doc.tag.Visual
+import d2.dokka.storybook.model.doc.tag.VisualType
 import org.jetbrains.dokka.links.sureClassNames
+import org.jetbrains.dokka.model.DClasslike
+import org.jetbrains.dokka.model.DTypeAlias
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.properties.PropertyContainer
 import org.jetbrains.dokka.model.properties.WithExtraProperties
@@ -47,3 +51,10 @@ fun Documentable.isOfType(type: D2Type): Boolean {
 fun Documentable.d2DocTagExtra() = (this as? WithExtraProperties<Documentable>)
     ?.extra?.get(D2DocTagExtra)
     ?: D2DocTagExtra(emptyList())
+
+fun Documentable.visualType() = when (this) {
+    is DClasslike -> d2DocTagExtra().firstTagOfTypeOrNull<Visual>()?.type ?: VisualType.DEFAULT
+    is DTypeAlias -> d2DocTagExtra().firstTagOfTypeOrNull<Visual>()?.type
+    is RootDocumentable -> pageDocumentation?.visual?.type
+    else -> null
+}

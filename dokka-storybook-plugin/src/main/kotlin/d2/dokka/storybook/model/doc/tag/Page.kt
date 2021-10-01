@@ -20,7 +20,7 @@ data class Page(
 ): D2DocTagWrapper {
     val title: Title?
     val description: Description?
-    val example: Example?
+    val visual: Visual?
 
     init {
         fun DocTag.parse(): String {
@@ -53,6 +53,6 @@ data class Page(
 
         title = tags.firstIsInstanceOrNull()
         description = tags.firstIsInstanceOrNull()
-        example = tags.firstIsInstanceOrNull()
+        visual = tags.firstIsInstanceOrNull()
     }
 }

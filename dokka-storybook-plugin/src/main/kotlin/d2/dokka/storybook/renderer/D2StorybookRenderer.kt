@@ -36,7 +36,9 @@ open class D2StorybookRenderer(
         FileData.ROOT to MainPageContentRenderer(),
         FileData.MAIN to MainPageContentRenderer(),
         FileData.DESCRIPTION to DescriptionPageContentRenderer(context),
-        FileData.VISUAL to VisualPageContentRenderer(),
+        FileData.VISUAL_JSON to VisualJsonPageContentRenderer(),
+        FileData.VISUAL_KOTLIN to VisualKotlinPageContentRenderer(),
+//        FileData.VISUAL_YAML to VisualYamlPageContentRenderer(),
         "Default" to MarkdownRenderer(context)
     )
 
