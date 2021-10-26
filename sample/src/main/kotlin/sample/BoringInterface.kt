@@ -1,22 +1,41 @@
 package sample
 
 /**
- * This thing is so dull that no one knows how it could have ever been created
- *
- * @D2 model
- * @author unknown but they should be loathed for their creation
- * @title Boring Object
- * @page
  * Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam,
  * quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
  * Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
- * @@visual json
+ * @D2 page
+ * @title d2/Boring Documentation
+ * @visual json
  * {
  *   "name": "Stuff",
  *   "description": "Phrase describing the stuff",
  *   "things": ["Weird thingy", "Eww wat is dis"]
  * }
- * @@title d2/Boring Documentation
+ */
+interface BoringInterfacePage
+
+/**
+ * @D2 section
+ * @title Json section
+ * @parent [BoringInterfacePage]
+ */
+interface BoringInterfaceJsonSection
+
+/**
+ * @D2 section
+ * @title Kotlin section
+ * @parent [BoringInterfacePage]
+ */
+interface BoringInterfaceKotlinSection
+
+/**
+ * This thing is so dull that no one knows how it could have ever been created
+ *
+ * @D2 model
+ * @author unknown but they should be loathed for their creation
+ * @title Boring Object
+ * @parent [BoringInterfaceJsonSection]
  */
 interface BoringInterface {
     /**
@@ -41,7 +60,7 @@ interface BoringInterface {
 /**
  * @D2 model
  * @title Boring Object but in Kotlin
- * @parent [BoringInterface]
+ * @parent [BoringInterfaceKotlinSection]
  * @visual kotlin
  */
 interface BoringInterfaceKotlin {
@@ -67,7 +86,7 @@ interface BoringInterfaceKotlin {
 /**
  * @D2 model
  * @title Boring Object but in Kotlin
- * @parent [BoringInterface]
+ * @parent [BoringInterfaceKotlinSection]
  * @visual kotlin BoringInterfaceKotlin2(
  *     name = "Stuff",
  *     description = "Ok",

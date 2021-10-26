@@ -1,9 +1,9 @@
 package d2.dokka.storybook.translator
 
 import com.intellij.util.containers.BidirectionalMap
+import d2.dokka.storybook.model.doc.PageDocumentable
 import d2.dokka.storybook.model.doc.RootDocumentable
-import d2.dokka.storybook.model.doc.isOfType
-import d2.dokka.storybook.model.doc.tag.D2Type
+import d2.dokka.storybook.model.doc.SectionDocumentable
 import d2.dokka.storybook.model.doc.title
 import d2.dokka.storybook.model.render.D2TextStyle
 import d2.dokka.storybook.model.render.documentableIn
@@ -30,9 +30,11 @@ internal abstract class DescriptionPageContentBuilder(
 
     override fun contentFor(d: Documentable): ContentNode? {
         return when (d) {
+            is RootDocumentable -> contentFor(d)
+            is PageDocumentable -> contentFor(d)
+            is SectionDocumentable -> contentFor(d)
             is DClasslike -> contentFor(d)
             is DTypeAlias -> contentFor(d)
-            is RootDocumentable -> contentFor(d)
             else -> null
         }
     }
@@ -69,16 +71,34 @@ internal abstract class DescriptionPageContentBuilder(
         }
     }
 
+    private fun contentFor(p: PageDocumentable): ContentNode {
+        return contentBuilder.contentFor(p)  {
+            group(kind = ContentKind.Cover) {
+                buildTitle(p)
+                +contentForDescription(p)
+            }
+        }
+    }
+
+    private fun contentFor(s: SectionDocumentable): ContentNode {
+        return contentBuilder.contentFor(s)  {
+            group(kind = ContentKind.Cover) {
+                buildTitle(s)
+                +contentForDescription(s)
+            }
+        }
+    }
+
     private fun PageContentBuilder.DocumentableContentBuilder.buildTitle(d: Documentable) {
-        header(d.pageLevel(), d.title.substringAfterLast("/"))
+        header(d.pageLevel(), d.title().substringAfterLast("/"))
     }
 
     private fun Documentable.pageLevel(): Int {
         val parent = childToParentMap[dri]?.let(documentables::get)
             ?: return 1
 
-        val parentIsModelAndNotRoot = parent.isOfType(D2Type.MODEL) && parent !is RootDocumentable
-        val headerInc = if (this.isOfType(D2Type.MODEL) && parentIsModelAndNotRoot) 0 else 1
+        val increaseCount = parent is RootDocumentable || parent is PageDocumentable || parent is SectionDocumentable
+        val headerInc = if (increaseCount) 1 else 0
 
         return parent.pageLevel() + headerInc
     }

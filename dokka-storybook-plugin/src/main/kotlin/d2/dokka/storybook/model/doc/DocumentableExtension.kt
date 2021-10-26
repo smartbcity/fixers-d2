@@ -14,19 +14,11 @@ import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.properties.PropertyContainer
 import org.jetbrains.dokka.model.properties.WithExtraProperties
 
-val Documentable.d2Type
-    get() = d2DocTagExtra()
-        .firstTagOfTypeOrNull<D2>()
-        ?.type
-
-val Documentable.weight
-  get() = d2DocTagExtra()
-      .firstTagOfTypeOrNull<Order>()
-      ?.weight
+private const val ROOT_SUFFIX = "Root"
 
 fun Documentable.toRootDocumentable() = RootDocumentable(
-    name = "${name.orEmpty()}Page",
-    dri = dri.copy(classNames = "${dri.sureClassNames}Page"),
+    name = "${name.orEmpty()}${ROOT_SUFFIX}",
+    dri = dri.copy(classNames = "${dri.sureClassNames}${ROOT_SUFFIX}"),
     documentation = documentation,
     sourceSets = sourceSets,
     expectPresentInSet = expectPresentInSet,
@@ -34,11 +26,38 @@ fun Documentable.toRootDocumentable() = RootDocumentable(
     extra = (this as? WithExtraProperties<Documentable>)?.extra ?: PropertyContainer.empty()
 )
 
-val Documentable.title
-    get() = when (this) {
-        is RootDocumentable -> pageDocumentation?.title?.body ?: name.removeSuffix("Page")
-        else -> d2DocTagExtra().firstTagOfTypeOrNull<Title>()?.body ?: name!!
-    }
+fun Documentable.toPageDocumentable() = PageDocumentable(
+    name = name.orEmpty(),
+    dri = dri.copy(classNames = dri.sureClassNames),
+    documentation = documentation,
+    sourceSets = sourceSets,
+    expectPresentInSet = expectPresentInSet,
+    children = listOf(this),
+    extra = (this as? WithExtraProperties<Documentable>)?.extra ?: PropertyContainer.empty()
+)
+
+fun Documentable.toSectionDocumentable() = SectionDocumentable(
+    name = name.orEmpty(),
+    dri = dri.copy(classNames = dri.sureClassNames),
+    documentation = documentation,
+    sourceSets = sourceSets,
+    expectPresentInSet = expectPresentInSet,
+    children = listOf(this),
+    extra = (this as? WithExtraProperties<Documentable>)?.extra ?: PropertyContainer.empty()
+)
+
+fun Documentable.d2Type() = d2DocTagExtra().firstTagOfTypeOrNull<D2>()?.type
+fun Documentable.weight() = d2DocTagExtra().firstTagOfTypeOrNull<Order>()?.weight
+fun Documentable.title() = when (this) {
+    is RootDocumentable -> pageDocumentation?.title?.body ?: name.removeSuffix(ROOT_SUFFIX)
+    else -> d2DocTagExtra().firstTagOfTypeOrNull<Title>()?.body ?: name!!
+}
+
+fun Documentable.asD2TypeDocumentable() = when (d2Type()) {
+    D2Type.PAGE -> toPageDocumentable()
+    D2Type.SECTION -> toSectionDocumentable()
+    else -> this
+}
 
 inline fun <reified T: D2DocTagWrapper> Documentable.hasD2TagOfType(): Boolean {
     return d2DocTagExtra().firstTagOfTypeOrNull<T>() != null
@@ -53,8 +72,10 @@ fun Documentable.d2DocTagExtra() = (this as? WithExtraProperties<Documentable>)
     ?: D2DocTagExtra(emptyList())
 
 fun Documentable.visualType() = when (this) {
+    is RootDocumentable -> pageDocumentation?.visual?.type ?: VisualType.NONE
+    is PageDocumentable -> d2DocTagExtra().firstTagOfTypeOrNull<Visual>()?.type ?: VisualType.NONE
+    is SectionDocumentable -> d2DocTagExtra().firstTagOfTypeOrNull<Visual>()?.type ?: VisualType.NONE
     is DClasslike -> d2DocTagExtra().firstTagOfTypeOrNull<Visual>()?.type ?: VisualType.DEFAULT
     is DTypeAlias -> d2DocTagExtra().firstTagOfTypeOrNull<Visual>()?.type
-    is RootDocumentable -> pageDocumentation?.visual?.type
     else -> null
 }

@@ -124,7 +124,7 @@ class D2StorybookLocationProvider(
     }
 
     private val Documentable.sanitizedTitle
-        get() = title.lowercase().replace(Regex("[^\\p{L}\\p{N}]+"), "-")
+        get() = title().lowercase().replace(Regex("[^\\p{L}\\p{N}]+"), "-")
 
     companion object {
         private val reservedFilenames = setOf("index", "con", "aux", "lst", "prn", "nul", "eof", "inp", "out")

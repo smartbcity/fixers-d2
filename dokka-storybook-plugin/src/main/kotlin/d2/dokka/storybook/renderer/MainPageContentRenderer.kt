@@ -128,7 +128,7 @@ open class MainPageContentRenderer: D2ContentRenderer {
     }
 
     open fun ReactFileBuilder.buildFileHeader(pageContext: ContentPage) {
-        val name = pageContext.documentable!!.title
+        val name = pageContext.documentable!!.title()
         addImport(CodeImport(path = "@storybook/addon-docs/blocks", element = "Meta", isComposite = true))
         write {
             append("<Meta title=\"$name\" parameters={{ previewTabs: { canvas: { hidden: true } } }} />")

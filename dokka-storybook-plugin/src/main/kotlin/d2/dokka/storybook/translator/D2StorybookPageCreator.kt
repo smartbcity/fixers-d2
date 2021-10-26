@@ -1,7 +1,10 @@
 package d2.dokka.storybook.translator
 
 import com.intellij.util.containers.BidirectionalMap
+import d2.dokka.storybook.model.doc.PageDocumentable
 import d2.dokka.storybook.model.doc.RootDocumentable
+import d2.dokka.storybook.model.doc.SectionDocumentable
+import d2.dokka.storybook.model.doc.asD2TypeDocumentable
 import d2.dokka.storybook.model.doc.d2DocTagExtra
 import d2.dokka.storybook.model.doc.tag.Child
 import d2.dokka.storybook.model.doc.tag.Parent
@@ -34,19 +37,22 @@ class D2StorybookPageCreator(
 
     override fun pageForModule(m: DModule): ModulePageNode {
         val documentables = m.packages.flatMap { pack -> pack.classlikes + pack.typealiases }
+            .map(Documentable::asD2TypeDocumentable)
+
         documentablesMap = documentables.associateBy(Documentable::dri).toMutableMap()
         buildChildrenMap(documentables)
 
-        val rootPages = childToParentBiMap.getKeysByValue(DRI.topLevel)
-            ?.mapNotNull(documentablesMap::get)
-            ?.flatMap(::pagesFor)
-            ?: emptyList()
+        val pages = childToParentBiMap.getKeysByValue(DRI.topLevel)
+            .orEmpty()
+            .mapNotNull(documentablesMap::get)
+            .plus(documentables)
+            .flatMap(::pagesFor)
 
         return ModulePageNode(
             name = m.name.ifEmpty { "<root>" },
             content = contentForModule(m),
             documentable = m,
-            children = documentables.flatMap(this::pagesFor).plus(rootPages)
+            children = pages
         )
     }
 
@@ -67,8 +73,10 @@ class D2StorybookPageCreator(
             }.plus(childrenDri.map { it to documentable.dri })
         }.toMap().toMutableMap()
 
-        documentables.forEach { documentable ->
-            if (!parentMap.contains(documentable.dri)) {
+        documentables
+            .filter { documentable -> documentable.dri !in parentMap }
+            .filter { documentable -> documentable !is PageDocumentable }
+            .forEach { documentable ->
                 val rootDocumentable = documentable.toRootDocumentable()
                 documentablesMap[rootDocumentable.dri] = rootDocumentable
                 parentMap.putAll(listOf(
@@ -76,13 +84,29 @@ class D2StorybookPageCreator(
                     rootDocumentable.dri to DRI.topLevel
                 ))
             }
-        }
         childToParentBiMap.putAll(parentMap)
     }
 
     private fun pagesFor(d: Documentable): List<ModelPageNode> {
         val visualFileData = d.visualType()?.fileData
         val pagesToGenerate = when (d) {
+            is RootDocumentable -> listOfNotNull(
+                FileData.ROOT,
+                FileData.MAIN,
+                FileData.DESCRIPTION.takeIf { d.hasDescription },
+                visualFileData
+            )
+            is PageDocumentable -> listOfNotNull(
+                FileData.ROOT,
+                FileData.MAIN,
+                FileData.DESCRIPTION.takeIf { d.hasDescription },
+                visualFileData
+            )
+            is SectionDocumentable -> listOfNotNull(
+                FileData.MAIN,
+                FileData.DESCRIPTION.takeIf { d.hasDescription },
+                visualFileData
+            )
             is DClasslike -> listOfNotNull(
                 FileData.MAIN,
                 FileData.DESCRIPTION,
@@ -91,12 +115,6 @@ class D2StorybookPageCreator(
             is DTypeAlias -> listOfNotNull(
                 FileData.MAIN,
                 FileData.DESCRIPTION,
-                visualFileData
-            )
-            is RootDocumentable -> listOfNotNull(
-                FileData.ROOT,
-                FileData.MAIN,
-                FileData.DESCRIPTION.takeIf { d.hasDescription },
                 visualFileData
             )
             else -> emptyList()

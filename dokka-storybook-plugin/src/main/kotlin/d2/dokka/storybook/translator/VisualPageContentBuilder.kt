@@ -1,6 +1,8 @@
 package d2.dokka.storybook.translator
 
+import d2.dokka.storybook.model.doc.PageDocumentable
 import d2.dokka.storybook.model.doc.RootDocumentable
+import d2.dokka.storybook.model.doc.SectionDocumentable
 import d2.dokka.storybook.model.doc.d2DocTagExtra
 import d2.dokka.storybook.model.doc.tag.Example
 import d2.dokka.storybook.model.doc.tag.ExampleLink
@@ -32,9 +34,11 @@ abstract class VisualPageContentBuilder(
 
     override fun contentFor(d: Documentable): ContentNode? {
         return when (d) {
+            is RootDocumentable -> rawContentFor(d)
+            is PageDocumentable -> rawContentFor(d)
+            is SectionDocumentable -> rawContentFor(d)
             is DClasslike -> contentFor(d)
-            is DTypeAlias -> contentFor(d)
-            is RootDocumentable -> contentFor(d)
+            is DTypeAlias -> rawContentFor(d)
             is DProperty -> contentFor(d)
             else -> null
         }
@@ -53,14 +57,14 @@ abstract class VisualPageContentBuilder(
         }
     }
 
-    private fun contentFor(t: DTypeAlias): ContentNode {
-        val visualTag = t.d2DocTagExtra().firstTagOfType<Visual>()
-        return rawContentForVisualTag(t, visualTag)
-    }
-
-    private fun contentFor(r: RootDocumentable): ContentNode {
+    private fun rawContentFor(r: RootDocumentable): ContentNode {
         val visualTag = r.pageDocumentation!!.visual!!
         return rawContentForVisualTag(r, visualTag)
+    }
+
+    private fun rawContentFor(d: Documentable): ContentNode {
+        val visualTag = d.d2DocTagExtra().firstTagOfType<Visual>()
+        return rawContentForVisualTag(d, visualTag)
     }
 
     private fun rawContentForVisualTag(d: Documentable, visualTag: Visual): ContentNode {
