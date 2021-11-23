@@ -14,7 +14,7 @@ class CodeHighlighterComponent(
         get() = "CodeHighlighter"
 
     override val importData: CodeImport
-        get() = CodeImport(path = ImportPath.ARCHETYPES_DOCUMENTATION, element = identifier, isComposite = true)
+        get() = CodeImport(path = ImportPath.G2_DOCUMENTATION, element = identifier, isComposite = true)
 
     override val params: Map<String, CodeElement>
         get() = mapOf(
