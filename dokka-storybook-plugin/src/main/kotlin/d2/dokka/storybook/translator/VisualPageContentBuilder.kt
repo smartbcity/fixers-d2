@@ -58,13 +58,12 @@ abstract class VisualPageContentBuilder(
     }
 
     private fun rawContentFor(r: RootDocumentable): ContentNode {
-        val visualTag = r.pageDocumentation!!.visual!!
-        return rawContentForVisualTag(r, visualTag)
+        val visualTag = r.pageDocumentation?.visual
+        return rawContentForVisualTag(r, visualTag!!)
     }
 
-    private fun rawContentFor(d: Documentable): ContentNode {
-        val visualTag = d.d2DocTagExtra().firstTagOfType<Visual>()
-        return rawContentForVisualTag(d, visualTag)
+    private fun rawContentFor(d: Documentable): ContentNode? {
+        return d.d2DocTagExtra().firstTagOfTypeOrNull<Visual>()?.let { rawContentForVisualTag(d, it) }
     }
 
     private fun rawContentForVisualTag(d: Documentable, visualTag: Visual): ContentNode {

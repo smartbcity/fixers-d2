@@ -105,11 +105,10 @@ internal abstract class MainPageContentBuilder(
     private fun List<Documentable>.driSortedByD2Type(): SortedSet<DRI> {
         val typeMap = this.associate { d -> d.dri to d.d2Type() }
         val weightMap = this.associate { d -> d.dri to (d.weight() ?: Int.MAX_VALUE) }
-
         return this.map(Documentable::dri)
             .toSortedSet { dri1, dri2 ->
-                (typeMap[dri1]!!.order - typeMap[dri2]!!.order).takeIf { it != 0 }
-                    ?: (weightMap[dri1]!! - weightMap[dri2]!!).takeIf { it != 0 }
+                (typeMap[dri1]?.order ?: 0 - (typeMap[dri2]?.order ?: 0)).takeIf { it != 0 }
+                    ?: (weightMap[dri1] ?: 0 - (weightMap[dri2] ?: 0)).takeIf { it != 0 }
                     ?: dri1.sureClassNames.compareTo(dri2.sureClassNames, true)
             }
     }
