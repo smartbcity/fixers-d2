@@ -1,6 +1,6 @@
 object PluginVersions {
-	const val kotlin = "1.5.20"
-	const val dokka = "1.4.32"
+	const val kotlin = "1.6.0"
+	const val dokka = "1.6.0"
 }
 
 object Versions {
