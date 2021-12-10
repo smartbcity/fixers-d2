@@ -58,8 +58,8 @@ abstract class VisualPageContentBuilder(
     }
 
     private fun rawContentFor(r: RootDocumentable): ContentNode {
-        val visualTag = r.pageDocumentation?.visual
-        return rawContentForVisualTag(r, visualTag!!)
+        val visualTag = r.pageDocumentation!!.visual!!
+        return rawContentForVisualTag(r, visualTag)
     }
 
     private fun rawContentFor(d: Documentable): ContentNode? {
@@ -95,7 +95,7 @@ abstract class VisualPageContentBuilder(
         val targetDri = targetTag.target ?: return null
 
         if (targetDri.callable == null) {
-            return documentables[targetDri]?.let(this::contentFor)
+            return documentables[targetDri]?.let(::contentFor)
         }
 
         val targetDocumentable = documentables[targetDri.copy(callable = null)]

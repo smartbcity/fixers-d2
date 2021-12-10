@@ -23,7 +23,7 @@ interface BoringPlagiarism {
 
     /**
      * A vain attempt to make it look like there are a lot to see here
-     * @example ["Weird thingy", "Eww wat is dis"]
+     * @example [["Weird thingy", "Eww wat is dis"]]
      */
     val things: List<String?>
 }

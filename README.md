@@ -132,7 +132,7 @@ package sample
  * {
  *   "name": "Stuff",
  *   "description": "Phrase describing the stuff",
- *   "things": ["Weird thingy", "Eww wat is dis"]
+ *   "things": [["Weird thingy", "Eww wat is dis"]]
  * }
  * @@title d2/Boring Documentation
  */
@@ -151,7 +151,7 @@ interface BoringInterface {
 
     /**
      * A vain attempt to make it look like there are a lot to see here
-     * @example ["Weird thingy", "Eww wat is dis"]
+     * @example [["Weird thingy", "Eww wat is dis"]]
      */
     val things: List<String?>
 }
@@ -173,7 +173,7 @@ interface ChildInterface {
 
     /**
      * The same things as you'd find in a BoringInterface
-     * @example [sample.BoringInterface.things]
+     * @example [[sample.BoringInterface.things]]
      */
     val things: List<String?>
 }
@@ -215,7 +215,7 @@ interface BoringGetQueryResult {
      * @example {
      *   "name": "blblbl",
      *   "description": "blblblblbl bl lbbllb lblblblbl",
-     *   "things": []
+     *   "things": [[]]
      * }
      */
     val boringStuff: BoringInterface?

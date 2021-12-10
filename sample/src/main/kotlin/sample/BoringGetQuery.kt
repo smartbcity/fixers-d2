@@ -38,7 +38,7 @@ interface BoringGetQueryResult {
      * @example {
      *   "name": "blblbl",
      *   "description": "blblblblbl bl lbbllb lblblblbl",
-     *   "things": []
+     *   "things": [[]]
      * }
      */
     val boringStuff: BoringInterface?

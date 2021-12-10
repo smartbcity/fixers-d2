@@ -10,7 +10,7 @@ package sample
  * {
  *   "name": "Stuff",
  *   "description": "Phrase describing the stuff",
- *   "things": ["Weird thingy", "Eww wat is dis"]
+ *   "things": [["Weird thingy", "Eww wat is dis"]]
  * }
  */
 interface BoringInterfacePage
@@ -52,7 +52,7 @@ interface BoringInterface {
 
     /**
      * A vain attempt to make it look like there are a lot to see here
-     * @example ["Weird thingy", "Eww wat is dis"]
+     * @example [["Weird thingy", "Eww wat is dis"]]
      */
     val things: List<String?>
 }

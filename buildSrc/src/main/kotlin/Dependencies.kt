@@ -5,7 +5,7 @@ object PluginVersions {
 
 object Versions {
 	const val junit = "5.7.0"
-	const val jackson = "2.12.3"
+	const val jackson = "2.13.0"
 	const val ktlint = "0.42.1"
 
 	const val f2 = "0.1.0-SNAPSHOT"

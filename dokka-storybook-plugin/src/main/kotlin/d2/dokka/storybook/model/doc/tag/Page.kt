@@ -26,7 +26,7 @@ data class Page(
         fun DocTag.parse(): String {
             return when (this) {
                 is DocumentationLink -> "[${children.first().parse()}]${href()}"
-                is Text -> hrefOrBody().replace("@@", "\n@")
+                is Text -> body.replace("@@", "\n@")
                 is P -> "\n\n${children.joinToString("", transform = DocTag::parse)}"
                 is Br -> "\\\n"
                 is Ul -> children.joinToString("", postfix = "\n") { "\n- ${it.parse()}" }

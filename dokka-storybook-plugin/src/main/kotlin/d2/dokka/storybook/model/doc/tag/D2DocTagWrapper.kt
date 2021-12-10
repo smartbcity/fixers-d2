@@ -60,7 +60,7 @@ fun CustomTagWrapper.toD2DocTagWrapper(): D2DocTagWrapper? {
 
 fun DocTag.asPlainText() = firstMemberOfType<P>()
     .childrenOfType<Text>() // text between [] is parsed as a reference and stored in a dedicated Text tag wrapper
-    .joinToString("", transform = Text::hrefOrBody)
+    .joinToString("", transform = Text::body)
     .trim()
     .ifBlank { null }
 
@@ -68,5 +68,4 @@ fun DocTag.hasDocumentationLink() = firstMemberOfTypeOrNull<DocumentationLink>()
 
 fun DocTag.hasContentAfterFirstParameter() = !asPlainText()?.substringAfter(' ', "").isNullOrBlank()
 
-fun Text.hrefOrBody() = params["href"] ?: body
 fun DocumentationLink.href() = params["href"]

@@ -30,7 +30,7 @@ open class MarkdownRenderer(
         pageContext: ContentPage,
         sourceSetRestriction: Set<DisplaySourceSet>?
     ) {
-        localbuildNewLine()
+        buildNewLine()
         when (node.dci.kind) {
             ContentKind.Properties -> buildTableProperties(node, pageContext)
             ContentKind.Sample,
@@ -39,7 +39,7 @@ open class MarkdownRenderer(
         }
     }
 
-    fun StringBuilder.localbuildNewLine() {
+    protected open fun StringBuilder.buildNewLine() {
         append("  \n")
     }
 
@@ -50,14 +50,14 @@ open class MarkdownRenderer(
     protected open fun StringBuilder.buildTableSampleOrParameters(node: ContentTable, pageContext: ContentPage, sourceSetRestriction: Set<DisplaySourceSet>?) {
         node.sourceSets.forEach { sourceSetData ->
             append(sourceSetData.name)
-            localbuildNewLine()
+            buildNewLine()
             buildTable(
                 node.copy(
                     children = node.children.filter { it.sourceSets.contains(sourceSetData) },
                     dci = node.dci.copy(kind = ContentKind.Main)
                 ), pageContext, sourceSetRestriction
             )
-            localbuildNewLine()
+            buildNewLine()
         }
     }
 
