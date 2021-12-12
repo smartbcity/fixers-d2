@@ -11,7 +11,6 @@ allprojects {
     version = System.getenv("VERSION") ?: "latest"
     repositories {
         mavenLocal()
-        jcenter()
         mavenCentral()
         maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
         maven("https://repo.spring.io/snapshot")

@@ -8,5 +8,5 @@ object Versions {
 	const val jackson = "2.13.0"
 	const val ktlint = "0.42.1"
 
-	const val f2 = "0.1.0-SNAPSHOT"
+	const val f2 = "experimental-SNAPSHOT"
 }

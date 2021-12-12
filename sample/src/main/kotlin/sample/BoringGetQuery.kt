@@ -1,6 +1,7 @@
 package sample
 
-import f2.dsl.function.F2Function
+import f2.dsl.fnc.F2Function
+
 
 /**
  * Retrieve a boring thing

@@ -78,7 +78,7 @@ interface BoringInterfaceKotlin {
 
     /**
      * A vain attempt to make it look like there are a lot to see here
-     * @example listOf("Weird thingy", "Eww wat is dis")
+     * @example listOf("Weird thingy2", "Eww wat is dis")
      */
     val things: List<String?>
 }
