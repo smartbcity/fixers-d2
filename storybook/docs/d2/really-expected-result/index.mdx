@@ -1,0 +1,17 @@
+import { CodeHighlighter, DescriptedCode } from '@smartb/g2-documentation'
+import { Meta } from '@storybook/addon-docs/blocks'
+import ReallyExpectedResultDesc from './desc.md'
+import ReallyExpectedResultVisualJson from './visualJson.json'
+
+<Meta title="ReallyExpectedResult" parameters={{ previewTabs: { canvas: { hidden: true } } }} />
+
+<DescriptedCode
+  leftElement={<ReallyExpectedResultDesc />}
+  rightElement={
+    <CodeHighlighter
+      object={ReallyExpectedResultVisualJson}
+      language={"json"}
+      title={"Example"}
+    />
+  }
+/>

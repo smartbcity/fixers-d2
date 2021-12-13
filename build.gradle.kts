@@ -111,5 +111,6 @@ tasks {
         }
         addChildTask(dokkaStorybookPartial)
         addSubprojectChildTasks(dokkaStorybookPartial)
+        outputDirectory.set(file("storybook/docs/d2"))
     }
 }
