@@ -4,6 +4,7 @@ plugins {
     kotlin("multiplatform") version PluginVersions.kotlin apply false
     kotlin("jvm") version PluginVersions.kotlin apply false
     id("org.jetbrains.dokka") version PluginVersions.dokka
+    id("com.gradle.plugin-publish") version PluginVersions.gradlePublish apply false
 }
 
 allprojects {
