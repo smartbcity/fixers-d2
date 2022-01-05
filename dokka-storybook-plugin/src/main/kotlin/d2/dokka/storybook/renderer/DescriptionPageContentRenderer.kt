@@ -17,9 +17,15 @@ class DescriptionPageContentRenderer(context: DokkaContext): MarkdownRenderer(co
                 append("\n")
                 append("\n")
                 property.children.forEach { child ->
-                    val trailingChar = if (child is ContentGroup)
-                        if (child.withDescendants().firstIsInstanceOrNull<ContentText>() == null) "\n\n" else ""
-                    else " "
+                    val trailingChar = if (child is ContentGroup) {
+                        if (child.withDescendants().firstIsInstanceOrNull<ContentText>() == null) {
+                            "\n\n"
+                        } else {
+                            ""
+                        }
+                    } else {
+                        " "
+                    }
                     append(buildString { child.build(this, pageContext) } + trailingChar)
                 }
             }

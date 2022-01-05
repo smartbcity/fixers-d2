@@ -9,7 +9,7 @@ import org.jetbrains.dokka.pages.Style
 
 class VisualKotlinPageContentRenderer: VisualPageContentRenderer() {
 
-    override val VISUAL_TYPE = "Kotlin"
+    override val visualType = "Kotlin"
     private var indentLevel = 0
 
     override fun StringBuilder.buildProperties(node: ContentGroup, pageContext: ContentPage) {

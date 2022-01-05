@@ -1,5 +1,6 @@
 plugins {
-    kotlin("jvm")
+    id("city.smartb.fixers.gradle.kotlin.jvm")
+    id("city.smartb.fixers.gradle.publish")
 }
 
 dependencies {
@@ -12,5 +13,3 @@ dependencies {
     testImplementation(kotlin("test-junit"))
     testImplementation("org.jetbrains.dokka:dokka-test-api:${PluginVersions.dokka}")
 }
-
-apply(from = rootProject.file("gradle/publishing.gradle"))

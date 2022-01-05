@@ -71,9 +71,13 @@ class InheritedDocExtractorTransformer: DocumentableTransformer {
             else -> this
         } as T
     }
-    private fun <T: Documentable> List<T>.appendInheritedExpectActualDocs(documentablesMap: Map<DRI, Documentable>) = map { it.appendInheritedExpectActualDoc(documentablesMap) }
+    private fun <T: Documentable> List<T>.appendInheritedExpectActualDocs(
+        documentablesMap: Map<DRI, Documentable>
+    ) = map { it.appendInheritedExpectActualDoc(documentablesMap) }
 
-    private fun DProperty.closerAncestorNotEmptyDoc(documentablesMap: Map<DRI, Documentable>): SourceSetDependent<DocumentationNode> {
+    private fun DProperty.closerAncestorNotEmptyDoc(
+        documentablesMap: Map<DRI, Documentable>
+    ): SourceSetDependent<DocumentationNode> {
         return documentation.takeIf { it.isNotEmptyDoc() }
             ?: parent(documentablesMap)?.closerAncestorNotEmptyDoc(documentablesMap)
             ?: documentation

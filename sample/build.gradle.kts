@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm")
+    id("city.smartb.fixers.gradle.kotlin.jvm")
     id("org.jetbrains.dokka")
 }
 

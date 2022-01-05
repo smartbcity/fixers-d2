@@ -150,10 +150,16 @@ class D2StorybookPageCreator(
         FileData.VISUAL_YAML -> InnerVisualPageContentBuilder()
     }
 
-    private inner class InnerMainPageContentBuilder: MainPageContentBuilder(contentBuilder, documentablesMap, childToParentBiMap)
-    private inner class InnerDescriptionPageContentBuilder: DescriptionPageContentBuilder(contentBuilder, documentablesMap, childToParentBiMap) {
-        override fun contentForComments(d: Documentable): List<ContentNode> = this@D2StorybookPageCreator.contentForComments(d)
-        override fun contentForDescription(d: Documentable): List<ContentNode> = this@D2StorybookPageCreator.contentForDescription(d)
+    private inner class InnerMainPageContentBuilder:
+        MainPageContentBuilder(contentBuilder, documentablesMap, childToParentBiMap)
+    private inner class InnerDescriptionPageContentBuilder:
+        DescriptionPageContentBuilder(contentBuilder, documentablesMap, childToParentBiMap) {
+        override fun contentForComments(
+            d: Documentable
+        ): List<ContentNode> = this@D2StorybookPageCreator.contentForComments(d)
+        override fun contentForDescription(
+            d: Documentable
+        ): List<ContentNode> = this@D2StorybookPageCreator.contentForDescription(d)
     }
     private inner class InnerVisualPageContentBuilder: VisualPageContentBuilder(contentBuilder, documentablesMap)
     private inner class InnerRootPageContentBuilder: RootPageContentBuilder(contentBuilder)

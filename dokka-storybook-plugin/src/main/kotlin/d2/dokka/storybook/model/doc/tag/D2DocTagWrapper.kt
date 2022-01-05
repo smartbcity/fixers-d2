@@ -41,21 +41,25 @@ fun CustomTagWrapper.toD2DocTagWrapper(): D2DocTagWrapper? {
     return when (name.lowercase()) {
         "child" -> ::Child
         "d2" -> ::D2
-        "example" -> when {
-            root.hasDocumentationLink() -> ::ExampleLink
-            else -> ::ExampleText
-        }
+        "example" -> onExample()
         "order" -> ::Order
         "page" -> ::Page
         "parent" -> ::Parent
         "title" -> ::Title
-        "visual" -> when {
-            root.hasDocumentationLink() -> ::VisualLink
-            root.hasContentAfterFirstParameter() -> ::VisualText
-            else -> ::VisualSimple
-        }
+        "visual" -> onVisual()
         else -> null
     }?.invoke(root)
+}
+
+private fun CustomTagWrapper.onVisual() = when {
+    root.hasDocumentationLink() -> ::VisualLink
+    root.hasContentAfterFirstParameter() -> ::VisualText
+    else -> ::VisualSimple
+}
+
+private fun CustomTagWrapper.onExample() = when {
+    root.hasDocumentationLink() -> ::ExampleLink
+    else -> ::ExampleText
 }
 
 fun DocTag.asPlainText() = firstMemberOfType<P>()

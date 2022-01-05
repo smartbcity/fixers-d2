@@ -7,7 +7,8 @@ abstract class CodeFileBuilder<B: Appendable> {
 
     protected open val imports: MutableList<CodeImport> = mutableListOf()
 
-    open val INDENT_SIZE = 4
+    @Suppress("MagicNumber")
+    open val indentSize: Int = 4
 
     open fun write(doWrite: B.() -> Unit) = builder.doWrite()
 
@@ -19,7 +20,7 @@ abstract class CodeFileBuilder<B: Appendable> {
     }
 
     open fun appendIndent(level: Int) {
-        append(" ".repeat(level * INDENT_SIZE))
+        append(" ".repeat(level * indentSize))
     }
 
     open fun addImport(path: String, element: String, isComposite: Boolean = false) {

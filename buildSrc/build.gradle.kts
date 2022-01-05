@@ -5,3 +5,6 @@ plugins {
 repositories {
 	mavenCentral()
 }
+
+dependencies {
+}

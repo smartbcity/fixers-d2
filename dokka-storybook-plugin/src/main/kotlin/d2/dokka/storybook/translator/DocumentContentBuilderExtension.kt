@@ -34,9 +34,11 @@ fun <T: Documentable> PageContentBuilder.DocumentableContentBuilder.block(
             header = headers,
             children = elements
                 .let {
-                    if (needsSorting)
+                    if (needsSorting) {
                         it.sortedWith(compareBy(nullsLast(String.CASE_INSENSITIVE_ORDER)) { it.name })
-                    else it
+                    } else {
+                        it
+                    }
                 }
                 .map {
                     val newExtra = if (needsAnchors) extra + SymbolAnchorHint.from(it, kind) else extra

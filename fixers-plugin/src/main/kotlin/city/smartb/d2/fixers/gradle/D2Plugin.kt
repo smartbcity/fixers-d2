@@ -1,7 +1,8 @@
 package city.smartb.d2.fixers.gradle
 
+import city.smartb.fixers.gradle.config.ConfigPlugin
 import city.smartb.gradle.config.fixers
-import city.smartb.gradle.config.model.getD2
+import getD2
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.dependencies
@@ -17,6 +18,7 @@ class D2Plugin : Plugin<Project> {
 
 	override fun apply(target: Project) {
 		target.plugins.apply("org.jetbrains.dokka")
+		target.plugins.apply(ConfigPlugin::class.java)
 		target.subprojects {
 			tasks {
 				register<org.jetbrains.dokka.gradle.DokkaTask>(DOKKA_STORYBOOK_PARTIAL) {

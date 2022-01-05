@@ -12,41 +12,43 @@ import org.jetbrains.dokka.gfm.GfmPlugin
 import org.jetbrains.dokka.plugability.DokkaPlugin
 import org.jetbrains.dokka.transformers.pages.PageTransformer
 
-class D2StorybookPlugin: DokkaPlugin() {
+class D2StorybookPlugin : DokkaPlugin() {
 
-    private val dokkaBase by lazy { plugin<DokkaBase>() }
-    private val gfmPlugin by lazy { plugin<GfmPlugin>() }
+	private val dokkaBase by lazy { plugin<DokkaBase>() }
+	private val gfmPlugin by lazy { plugin<GfmPlugin>() }
 
-    val storybookPreprocessors by extensionPoint<PageTransformer>()
+	val storybookPreprocessors by extensionPoint<PageTransformer>()
 
-    val renderer by extending {
-        CoreExtensions.renderer providing ::D2StorybookRenderer override gfmPlugin.renderer
-    }
+	val renderer by extending {
+		CoreExtensions.renderer providing ::D2StorybookRenderer override gfmPlugin.renderer
+	}
 
-    val locationProvider by extending {
-        dokkaBase.locationProviderFactory providing D2StorybookLocationProvider::Factory override gfmPlugin.locationProvider
-    }
+	val locationProvider by extending {
+		dokkaBase.locationProviderFactory providing D2StorybookLocationProvider::Factory override gfmPlugin.locationProvider
+	}
 
-    val locationProviderFactory by lazy { dokkaBase.locationProviderFactory }
-    val outputWriter by lazy { dokkaBase.outputWriter }
+	val locationProviderFactory by lazy { dokkaBase.locationProviderFactory }
+	val outputWriter by lazy { dokkaBase.outputWriter }
 
-    val inheritedDocExtractor by extending {
-        CoreExtensions.documentableTransformer with InheritedDocExtractorTransformer()
-    }
+	val inheritedDocExtractor by extending {
+		CoreExtensions.documentableTransformer with InheritedDocExtractorTransformer()
+	}
 
-    val docTagExtractor by extending {
-        CoreExtensions.documentableTransformer with DocTagWrapperExtractorTransformer() order {
-            after(inheritedDocExtractor)
-        }
-    }
+	val docTagExtractor by extending {
+		CoreExtensions.documentableTransformer with DocTagWrapperExtractorTransformer() order {
+			after(inheritedDocExtractor)
+		}
+	}
 
-    val d2AnnotationFilter by extending {
-        CoreExtensions.documentableTransformer with D2TagFilterTransformer() order {
-            after(docTagExtractor)
-        }
-    }
+	val d2AnnotationFilter by extending {
+		CoreExtensions.documentableTransformer with D2TagFilterTransformer() order {
+			after(docTagExtractor)
+		}
+	}
 
-    val documentableToPageTranslator by extending {
-        CoreExtensions.documentableToPageTranslator providing ::D2StorybookDocumentableToPageTranslator override dokkaBase.documentableToPageTranslator
-    }
+	val documentableToPageTranslator by extending {
+		CoreExtensions.documentableToPageTranslator providing
+				::D2StorybookDocumentableToPageTranslator override
+				dokkaBase.documentableToPageTranslator
+	}
 }

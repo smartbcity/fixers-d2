@@ -41,9 +41,13 @@ interface D2StorybookContentPage: D2StorybookPageNode, ContentPage {
         return modified(name = name, content = this.content, dri = dri, children = children)
     }
 
-    override fun modified(name: String, content: ContentNode, dri: Set<DRI>, embeddedResources: List<String>, children: List<PageNode>): D2StorybookContentPage
+    override fun modified(
+        name: String, content: ContentNode, dri: Set<DRI>, embeddedResources: List<String>, children: List<PageNode>
+    ): D2StorybookContentPage
 
-    fun isModified(name: String, content: ContentNode, embeddedResources: List<String>, children: List<PageNode>): Boolean {
+    fun isModified(
+        name: String, content: ContentNode, embeddedResources: List<String>, children: List<PageNode>
+    ): Boolean {
         return name == this.name &&
                 content === this.content &&
                 embeddedResources === this.embeddedResources &&

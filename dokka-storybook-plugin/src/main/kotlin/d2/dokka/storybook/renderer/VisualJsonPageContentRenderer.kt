@@ -9,7 +9,7 @@ import org.jetbrains.dokka.pages.Style
 
 class VisualJsonPageContentRenderer: VisualPageContentRenderer() {
 
-    override val VISUAL_TYPE = "Json"
+    override val visualType = "Json"
 
     override fun StringBuilder.buildProperties(node: ContentGroup, pageContext: ContentPage) {
         val header = node.children.first()

@@ -43,17 +43,20 @@ open class D2StorybookRenderer(
     )
 
     private fun PageNode.renderer(): D2ContentRenderer {
-        return when (this) {
-            is ModelPageNode -> renderers[this.fileData]
-            else -> renderers["Default"]
-        }!!
+        return if(this is ModelPageNode) {
+            renderers[this.fileData]!!
+        } else {
+            renderers["Default"]!!
+        }
     }
 
     override fun render(root: RootPageNode) {
         val newRoot = preprocessors.fold(root) { acc, t -> t(acc) }
 
         locationProvider =
-            context.plugin<D2StorybookPlugin>().querySingle { locationProviderFactory }.getLocationProvider(newRoot) as D2StorybookLocationProvider
+            context.plugin<D2StorybookPlugin>()
+                .querySingle { locationProviderFactory }
+                .getLocationProvider(newRoot) as D2StorybookLocationProvider
 
         runBlocking(Dispatchers.Default) {
             renderPages(newRoot)
@@ -73,7 +76,6 @@ open class D2StorybookRenderer(
     protected open suspend fun renderPage(page: PageNode) {
         val path by lazy {
             locationProvider.resolve(page, skipExtension = true)
-                ?: throw DokkaException("Cannot resolve path for ${page.name}")
         }
 
         when (page) {

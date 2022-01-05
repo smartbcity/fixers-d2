@@ -20,6 +20,7 @@ import org.jetbrains.dokka.pages.PageNode
 import org.jetbrains.dokka.pages.RootPageNode
 import org.jetbrains.dokka.plugability.DokkaContext
 import java.util.IdentityHashMap
+import kotlin.collections.HashMap
 
 class D2StorybookLocationProvider(
     pageGraphRoot: RootPageNode,
@@ -82,7 +83,7 @@ class D2StorybookLocationProvider(
             .takeWhile { (a, b) -> a == b }.count()
 
         val endOfPath = when {
-            node is D2StorybookPageNode -> if (node.fileData == FileData.ROOT) listOf("${node.name}${node.fileData.extension}") else listOf(node.fileData.toString())
+            node is D2StorybookPageNode -> handleStorybookPageNode(node)
             node is ClasslikePageNode || node.children.isNotEmpty() -> listOf(PAGE_WITH_CHILDREN_SUFFIX)
             else -> emptyList()
         }
@@ -93,6 +94,13 @@ class D2StorybookLocationProvider(
             .plus(endOfPath)
             .joinToString("/")
     }
+
+    private fun handleStorybookPageNode(node: D2StorybookPageNode) =
+        if (node.fileData == FileData.ROOT) {
+            listOf("${node.name}${node.fileData.extension}")
+        } else {
+            listOf(node.fileData.toString())
+        }
 
     fun resolveAnchor(dri: DRI, context: PageNode): String? {
         if (context !is ContentPage) {
@@ -142,8 +150,11 @@ class D2StorybookLocationProvider(
                 .removePrefix("-")
             val withoutReservedFileNames = if (lowercase in reservedFileNames) "--$lowercase--" else lowercase
             return reservedCharacters.fold(withoutReservedFileNames) { acc, character ->
-                if (character in acc) acc.replace(character.toString(), "[${character.code}]")
-                else acc
+                if (character in acc) {
+                    acc.replace(character.toString(), "[${character.code}]")
+                } else {
+                    acc
+                }
             }
         }
     }

@@ -12,7 +12,7 @@ import org.jetbrains.dokka.pages.Style
 
 abstract class VisualPageContentRenderer: D2ContentRenderer {
 
-    protected abstract val VISUAL_TYPE: String
+    protected abstract val visualType: String
 
     override lateinit var d2LocationProvider: D2StorybookLocationProvider
 
@@ -39,7 +39,7 @@ abstract class VisualPageContentRenderer: D2ContentRenderer {
                 is ContentCodeBlock -> buildCodeBlock(node, pageContext)
                 is ContentGroup -> buildGroup(node, pageContext)
                 is ContentText -> buildText(node, pageContext)
-                else -> throw IllegalArgumentException("Cannot render content of type [${node::class.java}] in a Visual $VISUAL_TYPE page")
+                else -> throw IllegalArgumentException("Cannot render content of type [${node::class.java}] in a Visual $visualType page")
             }
         }
     }
@@ -48,7 +48,7 @@ abstract class VisualPageContentRenderer: D2ContentRenderer {
         when (node.dci.kind) {
             ContentKind.Properties -> buildProperties(node, pageContext)
             ContentKind.Sample -> buildContentNode(node.children.first(), pageContext)
-            else -> throw IllegalArgumentException("Cannot render ContentGroup of kind [${node.dci.kind}] in a Visual $VISUAL_TYPE page")
+            else -> throw IllegalArgumentException("Cannot render ContentGroup of kind [${node.dci.kind}] in a Visual $visualType page")
         }
     }
 

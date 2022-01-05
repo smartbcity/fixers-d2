@@ -1,10 +1,11 @@
 plugins {
 	`kotlin-dsl`
 	`java-gradle-plugin`
-	kotlin("jvm")
+	id("city.smartb.fixers.gradle.kotlin.jvm")
+	id("city.smartb.fixers.gradle.publish")
 	id("com.gradle.plugin-publish")
-	`maven-publish`
-	signing
+//	`maven-publish`
+//	signing
 }
 
 repositories {
@@ -18,7 +19,8 @@ dependencies {
 
 	implementation("org.jetbrains.dokka:dokka-gradle-plugin:${PluginVersions.dokka}")
 
-	implementation("city.smartb.fixers:config:${PluginVersions.fixers}")
+	implementation("city.smartb.fixers.gradle:config:${PluginVersions.fixers}")
+	implementation("city.smartb.fixers.gradle:plugin:${PluginVersions.fixers}")
 }
 
 pluginBundle {
@@ -37,5 +39,3 @@ gradlePlugin {
 		}
 	}
 }
-
-apply(from = rootProject.file("gradle/publishing.gradle"))

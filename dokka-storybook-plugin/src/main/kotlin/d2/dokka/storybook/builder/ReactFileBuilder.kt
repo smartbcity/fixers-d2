@@ -12,7 +12,7 @@ class ReactFileBuilder(
     override val builder: StringBuilder = StringBuilder()
 ): CodeFileBuilder<StringBuilder>() {
 
-    override val INDENT_SIZE: Int = 2
+    override val indentSize: Int = 2
 
     override fun build(): String {
         builder.insert(0, buildImports())
