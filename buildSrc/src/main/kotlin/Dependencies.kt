@@ -3,7 +3,7 @@ object PluginVersions {
 	const val kotlin = "1.6.0"
 	const val dokka = "1.6.0"
 	const val gradlePublish = "0.15.0"
-	const val fixers = "0.2.5"
+	const val fixers = "0.2.6"
 }
 
 object Versions {
