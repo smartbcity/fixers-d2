@@ -21,11 +21,7 @@ class D2Plugin : Plugin<Project> {
 		target.plugins.apply(ConfigPlugin::class.java)
 		target.subprojects {
 			tasks {
-				register<org.jetbrains.dokka.gradle.DokkaTask>(DOKKA_STORYBOOK_PARTIAL) {
-					dependencies {
-						plugins("city.smartb.d2:dokka-storybook-plugin:${project.version}")
-					}
-				}
+				register<org.jetbrains.dokka.gradle.DokkaTask>(DOKKA_STORYBOOK_PARTIAL)
 			}
 		}
 		target.afterEvaluate {

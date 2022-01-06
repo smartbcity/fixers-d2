@@ -4,8 +4,6 @@ plugins {
 	id("city.smartb.fixers.gradle.kotlin.jvm")
 	id("city.smartb.fixers.gradle.publish")
 	id("com.gradle.plugin-publish")
-//	`maven-publish`
-//	signing
 }
 
 repositories {
@@ -19,6 +17,7 @@ dependencies {
 
 	implementation("org.jetbrains.dokka:dokka-gradle-plugin:${PluginVersions.dokka}")
 
+	implementation(project(":dokka-storybook-plugin"))
 	implementation("city.smartb.fixers.gradle:config:${PluginVersions.fixers}")
 	implementation("city.smartb.fixers.gradle:plugin:${PluginVersions.fixers}")
 }
@@ -26,7 +25,10 @@ dependencies {
 pluginBundle {
 	website = "https://smartb.city"
 	vcsUrl = "https://github.com/smartbcity/d2"
-	tags = listOf("SmartB", "Fixers", "kotlin", "dokka", "jvm")
+	tags = listOf("SmartB", "Fixers", "kotlin", "dokka", "d2")
+	mavenCoordinates {
+		groupId = "city.smartb.fixers.gradle"
+	}
 }
 
 gradlePlugin {

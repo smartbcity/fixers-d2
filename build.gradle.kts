@@ -1,6 +1,4 @@
 plugins {
-//    kotlin("multiplatform") version PluginVersions.kotlin apply false
-//    kotlin("jvm") version PluginVersions.kotlin apply false
     id("org.jetbrains.dokka") version PluginVersions.dokka
     id("com.gradle.plugin-publish") version PluginVersions.gradlePublish apply false
 
@@ -14,10 +12,11 @@ plugins {
 
 allprojects {
     group = "city.smartb.d2"
-    version = System.getenv("VERSION") ?: "latest"
+    version = System.getenv("VERSION") ?: "experimental-SNAPSHOT"
     repositories {
         mavenLocal()
         mavenCentral()
+        maven { url = uri("https://oss.sonatype.org/service/local/repositories/releases/content") }
         maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
     }
 }
