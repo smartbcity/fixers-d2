@@ -19,6 +19,7 @@ interface BoringInterfacePage
  * @D2 section
  * @title Json section
  * @parent [BoringInterfacePage]
+ * @order 100
  */
 interface BoringInterfaceJsonSection
 
@@ -26,6 +27,7 @@ interface BoringInterfaceJsonSection
  * @D2 section
  * @title Kotlin section
  * @parent [BoringInterfacePage]
+ * @order 20
  */
 interface BoringInterfaceKotlinSection
 
