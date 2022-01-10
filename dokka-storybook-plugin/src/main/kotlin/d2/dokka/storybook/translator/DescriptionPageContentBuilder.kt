@@ -94,10 +94,6 @@ internal abstract class DescriptionPageContentBuilder(
     }
 
     private fun Documentable.pageLevel(): Int {
-        println("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}")
-        println(dri)
-        println(this.name)
-        println("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}")
         val parent = childToParentMap[dri]?.let(documentables::get)
             ?: return 1
 
