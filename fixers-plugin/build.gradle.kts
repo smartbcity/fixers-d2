@@ -22,15 +22,6 @@ dependencies {
 	implementation("city.smartb.fixers.gradle:plugin:${PluginVersions.fixers}")
 }
 
-tasks.withType<Jar> {
-	manifest {
-		attributes(
-			"Implementation-Title" to project.name,
-			"Implementation-Version" to project.version
-		)
-	}
-}
-
 pluginBundle {
 	website = "https://smartb.city"
 	vcsUrl = "https://github.com/smartbcity/d2"
