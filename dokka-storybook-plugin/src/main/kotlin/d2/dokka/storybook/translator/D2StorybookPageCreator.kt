@@ -51,7 +51,7 @@ class D2StorybookPageCreator(
         return ModulePageNode(
             name = m.name.ifEmpty { "<root>" },
             content = contentForModule(m),
-            documentable = m,
+            documentables = listOf(m),
             children = pages
         )
     }

@@ -1,6 +1,6 @@
 plugins {
     id("city.smartb.fixers.gradle.kotlin.jvm")
-    id("org.jetbrains.dokka")
+    kotlin("plugin.jpa")
 }
 
 dependencies {
