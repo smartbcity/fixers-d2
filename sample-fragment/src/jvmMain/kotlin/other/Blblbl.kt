@@ -1,14 +1,12 @@
-package sample
+package other
 
 /**
  * This thing is so dull that no one knows how it could have ever been created
  *
  * @author me
  * @D2 model
- * @parent [BoringInterface]
- * @order 20
  */
-interface BoringPlagiarism {
+interface Blblbl {
     /**
      * The name of smth not interesting at all
      * @example "Stuff"
