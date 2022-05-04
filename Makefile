@@ -1,6 +1,4 @@
-test: test-mobi-rest
-
 libs: package-libs
 
 package-libs:
-	@gradle clean build publish
+	VERSION=${VERSION} ./gradlew clean build publish
