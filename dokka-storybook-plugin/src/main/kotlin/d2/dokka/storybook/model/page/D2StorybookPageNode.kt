@@ -4,6 +4,7 @@ import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.pages.ContentNode
 import org.jetbrains.dokka.pages.ContentPage
 import org.jetbrains.dokka.pages.PageNode
+import org.jetbrains.dokka.pages.WithDocumentables
 
 interface WithFileData {
     val fileData: FileData
@@ -36,7 +37,7 @@ enum class CodeLanguage(val id: String) {
 
 interface D2StorybookPageNode: PageNode, WithFileData
 
-interface D2StorybookContentPage: D2StorybookPageNode, ContentPage {
+interface D2StorybookContentPage: D2StorybookPageNode, ContentPage, WithDocumentables {
     override fun modified(name: String, children: List<PageNode>): D2StorybookContentPage {
         return modified(name = name, content = this.content, dri = dri, children = children)
     }

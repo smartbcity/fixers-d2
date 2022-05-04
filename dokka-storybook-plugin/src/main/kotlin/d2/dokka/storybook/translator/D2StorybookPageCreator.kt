@@ -134,7 +134,7 @@ class D2StorybookPageCreator(
                     name = this.name.orEmpty(),
                     content = content,
                     dri = setOf(this.dri.copy(extra = fileData.id)),
-                    documentable = this,
+                    documentables = listOf(this),
                     children = emptyList(),
                     fileData = fileData
                 )

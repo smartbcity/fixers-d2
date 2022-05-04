@@ -9,13 +9,13 @@ class ModelPageNode(
 	override val name: String,
 	override val content: ContentNode,
 	override val dri: Set<DRI>,
-	override val documentable: Documentable?,
+	override val documentables: List<Documentable>,
 	override var children: List<PageNode>,
 	override val embeddedResources: List<String> = emptyList(),
 	override val fileData: FileData
-) : D2StorybookContentPage {
+): D2StorybookContentPage {
 	override fun modified(name: String, children: List<PageNode>): ModelPageNode {
-		return modified(name = name, content = this.content, dri = dri, children = children)
+		return modified(name = name, content = content, dri = dri, children = children)
 	}
 
 	override fun modified(
@@ -27,7 +27,7 @@ class ModelPageNode(
 			name = name,
 			content = content,
 			dri = dri,
-			documentable = documentable,
+			documentables = documentables,
 			children = children,
 			embeddedResources = embeddedResources,
 			fileData = fileData
