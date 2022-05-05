@@ -1,5 +1,6 @@
 package d2.dokka.storybook.translator
 
+import d2.dokka.storybook.model.doc.DocumentableIndexes
 import d2.dokka.storybook.model.doc.PageDocumentable
 import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.SectionDocumentable
@@ -8,15 +9,14 @@ import d2.dokka.storybook.model.doc.tag.Example
 import d2.dokka.storybook.model.doc.tag.ExampleLink
 import d2.dokka.storybook.model.doc.tag.ExampleText
 import d2.dokka.storybook.model.doc.tag.Visual
+import d2.dokka.storybook.model.doc.tag.VisualLink
 import d2.dokka.storybook.model.doc.tag.VisualSimple
 import d2.dokka.storybook.model.doc.tag.VisualText
-import d2.dokka.storybook.model.doc.tag.VisualLink
 import d2.dokka.storybook.model.doc.tag.WithTarget
 import d2.dokka.storybook.model.render.documentableIn
 import d2.dokka.storybook.model.render.isCollection
 import d2.dokka.storybook.model.render.isMap
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.DClasslike
 import org.jetbrains.dokka.model.DProperty
 import org.jetbrains.dokka.model.DTypeAlias
@@ -29,7 +29,7 @@ import org.jetbrains.dokka.pages.Style
 
 abstract class VisualPageContentBuilder(
 	protected val contentBuilder: PageContentBuilder,
-	protected val documentables: Map<DRI, Documentable>
+	protected val documentableIndexes: DocumentableIndexes
 ) : D2StorybookPageContentBuilder {
 
 	override fun contentFor(d: Documentable): ContentNode? {
@@ -95,10 +95,10 @@ abstract class VisualPageContentBuilder(
 		val targetDri = targetTag.target ?: return null
 
 		if (targetDri.callable == null) {
-			return documentables[targetDri]?.let(::contentFor)
+			return documentableIndexes.documentables[targetDri]?.let(::contentFor)
 		}
 
-		val targetDocumentable = documentables[targetDri.copy(callable = null)]
+		val targetDocumentable = documentableIndexes.documentables[targetDri.copy(callable = null)]
 		if (targetDocumentable !is DClasslike) {
 			return null
 		}
@@ -111,7 +111,7 @@ abstract class VisualPageContentBuilder(
 			ContentStyle.TabbedContent.takeIf { property.type.isCollection() && !property.type.isMap() }
 		)
 
-		val propertyType = property.type.documentableIn(documentables)
+		val propertyType = property.type.documentableIn(documentableIndexes.documentables)
 			?: return null
 
 		val contentForPropertyType = contentFor(propertyType)

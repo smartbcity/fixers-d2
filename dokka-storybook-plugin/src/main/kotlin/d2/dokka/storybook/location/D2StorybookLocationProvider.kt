@@ -1,11 +1,10 @@
 package d2.dokka.storybook.location
 
-import d2.dokka.storybook.model.doc.d2DocTagExtra
-import d2.dokka.storybook.model.doc.tag.Parent
+import d2.dokka.storybook.model.doc.DocumentableIndexes
 import d2.dokka.storybook.model.doc.title
-import d2.dokka.storybook.model.doc.toRootDocumentable
 import d2.dokka.storybook.model.page.D2StorybookPageNode
 import d2.dokka.storybook.model.page.FileData
+import d2.dokka.storybook.model.page.recursiveDocumentables
 import org.jetbrains.dokka.base.resolvers.local.DokkaLocationProvider
 import org.jetbrains.dokka.base.resolvers.local.LocationProviderFactory
 import org.jetbrains.dokka.links.DRI
@@ -20,7 +19,6 @@ import org.jetbrains.dokka.pages.PageNode
 import org.jetbrains.dokka.pages.RootPageNode
 import org.jetbrains.dokka.plugability.DokkaContext
 import java.util.IdentityHashMap
-import kotlin.collections.HashMap
 
 class D2StorybookLocationProvider(
     pageGraphRoot: RootPageNode,
@@ -48,23 +46,7 @@ class D2StorybookLocationProvider(
         pageGraphRoot.children.forEach { registerPath(it, emptyList()) }
     }
 
-    private val documentableIndex = HashMap<DRI, Documentable>().apply {
-        fun registerDocumentable(page: PageNode) {
-            if (page is ContentPage) {
-                page.documentable
-                    ?.takeIf { it.dri != DRI.topLevel }
-                    ?.let { put(it.dri, it) }
-            }
-            page.children.forEach(::registerDocumentable)
-        }
-        registerDocumentable(pageGraphRoot)
-    }
-
-    private val parentMap = documentableIndex.mapValues { (_, documentable) ->
-        val parentDri = documentable.d2DocTagExtra().firstTagOfTypeOrNull<Parent>()?.target
-            ?: documentable.toRootDocumentable().dri
-        documentableIndex[parentDri]
-    }
+    private val documentableIndexes = DocumentableIndexes.from(pageGraphRoot.recursiveDocumentables())
 
     override fun resolve(dri: DRI, sourceSets: Set<DisplaySourceSet>, context: PageNode?): String? {
         return super.resolve(dri, sourceSets, context)
@@ -107,7 +89,7 @@ class D2StorybookLocationProvider(
             return null
         }
 
-        val targetDocumentable = documentableIndex[dri] ?: return null
+        val targetDocumentable = documentableIndexes.documentables[dri] ?: return null
         val targetRoot = targetDocumentable.firstAncestor()
         val contextRoot = context.documentable!!.firstAncestor()
 
@@ -124,7 +106,8 @@ class D2StorybookLocationProvider(
         get() = if (this is PackagePageNode) name else identifierToFilename(name)
 
     private fun Documentable.parent(): Documentable? {
-        return parentMap[dri]
+        return documentableIndexes.childToParentBiMap[dri]
+            ?.let(documentableIndexes.documentables::get)
     }
 
     private fun Documentable.firstAncestor(): Documentable {

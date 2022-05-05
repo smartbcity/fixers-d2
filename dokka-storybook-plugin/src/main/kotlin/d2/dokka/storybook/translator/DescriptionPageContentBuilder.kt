@@ -1,6 +1,6 @@
 package d2.dokka.storybook.translator
 
-import com.intellij.util.containers.BidirectionalMap
+import d2.dokka.storybook.model.doc.DocumentableIndexes
 import d2.dokka.storybook.model.doc.PageDocumentable
 import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.SectionDocumentable
@@ -9,7 +9,6 @@ import d2.dokka.storybook.model.render.D2TextStyle
 import d2.dokka.storybook.model.render.documentableIn
 import d2.dokka.storybook.model.render.toTypeString
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
-import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.DClasslike
 import org.jetbrains.dokka.model.DProperty
 import org.jetbrains.dokka.model.DTypeAlias
@@ -21,8 +20,7 @@ import org.jetbrains.dokka.pages.TextStyle
 
 internal abstract class DescriptionPageContentBuilder(
     protected val contentBuilder: PageContentBuilder,
-    protected val documentables: Map<DRI, Documentable>,
-    protected val childToParentMap: BidirectionalMap<DRI, DRI>
+    protected val documentableIndexes: DocumentableIndexes
 ): D2StorybookPageContentBuilder {
 
     protected abstract fun contentForComments(d: Documentable): List<ContentNode>
@@ -94,7 +92,7 @@ internal abstract class DescriptionPageContentBuilder(
     }
 
     private fun Documentable.pageLevel(): Int {
-        val parent = childToParentMap[dri]?.let(documentables::get)
+        val parent = documentableIndexes.childToParentBiMap[dri]?.let(documentableIndexes.documentables::get)
             ?: return 1
 
         val increaseCount = parent is RootDocumentable || parent is PageDocumentable || parent is SectionDocumentable
@@ -109,7 +107,7 @@ internal abstract class DescriptionPageContentBuilder(
         block(kind = ContentKind.Properties, elements = properties) { property ->
             text(property.name, styles = setOf(TextStyle.Italic))
 
-            val propertyTypeDocumentable = property.type.documentableIn(documentables)
+            val propertyTypeDocumentable = property.type.documentableIn(documentableIndexes.documentables)
             if (propertyTypeDocumentable == null) {
                 text(property.type.toTypeString(), styles = setOf(D2TextStyle.Code))
             } else {
