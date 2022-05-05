@@ -20,12 +20,16 @@ allprojects {
     }
 }
 
-fixers {
-    bundle {
-        id = "d2"
-        name = "D2"
-        description = "Dokka plugin for SmartB projects"
-        url = "https://gitlab.smartb.city/fixers/d2"
+subprojects {
+    plugins.withType(city.smartb.fixers.gradle.config.ConfigPlugin::class.java).whenPluginAdded {
+        fixers {
+            bundle {
+                id = "d2"
+                name = "D2"
+                description = "Dokka plugin for SmartB projects"
+                url = "https://gitlab.smartb.city/fixers/d2"
+            }
+        }
     }
 }
 
