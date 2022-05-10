@@ -105,7 +105,7 @@ If a property with a d2 documentable type misses an @example tag, it will attemp
 
 Defines a custom title for the documentation part of the documentable. If no title is specified, it will take the name of the object by default.
 
-#### @page
+#### @page (deprecated)
 
 Specifies an introduction for the page of the documentable, applied if and only if it has its own dedicated page (i.e. no parent). 
 
