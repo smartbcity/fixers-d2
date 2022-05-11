@@ -21,7 +21,7 @@ class BoringService {
      * So boring, can't help but sleep
      * @return true if slept, false else
      */
-    fun sleep(duration: Long): Boolean = false
+    fun sleep(duration: Long): Boolean = duration > 0
 
     /**
      * Would consume stuff if it weren't lazy
