@@ -1,13 +1,13 @@
-package d2.dokka.storybook.translator
+package d2.dokka.storybook.translator.description
 
 import d2.dokka.storybook.model.doc.DocumentableIndexes
 import d2.dokka.storybook.model.doc.PageDocumentable
 import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.SectionDocumentable
-import d2.dokka.storybook.model.doc.title
 import d2.dokka.storybook.model.render.D2TextStyle
 import d2.dokka.storybook.model.render.documentableIn
 import d2.dokka.storybook.model.render.toTypeString
+import d2.dokka.storybook.translator.block
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.model.DClasslike
 import org.jetbrains.dokka.model.DProperty
@@ -18,13 +18,10 @@ import org.jetbrains.dokka.pages.ContentNode
 import org.jetbrains.dokka.pages.ContentStyle
 import org.jetbrains.dokka.pages.TextStyle
 
-internal abstract class DescriptionPageContentBuilder(
-    protected val contentBuilder: PageContentBuilder,
-    protected val documentableIndexes: DocumentableIndexes
-): D2StorybookPageContentBuilder {
-
-    protected abstract fun contentForComments(d: Documentable): List<ContentNode>
-    protected abstract fun contentForDescription(d: Documentable): List<ContentNode>
+internal abstract class ModelDescriptionPageContentBuilder(
+    private val contentBuilder: PageContentBuilder,
+    override val documentableIndexes: DocumentableIndexes
+): DescriptionPageContentBuilder() {
 
     override fun contentFor(d: Documentable): ContentNode? {
         return when (d) {
@@ -85,20 +82,6 @@ internal abstract class DescriptionPageContentBuilder(
                 +contentForDescription(s)
             }
         }
-    }
-
-    private fun PageContentBuilder.DocumentableContentBuilder.buildTitle(d: Documentable) {
-        header(d.pageLevel(), d.title().substringAfterLast("/"))
-    }
-
-    private fun Documentable.pageLevel(): Int {
-        val parent = documentableIndexes.childToParentBiMap[dri]?.let(documentableIndexes.documentables::get)
-            ?: return 1
-
-        val increaseCount = parent is RootDocumentable || parent is PageDocumentable || parent is SectionDocumentable
-        val headerInc = if (increaseCount) 1 else 0
-
-        return parent.pageLevel() + headerInc
     }
 
     private fun PageContentBuilder.DocumentableContentBuilder.propertiesBlock(

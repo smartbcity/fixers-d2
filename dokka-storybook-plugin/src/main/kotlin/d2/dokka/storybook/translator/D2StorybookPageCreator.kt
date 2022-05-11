@@ -116,14 +116,12 @@ class D2StorybookPageCreator(
 
     private inner class InnerMainPageContentBuilder:
         MainPageContentBuilder(contentBuilder, documentableIndexes)
-    private inner class InnerDescriptionPageContentBuilder:
-        DescriptionPageContentBuilder(contentBuilder, documentableIndexes) {
-        override fun contentForComments(
-            d: Documentable
-        ): List<ContentNode> = this@D2StorybookPageCreator.contentForComments(d)
-        override fun contentForDescription(
-            d: Documentable
-        ): List<ContentNode> = this@D2StorybookPageCreator.contentForDescription(d)
+    private inner class InnerModelDescriptionPageContentBuilder:
+        ModelDescriptionPageContentBuilder(contentBuilder, documentableIndexes) {
+        override fun contentForComments(d: Documentable): List<ContentNode>
+            = this@D2StorybookPageCreator.contentForComments(d)
+        override fun contentForDescription(d: Documentable): List<ContentNode>
+            = this@D2StorybookPageCreator.contentForDescription(d)
     }
     private inner class InnerVisualPageContentBuilder: VisualPageContentBuilder(contentBuilder, documentableIndexes)
     private inner class InnerRootPageContentBuilder: RootPageContentBuilder(contentBuilder)
