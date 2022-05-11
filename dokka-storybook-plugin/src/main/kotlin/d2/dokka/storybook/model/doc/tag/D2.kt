@@ -14,7 +14,8 @@ enum class D2Type(val id: String, val order: Int) {
 	FUNCTION("function", order = 20),
 	COMMAND("command", order = 30),
 	QUERY("query", order = 30),
-	EVENT("event", order = 40);
+	EVENT("event", order = 40),
+	SERVICE("service", order = 50);
 
 	companion object {
 		operator fun get(id: String) = values().find { it.id == id.toLowerCaseAsciiOnly() }

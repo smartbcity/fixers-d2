@@ -5,9 +5,16 @@ import d2.dokka.storybook.model.doc.PageDocumentable
 import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.SectionDocumentable
 import d2.dokka.storybook.model.doc.asD2TypeDocumentable
+import d2.dokka.storybook.model.doc.d2Type
+import d2.dokka.storybook.model.doc.tag.D2Type
 import d2.dokka.storybook.model.doc.visualType
 import d2.dokka.storybook.model.page.FileData
 import d2.dokka.storybook.model.page.ModelPageNode
+import d2.dokka.storybook.translator.description.ModelDescriptionPageContentBuilder
+import d2.dokka.storybook.translator.description.ServiceDescriptionPageContentBuilder
+import d2.dokka.storybook.translator.root.MainPageContentBuilder
+import d2.dokka.storybook.translator.root.RootPageContentBuilder
+import d2.dokka.storybook.translator.visual.VisualPageContentBuilder
 import org.jetbrains.dokka.base.DokkaBaseConfiguration
 import org.jetbrains.dokka.base.signatures.SignatureProvider
 import org.jetbrains.dokka.base.transformers.pages.comments.CommentsToContentConverter
@@ -92,7 +99,7 @@ class D2StorybookPageCreator(
     }
 
     private fun Documentable.toModelPageNode(fileData: FileData): ModelPageNode? {
-        return fileData.contentBuilder().contentFor(this)
+        return fileData.contentBuilder(d2Type()!!).contentFor(this)
             ?.let { content ->
                 ModelPageNode(
                     name = this.name.orEmpty(),
@@ -105,19 +112,31 @@ class D2StorybookPageCreator(
             }
     }
 
-    private fun FileData.contentBuilder() = when (this) {
+    private fun FileData.contentBuilder(d2Type: D2Type) = when (this) {
         FileData.ROOT -> InnerRootPageContentBuilder()
         FileData.MAIN -> InnerMainPageContentBuilder()
-        FileData.DESCRIPTION -> InnerDescriptionPageContentBuilder()
+        FileData.DESCRIPTION -> d2Type.descriptionContentBuilder()
         FileData.VISUAL_JSON,
         FileData.VISUAL_KOTLIN,
         FileData.VISUAL_YAML -> InnerVisualPageContentBuilder()
+    }
+
+    private fun D2Type.descriptionContentBuilder() = when (this) {
+        D2Type.SERVICE -> InnerServiceDescriptionPageContentBuilder()
+        else -> InnerModelDescriptionPageContentBuilder()
     }
 
     private inner class InnerMainPageContentBuilder:
         MainPageContentBuilder(contentBuilder, documentableIndexes)
     private inner class InnerModelDescriptionPageContentBuilder:
         ModelDescriptionPageContentBuilder(contentBuilder, documentableIndexes) {
+        override fun contentForComments(d: Documentable): List<ContentNode>
+            = this@D2StorybookPageCreator.contentForComments(d)
+        override fun contentForDescription(d: Documentable): List<ContentNode>
+            = this@D2StorybookPageCreator.contentForDescription(d)
+    }
+    private inner class InnerServiceDescriptionPageContentBuilder:
+        ServiceDescriptionPageContentBuilder(contentBuilder, documentableIndexes) {
         override fun contentForComments(d: Documentable): List<ContentNode>
             = this@D2StorybookPageCreator.contentForComments(d)
         override fun contentForDescription(d: Documentable): List<ContentNode>

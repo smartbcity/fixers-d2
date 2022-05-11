@@ -72,11 +72,21 @@ fun Documentable.d2DocTagExtra() = (this as? WithExtraProperties<Documentable>)
 	?.extra?.get(D2DocTagExtra)
 	?: D2DocTagExtra(emptyList())
 
-fun Documentable.visualType() = when (this) {
+fun Documentable.visualType() = when (d2Type()) {
+	D2Type.SERVICE -> serviceVisualType()
+	null -> null
+	else -> modelVisualType()
+}
+
+private fun Documentable.modelVisualType() = when (this) {
 	is RootDocumentable -> pageDocumentation?.visual?.type ?: VisualType.NONE
 	is PageDocumentable -> d2DocTagExtra().firstTagOfTypeOrNull<Visual>()?.type ?: VisualType.NONE
 	is SectionDocumentable -> d2DocTagExtra().firstTagOfTypeOrNull<Visual>()?.type ?: VisualType.NONE
 	is DClasslike -> d2DocTagExtra().firstTagOfTypeOrNull<Visual>()?.type ?: VisualType.DEFAULT
 	is DTypeAlias -> d2DocTagExtra().firstTagOfTypeOrNull<Visual>()?.type
 	else -> null
+}
+
+private fun Documentable.serviceVisualType() = when (this) {
+	else -> d2DocTagExtra().firstTagOfTypeOrNull<Visual>()?.type ?: VisualType.NONE
 }
