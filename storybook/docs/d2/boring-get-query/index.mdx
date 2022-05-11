@@ -1,0 +1,17 @@
+import BoringGetQueryDesc from './desc.md'
+import BoringGetQueryVisualJson from './visualJson.json'
+import { CodeHighlighter, DescriptedCode } from '@smartb/g2-documentation'
+import { Meta } from '@storybook/addon-docs/blocks'
+
+<Meta title="BoringGetQuery" parameters={{ previewTabs: { canvas: { hidden: true } } }} />
+
+<DescriptedCode
+  leftElement={<BoringGetQueryDesc />}
+  rightElement={
+    <CodeHighlighter
+      object={BoringGetQueryVisualJson}
+      language={"json"}
+      title={"Example"}
+    />
+  }
+/>

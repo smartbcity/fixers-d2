@@ -1,0 +1,20 @@
+import { CodeHighlighter, DescriptedCode } from '@smartb/g2-documentation'
+import ExpectedResultDesc from './desc.md'
+import ExpectedResultVisualJson from './visualJson.json'
+import { Meta } from '@storybook/addon-docs/blocks'
+import ReallyExpectedResultIndex from '../really-expected-result/index.mdx'
+
+<Meta title="ExpectedResult" parameters={{ previewTabs: { canvas: { hidden: true } } }} />
+
+<DescriptedCode
+  leftElement={<ExpectedResultDesc />}
+  rightElement={
+    <CodeHighlighter
+      object={ExpectedResultVisualJson}
+      language={"json"}
+      title={"Example"}
+    />
+  }
+/>
+
+<ReallyExpectedResultIndex />
