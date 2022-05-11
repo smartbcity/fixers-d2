@@ -1,6 +1,8 @@
 package d2.dokka.storybook.translator.description
 
+import d2.dokka.storybook.model.Constants
 import d2.dokka.storybook.model.doc.DocumentableIndexes
+import d2.dokka.storybook.model.doc.directAnnotation
 import d2.dokka.storybook.model.render.D2TextStyle
 import d2.dokka.storybook.model.render.documentableIn
 import d2.dokka.storybook.model.render.isF2
@@ -10,10 +12,12 @@ import d2.dokka.storybook.model.render.isF2Supplier
 import d2.dokka.storybook.model.render.toTypeString
 import d2.dokka.storybook.translator.block
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
+import org.jetbrains.dokka.model.ArrayValue
 import org.jetbrains.dokka.model.DClasslike
 import org.jetbrains.dokka.model.DFunction
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.GenericTypeConstructor
+import org.jetbrains.dokka.model.LiteralValue
 import org.jetbrains.dokka.model.Projection
 import org.jetbrains.dokka.model.TypeAliased
 import org.jetbrains.dokka.pages.ContentKind
@@ -50,7 +54,9 @@ internal abstract class ServiceDescriptionPageContentBuilder(
         functions: Collection<DFunction>,
     ) {
         block(kind = ContentKind.Properties, elements = functions) { function ->
-            functionSignature(FunctionSignature.of(function))
+            functionSignature(function)
+            text("<br/>")
+            functionAccess(function)
 
             group(setOf(function.dri), function.sourceSets.toSet(), ContentKind.Main) {
                 function.documentation.forEach { (_, docNode) ->
@@ -64,16 +70,17 @@ internal abstract class ServiceDescriptionPageContentBuilder(
         }
     }
 
-    private fun PageContentBuilder.DocumentableContentBuilder.functionSignature(function: FunctionSignature) {
-        text(function.name, styles = setOf(TextStyle.Bold))
+    private fun PageContentBuilder.DocumentableContentBuilder.functionSignature(function: DFunction) {
+        val signature = FunctionSignature.of(function)
+        text(signature.name, styles = setOf(TextStyle.Bold))
         text("(")
-        function.params.forEachIndexed { i, (name, type) ->
+        signature.params.forEachIndexed { i, (name, type) ->
             val separator = if (i > 0) ", " else ""
             text("$separator$name:")
             type(type)
         }
         text(")")
-        function.returnType?.let {
+        signature.returnType?.let {
             text(":")
             type(it)
         }
@@ -86,6 +93,21 @@ internal abstract class ServiceDescriptionPageContentBuilder(
         } else {
             link(text = type.toTypeString(), address = typeDocumentable.dri, styles = setOf(D2TextStyle.Code))
         }
+    }
+
+    private fun PageContentBuilder.DocumentableContentBuilder.functionAccess(function: DFunction) {
+        function.directAnnotation(Constants.Annotation.PERMIT_ALL)
+            ?.let { text("Access: public", styles = setOf(TextStyle.Italic)) }
+
+        function.directAnnotation(Constants.Annotation.ROLES_ALLOWED)
+            ?.let { annotation ->
+                val roles = (annotation.params["value"] as? ArrayValue)
+                    ?.value
+                    .orEmpty()
+                    .map { it as LiteralValue }
+                    .map(LiteralValue::text)
+                text("Access: ${roles.joinToString(", ")}", styles = setOf(TextStyle.Italic))
+            }
     }
 
     private data class FunctionSignature(

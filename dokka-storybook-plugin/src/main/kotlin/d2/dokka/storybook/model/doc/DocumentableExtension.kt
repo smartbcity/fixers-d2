@@ -7,7 +7,9 @@ import d2.dokka.storybook.model.doc.tag.Order
 import d2.dokka.storybook.model.doc.tag.Title
 import d2.dokka.storybook.model.doc.tag.Visual
 import d2.dokka.storybook.model.doc.tag.VisualType
+import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.sureClassNames
+import org.jetbrains.dokka.model.Annotations
 import org.jetbrains.dokka.model.DClasslike
 import org.jetbrains.dokka.model.DTypeAlias
 import org.jetbrains.dokka.model.Documentable
@@ -90,3 +92,11 @@ private fun Documentable.modelVisualType() = when (this) {
 private fun Documentable.serviceVisualType() = when (this) {
 	else -> d2DocTagExtra().firstTagOfTypeOrNull<Visual>()?.type ?: VisualType.NONE
 }
+
+fun Documentable.directAnnotation(dri: DRI): Annotations.Annotation? = (this as? WithExtraProperties<Documentable>)
+	?.extra
+	?.get(Annotations)
+	?.directAnnotations
+	.orEmpty()
+	.flatMap { it.value }
+	.firstOrNull { annotation -> annotation.dri == dri }
