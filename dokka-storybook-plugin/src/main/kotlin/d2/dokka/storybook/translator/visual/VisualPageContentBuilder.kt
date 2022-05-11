@@ -1,4 +1,4 @@
-package d2.dokka.storybook.translator
+package d2.dokka.storybook.translator.visual
 
 import d2.dokka.storybook.model.doc.DocumentableIndexes
 import d2.dokka.storybook.model.doc.PageDocumentable
@@ -16,6 +16,8 @@ import d2.dokka.storybook.model.doc.tag.WithTarget
 import d2.dokka.storybook.model.render.documentableIn
 import d2.dokka.storybook.model.render.isCollection
 import d2.dokka.storybook.model.render.isMap
+import d2.dokka.storybook.translator.D2StorybookPageContentBuilder
+import d2.dokka.storybook.translator.codeBlock
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.model.DClasslike
 import org.jetbrains.dokka.model.DProperty
@@ -28,8 +30,8 @@ import org.jetbrains.dokka.pages.ContentStyle
 import org.jetbrains.dokka.pages.Style
 
 abstract class VisualPageContentBuilder(
-	protected val contentBuilder: PageContentBuilder,
-	protected val documentableIndexes: DocumentableIndexes
+    protected val contentBuilder: PageContentBuilder,
+    protected val documentableIndexes: DocumentableIndexes
 ) : D2StorybookPageContentBuilder {
 
 	override fun contentFor(d: Documentable): ContentNode? {
@@ -122,8 +124,8 @@ abstract class VisualPageContentBuilder(
 	}
 
 	private fun contentFor(
-		property: DProperty, kind: ContentKind = ContentKind.Main, styles: Set<Style> = emptySet(),
-		propertyValue: PageContentBuilder.DocumentableContentBuilder.() -> Unit
+        property: DProperty, kind: ContentKind = ContentKind.Main, styles: Set<Style> = emptySet(),
+        propertyValue: PageContentBuilder.DocumentableContentBuilder.() -> Unit
 	): ContentGroup {
 		return contentBuilder.contentFor(property, sourceSets = property.sourceSets, kind = kind, styles = styles) {
 			text(property.name)

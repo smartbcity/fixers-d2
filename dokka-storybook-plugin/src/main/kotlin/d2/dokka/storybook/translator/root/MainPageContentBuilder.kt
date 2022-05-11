@@ -1,4 +1,4 @@
-package d2.dokka.storybook.translator
+package d2.dokka.storybook.translator.root
 
 import d2.dokka.storybook.model.doc.D2Documentable
 import d2.dokka.storybook.model.doc.DocumentableIndexes
@@ -9,6 +9,7 @@ import d2.dokka.storybook.model.doc.d2Type
 import d2.dokka.storybook.model.doc.visualType
 import d2.dokka.storybook.model.doc.weight
 import d2.dokka.storybook.model.page.FileData
+import d2.dokka.storybook.translator.D2StorybookPageContentBuilder
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.sureClassNames
