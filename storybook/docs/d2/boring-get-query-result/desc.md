@@ -9,7 +9,7 @@
   
 <article>
 
-*boringStuff* [`BoringInterface?`](#boring-object) 
+***boringStuff*** [`BoringInterface?`](#boring-object) 
 
 retrieved stuff
 
