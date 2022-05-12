@@ -88,7 +88,7 @@ internal abstract class ModelDescriptionPageContentBuilder(
         properties: Collection<DProperty>,
     ) {
         block(kind = ContentKind.Properties, elements = properties) { property ->
-            text(property.name, styles = setOf(TextStyle.Italic))
+            text(property.name, styles = setOf(TextStyle.Italic, TextStyle.Bold))
 
             val propertyTypeDocumentable = property.type.documentableIn(documentableIndexes.documentables)
             if (propertyTypeDocumentable == null) {

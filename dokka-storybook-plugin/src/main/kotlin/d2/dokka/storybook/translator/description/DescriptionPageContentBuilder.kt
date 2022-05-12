@@ -24,7 +24,9 @@ abstract class DescriptionPageContentBuilder: D2StorybookPageContentBuilder {
         val parent = documentableIndexes.childToParentBiMap[dri]?.let(documentableIndexes.documentables::get)
             ?: return 1
 
-        val increaseCount = parent is RootDocumentable || parent is PageDocumentable || parent is SectionDocumentable
+        val increaseCount = (parent is RootDocumentable && parent.pageDocumentation != null) ||
+                parent is PageDocumentable ||
+                parent is SectionDocumentable
         val headerInc = if (increaseCount) 1 else 0
 
         return parent.pageLevel() + headerInc

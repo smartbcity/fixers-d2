@@ -50,8 +50,8 @@ fun Documentable.toSectionDocumentable() = SectionDocumentable(
 
 fun Documentable.d2Type() = d2DocTagExtra().firstTagOfTypeOrNull<D2>()?.type
 fun Documentable.weight() = d2DocTagExtra().firstTagOfTypeOrNull<Order>()?.weight
-fun Documentable.title() = if (this is RootDocumentable) {
-	pageDocumentation?.title?.body ?: name.removeSuffix(ROOT_SUFFIX)
+fun Documentable.title(): String = if (this is RootDocumentable) {
+	pageDocumentation?.title?.body ?: children.first().title()
 } else {
 	d2DocTagExtra().firstTagOfTypeOrNull<Title>()?.body ?: name!!
 }
