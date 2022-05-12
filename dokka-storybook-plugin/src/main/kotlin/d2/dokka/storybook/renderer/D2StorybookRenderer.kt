@@ -38,14 +38,14 @@ open class D2StorybookRenderer(
         FileData.VISUAL_JSON to VisualJsonPageContentRenderer(),
         FileData.VISUAL_KOTLIN to VisualKotlinPageContentRenderer(),
 //        FileData.VISUAL_YAML to VisualYamlPageContentRenderer(),
-        "Default" to MarkdownRenderer(context)
     )
+    private val defaultRenderer = MarkdownRenderer(context)
 
     private fun PageNode.renderer(): D2ContentRenderer {
-        return if(this is ModelPageNode) {
-            renderers[this.fileData]!!
+        return if (this is ModelPageNode) {
+            renderers[fileData]!!
         } else {
-            renderers["Default"]!!
+            defaultRenderer
         }
     }
 
@@ -97,4 +97,3 @@ open class D2StorybookRenderer(
         write(path, renderer.buildPage(page, locationProvider, renderer::buildPageContent), "")
     }
 }
-
