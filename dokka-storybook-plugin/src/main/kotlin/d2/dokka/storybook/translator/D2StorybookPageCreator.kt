@@ -99,7 +99,7 @@ class D2StorybookPageCreator(
     }
 
     private fun Documentable.toModelPageNode(fileData: FileData): ModelPageNode? {
-        return fileData.contentBuilder(d2Type()!!).contentFor(this)
+        return fileData.contentBuilder(d2Type()).contentFor(this)
             ?.let { content ->
                 ModelPageNode(
                     name = this.name.orEmpty(),
@@ -112,7 +112,7 @@ class D2StorybookPageCreator(
             }
     }
 
-    private fun FileData.contentBuilder(d2Type: D2Type) = when (this) {
+    private fun FileData.contentBuilder(d2Type: D2Type?) = when (this) {
         FileData.ROOT -> InnerRootPageContentBuilder()
         FileData.MAIN -> InnerMainPageContentBuilder()
         FileData.DESCRIPTION -> d2Type.descriptionContentBuilder()
@@ -121,7 +121,7 @@ class D2StorybookPageCreator(
         FileData.VISUAL_YAML -> InnerVisualPageContentBuilder()
     }
 
-    private fun D2Type.descriptionContentBuilder() = when (this) {
+    private fun D2Type?.descriptionContentBuilder() = when (this) {
         D2Type.SERVICE -> InnerServiceDescriptionPageContentBuilder()
         else -> InnerModelDescriptionPageContentBuilder()
     }
