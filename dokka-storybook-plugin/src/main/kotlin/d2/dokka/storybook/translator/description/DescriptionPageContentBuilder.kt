@@ -17,10 +17,10 @@ abstract class DescriptionPageContentBuilder: D2StorybookPageContentBuilder {
     protected abstract fun contentForDescription(d: Documentable): List<ContentNode>
 
     protected fun PageContentBuilder.DocumentableContentBuilder.buildTitle(d: Documentable) {
-        header(d.pageLevel(), d.title().substringAfterLast("/"))
+        header(d.headerLevel(), d.title().substringAfterLast("/"))
     }
 
-    protected fun Documentable.pageLevel(): Int {
+    protected fun Documentable.headerLevel(): Int {
         val parent = documentableIndexes.childToParentBiMap[dri]?.let(documentableIndexes.documentables::get)
             ?: return 1
 
@@ -29,6 +29,6 @@ abstract class DescriptionPageContentBuilder: D2StorybookPageContentBuilder {
                 parent is SectionDocumentable
         val headerInc = if (increaseCount) 1 else 0
 
-        return parent.pageLevel() + headerInc
+        return parent.headerLevel() + headerInc
     }
 }

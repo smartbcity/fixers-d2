@@ -9,7 +9,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import org.jetbrains.dokka.DokkaException
 import org.jetbrains.dokka.base.renderers.OutputWriter
 import org.jetbrains.dokka.pages.ContentPage
 import org.jetbrains.dokka.pages.ModulePageNode
@@ -32,9 +31,9 @@ open class D2StorybookRenderer(
 
     protected open val preprocessors = context.plugin<D2StorybookPlugin>().query { storybookPreprocessors }
 
-    private val renderers = mutableMapOf<Any, D2ContentRenderer>(
-        FileData.ROOT to MainPageContentRenderer(),
-        FileData.MAIN to MainPageContentRenderer(),
+    private val renderers = mutableMapOf(
+        FileData.ROOT to MainPageContentRenderer(true),
+        FileData.MAIN to MainPageContentRenderer(false),
         FileData.DESCRIPTION to DescriptionPageContentRenderer(context),
         FileData.VISUAL_JSON to VisualJsonPageContentRenderer(),
         FileData.VISUAL_KOTLIN to VisualKotlinPageContentRenderer(),

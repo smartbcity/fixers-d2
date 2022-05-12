@@ -19,7 +19,9 @@ import org.jetbrains.dokka.pages.ContentNode
 import org.jetbrains.dokka.pages.ContentPage
 import org.jetbrains.dokka.pages.ContentText
 
-open class MainPageContentRenderer: D2ContentRenderer {
+open class MainPageContentRenderer(
+    private val isRoot: Boolean
+): D2ContentRenderer {
 
     companion object {
         val RAW_LOADED_FILES = listOf(FileData.VISUAL_KOTLIN, FileData.VISUAL_YAML)
@@ -128,6 +130,8 @@ open class MainPageContentRenderer: D2ContentRenderer {
     }
 
     open fun ReactFileBuilder.buildFileHeader(pageContext: ContentPage) {
+        if (!isRoot) return
+
         val name = pageContext.documentable!!.title()
         addImport(CodeImport(path = "@storybook/addon-docs/blocks", element = "Meta", isComposite = true))
         write {
