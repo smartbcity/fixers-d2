@@ -6,8 +6,9 @@ import d2.dokka.storybook.model.code.BasicImportedElement
 import d2.dokka.storybook.model.code.CodeElement
 import d2.dokka.storybook.model.code.imports.CodeImport
 import d2.dokka.storybook.model.code.react.BasicComponent
-import d2.dokka.storybook.model.code.react.CodeHighlighterComponent
-import d2.dokka.storybook.model.code.react.DescriptedCodeComponent
+import d2.dokka.storybook.model.code.react.g2.CodeHighlighterComponent
+import d2.dokka.storybook.model.code.react.g2.DescriptedCodeComponent
+import d2.dokka.storybook.model.code.react.storybook.MetaComponent
 import d2.dokka.storybook.model.doc.title
 import d2.dokka.storybook.model.page.FileData
 import org.jetbrains.dokka.links.DRI
@@ -99,16 +100,12 @@ open class MainPageContentRenderer(
         node.dci.dri.forEach { childDri ->
             val import = buildImport(childDri, FileData.MAIN, node.sourceSets, pageContext)
                 ?: return@forEach
-            val component = BasicComponent(
-                identifier = import.element,
-                importData = import
-            )
+
             appendNewLine()
             appendNewLine()
-            append(component)
+            append(BasicComponent(importData = import))
         }
     }
-
 
     open fun buildImport(target: DRI, fileData: FileData, sourceSets: Set<DisplaySourceSet>, pageContext: ContentPage): CodeImport? {
         val fullDri = target.copy(extra = fileData.id)
@@ -133,10 +130,6 @@ open class MainPageContentRenderer(
         if (!isRoot) return
 
         val name = pageContext.documentable!!.title()
-        addImport(CodeImport(path = "@storybook/addon-docs/blocks", element = "Meta", isComposite = true))
-        write {
-            append("<Meta title=\"$name\" parameters={{ previewTabs: { canvas: { hidden: true } } }} />")
-            append("\n\n")
-        }
+        append(MetaComponent(name))
     }
 }

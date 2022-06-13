@@ -4,9 +4,10 @@ import d2.dokka.storybook.model.code.CodeElement
 import d2.dokka.storybook.model.code.WithImport
 import d2.dokka.storybook.model.code.WithParams
 import d2.dokka.storybook.model.code.imports.CodeImport
+import d2.dokka.storybook.model.code.react.JsonNode
+import d2.dokka.storybook.model.code.react.LiteralNode
 import d2.dokka.storybook.model.code.react.ReactComponent
 import d2.dokka.storybook.model.code.react.ReactNode
-import d2.dokka.storybook.model.code.react.StringNode
 
 class ReactFileBuilder(
     override val builder: StringBuilder = StringBuilder()
@@ -19,14 +20,14 @@ class ReactFileBuilder(
         return builder.toString()
     }
 
-    fun append(element: CodeElement, indentLevel: Int = 0) {
+    fun append(element: CodeElement, indentLevel: Int = 0, indentFirstLine: Boolean = true) {
         if (element is WithImport) {
             addImport(element.importData)
         }
 
         when (element) {
-            is ReactNode -> append(element, indentLevel)
-            else -> append(element.identifier, indentLevel)
+            is ReactNode -> append(element, indentLevel, indentFirstLine)
+            else -> append(element.identifier, actualIndentLevel(indentLevel, indentFirstLine))
         }
     }
 
@@ -34,17 +35,45 @@ class ReactFileBuilder(
         append("\n")
     }
 
-    private fun append(node: ReactNode, indentLevel: Int) {
+    private fun append(node: ReactNode, indentLevel: Int, indentFirstLine: Boolean) {
         when (node) {
-            is StringNode -> append(node.toString(), indentLevel)
-            is ReactComponent -> appendReactComponent(node, indentLevel)
+            is LiteralNode -> append(node, indentLevel, indentFirstLine)
+            is JsonNode -> append(node, indentLevel, indentFirstLine)
+            is ReactComponent -> append(node, indentLevel, indentFirstLine)
+            else -> throw NotImplementedError("Unsupported react node type: ${node::class.simpleName}")
         }
     }
 
-    private fun appendReactComponent(component: ReactComponent, indentLevel: Int) {
+    private fun append(node: LiteralNode, indentLevel: Int, indentFirstLine: Boolean) {
+        append(node.identifier, actualIndentLevel(indentLevel, indentFirstLine))
+    }
+
+    private fun append(node: JsonNode, indentLevel: Int, indentFirstLine: Boolean) {
+        append("{", actualIndentLevel(indentLevel, indentFirstLine))
+        node.params.entries.forEachIndexed { index, (key, value) ->
+            appendNewLine()
+            append("$key: ", indentLevel + 1)
+            when (value) {
+                is ReactNode -> append(value, indentLevel + 1, false)
+                else -> append(value.toString())
+            }
+            if (index < node.params.size - 1) {
+                append(",")
+                appendNewLine()
+            }
+        }
+        if (node.params.isEmpty()) {
+            append("}")
+        } else {
+            appendNewLine()
+            append("}", indentLevel)
+        }
+    }
+
+    private fun append(component: ReactComponent, indentLevel: Int, indentFirstLine: Boolean) {
         when {
-            component.params.isEmpty() -> appendSimpleComponent(component, indentLevel)
-            else -> appendComplexComponent(component, indentLevel)
+            component.params.isEmpty() -> appendSimpleComponent(component, actualIndentLevel(indentLevel, indentFirstLine))
+            else -> appendComplexComponent(component, indentLevel, indentFirstLine)
         }
     }
 
@@ -52,8 +81,8 @@ class ReactFileBuilder(
         append("<${component.identifier} />", indentLevel)
     }
 
-    private fun appendComplexComponent(component: ReactComponent, indentLevel: Int) {
-        append("<${component.identifier}", indentLevel)
+    private fun appendComplexComponent(component: ReactComponent, indentLevel: Int, indentFirstLine: Boolean) {
+        append("<${component.identifier}", actualIndentLevel(indentLevel, indentFirstLine))
         appendNewLine()
 
         component.params.map { (key, value) ->
@@ -102,4 +131,6 @@ class ReactFileBuilder(
     }
 
     private fun CodeImport.fullPath() = if (withRawLoader) "!!raw-loader!$path" else path
+
+    private fun actualIndentLevel(indentLevel: Int, indentFirstLine: Boolean) = if (indentFirstLine) indentLevel else 0
 }
