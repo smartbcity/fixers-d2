@@ -132,8 +132,8 @@ internal abstract class MainPageContentBuilder(
         val weightMap = this.associate { d -> d.dri to (d.weight() ?: Int.MAX_VALUE) }
         return this.map(Documentable::dri)
             .toSortedSet { dri1, dri2 ->
-                compareWeights(weightMap[dri1], weightMap[dri2]).takeIf { it != 0 }
-                    ?: compareWeights(typeMap[dri1]?.order, typeMap[dri2]?.order).takeIf { it != 0 }
+                compareWeights(typeMap[dri1]?.order, typeMap[dri2]?.order).takeIf { it != 0 }
+                    ?: compareWeights(weightMap[dri1], weightMap[dri2]).takeIf { it != 0 }
                     ?: dri1.sureClassNames.compareTo(dri2.sureClassNames, true)
             }
     }

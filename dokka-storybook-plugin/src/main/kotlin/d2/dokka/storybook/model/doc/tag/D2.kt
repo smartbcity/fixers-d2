@@ -9,13 +9,14 @@ data class D2(override val root: DocTag) : WithTextBody {
 
 enum class D2Type(val id: String, val order: Int) {
 	PAGE("page", order = 0),
-	SECTION("section", order = 0),
+	SERVICE("service", order = 5),
 	MODEL("model", order = 10),
 	FUNCTION("function", order = 20),
 	COMMAND("command", order = 30),
 	QUERY("query", order = 30),
 	EVENT("event", order = 40),
-	SERVICE("service", order = 50);
+	RESULT("result", order = 40),
+	SECTION("section", order = 50);
 
 	companion object {
 		operator fun get(id: String) = values().find { it.id == id.toLowerCaseAsciiOnly() }
