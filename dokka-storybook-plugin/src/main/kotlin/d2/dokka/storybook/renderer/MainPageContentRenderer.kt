@@ -11,6 +11,7 @@ import d2.dokka.storybook.model.code.react.g2.DescriptedCodeComponent
 import d2.dokka.storybook.model.code.react.storybook.MetaComponent
 import d2.dokka.storybook.model.doc.title
 import d2.dokka.storybook.model.page.FileData
+import d2.dokka.storybook.model.render.D2ContentKind
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.sureClassNames
 import org.jetbrains.dokka.model.DisplaySourceSet
@@ -49,9 +50,9 @@ open class MainPageContentRenderer(
 
     open fun ReactFileBuilder.buildGroup(node: ContentGroup, pageContext: ContentPage) {
         when (node.dci.kind) {
-            ContentKind.Main -> node.children.forEach { child -> buildContentNode(child, pageContext) }
-            ContentKind.Source -> importSources(node, pageContext)
-            ContentKind.Extensions -> importExtensions(node, pageContext)
+            D2ContentKind.Container -> node.children.forEach { child -> buildContentNode(child, pageContext) }
+            D2ContentKind.Source -> importSources(node, pageContext)
+            D2ContentKind.Children -> importExtensions(node, pageContext)
             ContentKind.Empty -> Unit
             else -> throw IllegalArgumentException("Cannot render ContentGroup of kind [${node.dci.kind}] in a Main page")
         }
@@ -87,8 +88,8 @@ open class MainPageContentRenderer(
         val codeImport = buildImport(parent.dci.dri.first(), fileData, parent.sourceSets, pageContext)
 
         return when (this.dci.kind) {
-            ContentKind.Comment -> BasicComponent(importData = codeImport!!)
-            ContentKind.Sample -> {
+            D2ContentKind.Description -> BasicComponent(importData = codeImport!!)
+            D2ContentKind.Visual -> {
                 val visual = BasicImportedElement(importData = codeImport!!)
                 CodeHighlighterComponent(displayed = visual, language = fileData.language.id, title = "Example")
             }

@@ -2,10 +2,10 @@ package d2.dokka.storybook.translator.root
 
 import d2.dokka.storybook.model.doc.PageDocumentable
 import d2.dokka.storybook.model.doc.RootDocumentable
+import d2.dokka.storybook.model.render.D2ContentKind
 import d2.dokka.storybook.translator.D2StorybookPageContentBuilder
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.model.Documentable
-import org.jetbrains.dokka.pages.ContentKind
 import org.jetbrains.dokka.pages.ContentNode
 
 internal abstract class RootPageContentBuilder(
@@ -24,7 +24,7 @@ internal abstract class RootPageContentBuilder(
         return contentBuilder.contentFor(
             dri = r.dri,
             sourceSets = r.sourceSets,
-            kind = ContentKind.Extensions
+            kind = D2ContentKind.Children
         ) {}
     }
 }

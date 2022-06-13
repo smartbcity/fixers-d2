@@ -9,6 +9,7 @@ import d2.dokka.storybook.model.doc.d2Type
 import d2.dokka.storybook.model.doc.visualType
 import d2.dokka.storybook.model.doc.weight
 import d2.dokka.storybook.model.page.FileData
+import d2.dokka.storybook.model.render.D2ContentKind
 import d2.dokka.storybook.translator.D2StorybookPageContentBuilder
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.links.DRI
@@ -17,7 +18,6 @@ import org.jetbrains.dokka.model.DClasslike
 import org.jetbrains.dokka.model.DTypeAlias
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.pages.ContentGroup
-import org.jetbrains.dokka.pages.ContentKind
 import org.jetbrains.dokka.pages.ContentNode
 import java.util.SortedSet
 
@@ -39,10 +39,10 @@ internal abstract class MainPageContentBuilder(
 
     private fun contentFor(c: DClasslike): ContentNode {
         return contentFor(c)  {
-            group(setOf(c.dri), kind = ContentKind.Source) {
-                text(FileData.DESCRIPTION.id, kind = ContentKind.Comment)
+            group(setOf(c.dri), kind = D2ContentKind.Source) {
+                descriptionFile()
                 c.visualType()?.fileData?.let { fileData ->
-                    text(fileData.id, kind = ContentKind.Sample)
+                    visualFile(fileData)
                 }
             }
         }
@@ -50,10 +50,10 @@ internal abstract class MainPageContentBuilder(
 
     private fun contentFor(t: DTypeAlias): ContentNode {
         return contentFor(t) {
-            group(setOf(t.dri), kind = ContentKind.Source) {
-                text(FileData.DESCRIPTION.id, kind = ContentKind.Comment)
+            group(setOf(t.dri), kind = D2ContentKind.Source) {
+                descriptionFile()
                 t.visualType()?.fileData?.let { fileData ->
-                    text(fileData.id, kind = ContentKind.Sample)
+                    visualFile(fileData)
                 }
             }
         }
@@ -61,13 +61,13 @@ internal abstract class MainPageContentBuilder(
 
     private fun contentFor(r: RootDocumentable): ContentNode {
         return contentFor(r) {
-            group(setOf(r.dri), kind = ContentKind.Source) {
+            group(setOf(r.dri), kind = D2ContentKind.Source) {
                 if (r.hasDescription) {
-                    text(FileData.DESCRIPTION.id, kind = ContentKind.Comment)
+                    descriptionFile()
                 }
                 if (r.hasVisual) {
                     r.pageDocumentation?.visual?.type?.fileData?.let { fileData ->
-                        text(fileData.id, kind = ContentKind.Sample)
+                        visualFile(fileData)
                     }
                 }
             }
@@ -76,19 +76,19 @@ internal abstract class MainPageContentBuilder(
 
     private fun contentFor(d: D2Documentable): ContentNode {
         return contentFor(d) {
-            group(setOf(d.dri), kind = ContentKind.Source) {
+            group(setOf(d.dri), kind = D2ContentKind.Source) {
                 if (d.hasDescription) {
-                    text(FileData.DESCRIPTION.id, kind = ContentKind.Comment)
+                    descriptionFile()
                 }
                 d.visualType()?.fileData?.let { fileData ->
-                    text(fileData.id, kind = ContentKind.Sample)
+                    visualFile(fileData)
                 }
             }
         }
     }
 
     private fun contentFor(d: Documentable, block: PageContentBuilder.DocumentableContentBuilder.() -> Unit = {}): ContentGroup {
-        return contentBuilder.contentFor(d, kind = ContentKind.Main)  {
+        return contentBuilder.contentFor(d, kind = D2ContentKind.Container)  {
             block()
             +contentForChildrenOf(d)
         }
@@ -102,8 +102,16 @@ internal abstract class MainPageContentBuilder(
                 .mapNotNull(documentableIndexes.documentables::get)
                 .driSortedByD2Type(),
             sourceSets = d.sourceSets,
-            kind = ContentKind.Extensions
+            kind = D2ContentKind.Children
         ) {}
+    }
+
+    private fun PageContentBuilder.DocumentableContentBuilder.descriptionFile() {
+        text(FileData.DESCRIPTION.id, kind = D2ContentKind.Description)
+    }
+
+    private fun PageContentBuilder.DocumentableContentBuilder.visualFile(fileData: FileData) {
+        text(fileData.id, kind = D2ContentKind.Visual)
     }
 
     private fun List<Documentable>.driSortedByD2Type(): SortedSet<DRI> {
