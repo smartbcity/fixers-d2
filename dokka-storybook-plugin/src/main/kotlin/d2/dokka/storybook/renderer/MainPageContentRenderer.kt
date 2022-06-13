@@ -12,6 +12,7 @@ import d2.dokka.storybook.model.code.react.storybook.MetaComponent
 import d2.dokka.storybook.model.doc.title
 import d2.dokka.storybook.model.page.FileData
 import d2.dokka.storybook.model.render.D2ContentKind
+import d2.dokka.storybook.model.render.D2Marker
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.sureClassNames
 import org.jetbrains.dokka.model.DisplaySourceSet
@@ -44,7 +45,15 @@ open class MainPageContentRenderer(
     ) {
         when (node) {
             is ContentGroup -> buildGroup(node, pageContext)
+            is ContentText -> buildMarker(node, pageContext)
             else -> throw IllegalArgumentException("Cannot render content of type [${node::class.java}] in a Main page")
+        }
+    }
+
+    open fun ReactFileBuilder.buildMarker(node: ContentText, pageContext: ContentPage) {
+        when (node.dci.kind) {
+            D2Marker.Divider -> appendDivider()
+            else -> throw IllegalArgumentException("Cannot render marker of type [${node.dci.kind}] in a Main page")
         }
     }
 
@@ -65,7 +74,6 @@ open class MainPageContentRenderer(
             2 -> buildTwoColumnsSources(node, pageContext)
             else -> throw IllegalArgumentException("A page cannot have more than 2 columns ATM")
         }
-
     }
 
     open fun ReactFileBuilder.buildOneColumnSources(node: ContentGroup, pageContext: ContentPage) {
@@ -132,5 +140,11 @@ open class MainPageContentRenderer(
 
         val name = pageContext.documentable!!.title()
         append(MetaComponent(name))
+    }
+
+    open fun ReactFileBuilder.appendDivider() {
+        appendNewLine()
+        appendNewLine()
+        append("---")
     }
 }

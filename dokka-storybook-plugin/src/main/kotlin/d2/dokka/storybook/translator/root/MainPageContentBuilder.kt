@@ -6,10 +6,13 @@ import d2.dokka.storybook.model.doc.PageDocumentable
 import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.SectionDocumentable
 import d2.dokka.storybook.model.doc.d2Type
+import d2.dokka.storybook.model.doc.isOfType
+import d2.dokka.storybook.model.doc.tag.D2Type
 import d2.dokka.storybook.model.doc.visualType
 import d2.dokka.storybook.model.doc.weight
 import d2.dokka.storybook.model.page.FileData
 import d2.dokka.storybook.model.render.D2ContentKind
+import d2.dokka.storybook.model.render.D2Marker
 import d2.dokka.storybook.translator.D2StorybookPageContentBuilder
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.links.DRI
@@ -90,7 +93,13 @@ internal abstract class MainPageContentBuilder(
     private fun contentFor(d: Documentable, block: PageContentBuilder.DocumentableContentBuilder.() -> Unit = {}): ContentGroup {
         return contentBuilder.contentFor(d, kind = D2ContentKind.Container)  {
             block()
+            if (d.isOfType(D2Type.MODEL, D2Type.SERVICE)) {
+                divider()
+            }
             +contentForChildrenOf(d)
+            if (d.isOfType(D2Type.FUNCTION)) {
+                divider()
+            }
         }
     }
 
@@ -112,6 +121,10 @@ internal abstract class MainPageContentBuilder(
 
     private fun PageContentBuilder.DocumentableContentBuilder.visualFile(fileData: FileData) {
         text(fileData.id, kind = D2ContentKind.Visual)
+    }
+
+    private fun PageContentBuilder.DocumentableContentBuilder.divider() {
+        text("", kind = D2Marker.Divider)
     }
 
     private fun List<Documentable>.driSortedByD2Type(): SortedSet<DRI> {

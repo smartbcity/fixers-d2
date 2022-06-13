@@ -66,8 +66,8 @@ inline fun <reified T : D2DocTagWrapper> Documentable.hasD2TagOfType(): Boolean 
 	return d2DocTagExtra().firstTagOfTypeOrNull<T>() != null
 }
 
-fun Documentable.isOfType(type: D2Type): Boolean {
-	return d2DocTagExtra().firstTagOfType<D2>().type == type
+fun Documentable.isOfType(vararg types: D2Type): Boolean {
+	return d2DocTagExtra().firstTagOfType<D2>().type in types
 }
 
 fun Documentable.d2DocTagExtra() = (this as? WithExtraProperties<Documentable>)
