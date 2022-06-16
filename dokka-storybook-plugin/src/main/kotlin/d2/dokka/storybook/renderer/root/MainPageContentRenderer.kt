@@ -1,6 +1,5 @@
-package d2.dokka.storybook.renderer
+package d2.dokka.storybook.renderer.root
 
-import d2.dokka.storybook.builder.ReactFileBuilder
 import d2.dokka.storybook.location.D2StorybookLocationProvider
 import d2.dokka.storybook.model.code.BasicImportedElement
 import d2.dokka.storybook.model.code.CodeElement
@@ -13,6 +12,8 @@ import d2.dokka.storybook.model.doc.title
 import d2.dokka.storybook.model.page.FileData
 import d2.dokka.storybook.model.render.D2ContentKind
 import d2.dokka.storybook.model.render.D2Marker
+import d2.dokka.storybook.renderer.D2ContentRenderer
+import d2.dokka.storybook.renderer.builder.ReactFileBuilder
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.sureClassNames
 import org.jetbrains.dokka.model.DisplaySourceSet

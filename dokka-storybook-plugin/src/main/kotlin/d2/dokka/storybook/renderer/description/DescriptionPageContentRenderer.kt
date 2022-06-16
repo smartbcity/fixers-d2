@@ -1,6 +1,7 @@
-package d2.dokka.storybook.renderer
+package d2.dokka.storybook.renderer.description
 
 import d2.dokka.storybook.model.render.Article
+import d2.dokka.storybook.renderer.MarkdownRenderer
 import org.jetbrains.dokka.model.withDescendants
 import org.jetbrains.dokka.pages.ContentGroup
 import org.jetbrains.dokka.pages.ContentPage

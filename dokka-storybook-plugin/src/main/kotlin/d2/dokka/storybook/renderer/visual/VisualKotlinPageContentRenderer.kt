@@ -1,4 +1,4 @@
-package d2.dokka.storybook.renderer
+package d2.dokka.storybook.renderer.visual
 
 import org.jetbrains.dokka.model.firstChildOfType
 import org.jetbrains.dokka.pages.ContentGroup

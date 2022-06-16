@@ -1,4 +1,4 @@
-package d2.dokka.storybook.builder
+package d2.dokka.storybook.renderer.builder
 
 import d2.dokka.storybook.model.code.imports.CodeImport
 

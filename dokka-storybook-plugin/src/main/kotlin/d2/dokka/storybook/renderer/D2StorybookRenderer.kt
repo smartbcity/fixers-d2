@@ -5,6 +5,10 @@ import d2.dokka.storybook.location.D2StorybookLocationProvider
 import d2.dokka.storybook.model.page.D2StorybookContentPage
 import d2.dokka.storybook.model.page.FileData
 import d2.dokka.storybook.model.page.ModelPageNode
+import d2.dokka.storybook.renderer.description.DescriptionPageContentRenderer
+import d2.dokka.storybook.renderer.root.MainPageContentRenderer
+import d2.dokka.storybook.renderer.visual.VisualJsonPageContentRenderer
+import d2.dokka.storybook.renderer.visual.VisualKotlinPageContentRenderer
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch

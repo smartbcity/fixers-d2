@@ -1,4 +1,4 @@
-package d2.dokka.storybook.renderer
+package d2.dokka.storybook.renderer.visual
 
 import com.fasterxml.jackson.core.JsonParser
 import com.fasterxml.jackson.databind.ObjectMapper

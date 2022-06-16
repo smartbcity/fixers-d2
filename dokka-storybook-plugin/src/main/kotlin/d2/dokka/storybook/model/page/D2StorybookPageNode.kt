@@ -6,35 +6,6 @@ import org.jetbrains.dokka.pages.ContentPage
 import org.jetbrains.dokka.pages.PageNode
 import org.jetbrains.dokka.pages.WithDocumentables
 
-interface WithFileData {
-    val fileData: FileData
-}
-
-enum class FileData(val id: String, val extension: String, val language: CodeLanguage) {
-    ROOT("root", ".stories.mdx", CodeLanguage.REACT),
-    MAIN("index", ".mdx", CodeLanguage.REACT),
-    DESCRIPTION("desc", ".md", CodeLanguage.MARKDOWN),
-    VISUAL_JSON("visualJson", ".json", CodeLanguage.JSON),
-    VISUAL_KOTLIN("visualKotlin", ".kt", CodeLanguage.KOTLIN),
-    VISUAL_YAML("visualYaml", ".yml", CodeLanguage.YAML);
-
-    override fun toString() = "$id$extension"
-
-    companion object {
-        fun fromId(id: String): FileData {
-            return values().first { it.id == id }
-        }
-    }
-}
-
-enum class CodeLanguage(val id: String) {
-    MARKDOWN("markdown"),
-    JSON("json"),
-    KOTLIN("kotlin"),
-    REACT("react"),
-    YAML("yaml")
-}
-
 interface D2StorybookPageNode: PageNode, WithFileData
 
 interface D2StorybookContentPage: D2StorybookPageNode, ContentPage, WithDocumentables {

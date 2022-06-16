@@ -1,6 +1,7 @@
-package d2.dokka.storybook.renderer
+package d2.dokka.storybook.renderer.visual
 
 import d2.dokka.storybook.location.D2StorybookLocationProvider
+import d2.dokka.storybook.renderer.D2ContentRenderer
 import org.jetbrains.dokka.model.DisplaySourceSet
 import org.jetbrains.dokka.pages.ContentCodeBlock
 import org.jetbrains.dokka.pages.ContentGroup
