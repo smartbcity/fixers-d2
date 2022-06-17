@@ -23,8 +23,8 @@ import org.jetbrains.dokka.model.properties.WithExtraProperties
 private const val ROOT_SUFFIX = "Root"
 
 fun Documentable.toRootDocumentable() = RootDocumentable(
-	name = "${name.orEmpty()}${ROOT_SUFFIX}",
-	dri = dri.copy(classNames = "${dri.sureClassNames}${ROOT_SUFFIX}"),
+	name = "${name.orEmpty()}$ROOT_SUFFIX",
+	dri = dri.copy(classNames = "${dri.sureClassNames}$ROOT_SUFFIX"),
 	documentation = documentation,
 	sourceSets = sourceSets,
 	expectPresentInSet = expectPresentInSet,
@@ -57,7 +57,18 @@ fun Documentable.weight() = d2DocTagExtra().firstTagOfTypeOrNull<Order>()?.weigh
 fun Documentable.title(): String = if (this is RootDocumentable) {
 	pageDocumentation?.title?.body ?: children.first().title()
 } else {
-	d2DocTagExtra().firstTagOfTypeOrNull<Title>()?.body ?: name!!
+	d2DocTagExtra().firstTagOfTypeOrNull<Title>()?.body
+		?: generateTitle()
+}
+private fun Documentable.generateTitle() = when (d2Type()) {
+	D2Type.COMMAND -> "Command"
+	D2Type.QUERY -> "Query"
+	D2Type.EVENT -> "Event"
+	D2Type.RESULT -> "Result"
+	D2Type.FUNCTION -> name!!.split(Regex("(?=[A-Z])"))
+		.joinToString(" ")
+		.substringBeforeLast("Function")
+	else -> name!!
 }
 
 fun Documentable.asD2TypeDocumentable() = when (d2Type()) {

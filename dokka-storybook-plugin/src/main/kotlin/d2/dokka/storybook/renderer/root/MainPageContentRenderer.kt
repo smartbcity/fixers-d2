@@ -78,12 +78,12 @@ open class MainPageContentRenderer(
     }
 
     open fun ReactFileBuilder.buildOneColumnSources(node: ContentGroup, pageContext: ContentPage) {
-        val element = node.children.first() as ContentText
+        val element = node.children.first() as ContentGroup
         append(element.toSourceComponent(node, pageContext))
     }
 
     open fun ReactFileBuilder.buildTwoColumnsSources(node: ContentGroup, pageContext: ContentPage) {
-        val (leftElement, rightElement) = node.children as List<ContentText>
+        val (leftElement, rightElement) = node.children as List<ContentGroup>
 
         val leftContainerProps = mutableMapOf<String, String>()
         val rightContainerProps = mutableMapOf<String, String>()
@@ -104,15 +104,18 @@ open class MainPageContentRenderer(
         append(component)
     }
 
-    private fun ContentText.toSourceComponent(parent: ContentGroup, pageContext: ContentPage): CodeElement {
-        val fileData = FileData.fromId(this.text)
+    private fun ContentGroup.toSourceComponent(parent: ContentGroup, pageContext: ContentPage): CodeElement {
+        val title = children.firstOrNull { it.dci.kind == D2ContentKind.Description } as ContentText?
+        val fileId = children.first { it.dci.kind == D2ContentKind.File } as ContentText
+
+        val fileData = FileData.fromId(fileId.text)
         val codeImport = buildImport(parent.dci.dri.first(), fileData, parent.sourceSets, pageContext)
 
         return when (this.dci.kind) {
             D2ContentKind.Description -> BasicComponent(importData = codeImport!!)
             D2ContentKind.Visual -> {
                 val visual = BasicImportedElement(importData = codeImport!!)
-                CodeHighlighterComponent(displayed = visual, language = fileData.language.id, title = "Example")
+                CodeHighlighterComponent(displayed = visual, language = fileData.language.id, title = title?.text ?: "Example")
             }
             else -> throw IllegalArgumentException("Unsupported ContentKind[${this.dci.kind}] for source files")
         }

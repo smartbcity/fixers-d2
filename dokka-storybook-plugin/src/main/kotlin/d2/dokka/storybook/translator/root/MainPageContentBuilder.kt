@@ -1,9 +1,11 @@
 package d2.dokka.storybook.translator.root
 
 import d2.dokka.storybook.model.doc.DocumentableIndexes
-import d2.dokka.storybook.model.doc.utils.d2Type
-import d2.dokka.storybook.model.doc.utils.isOfType
 import d2.dokka.storybook.model.doc.tag.D2Type
+import d2.dokka.storybook.model.doc.utils.d2Type
+import d2.dokka.storybook.model.doc.utils.isF2CommandFunction
+import d2.dokka.storybook.model.doc.utils.isOfType
+import d2.dokka.storybook.model.doc.utils.title
 import d2.dokka.storybook.model.doc.utils.weight
 import d2.dokka.storybook.model.page.FileData
 import d2.dokka.storybook.model.render.D2ContentKind
@@ -13,6 +15,7 @@ import d2.dokka.storybook.translator.D2StorybookPageContentBuilder
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.sureClassNames
+import org.jetbrains.dokka.model.DTypeAlias
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.pages.ContentGroup
 import org.jetbrains.dokka.pages.ContentNode
@@ -28,7 +31,7 @@ internal abstract class MainPageContentBuilder(
             group(setOf(d.dri), kind = D2ContentKind.Source) {
                 DocumentablePageSelector.filesFor(d)
                     .filter { file -> file !in listOf(FileData.MAIN, FileData.ROOT) }
-                    .forEach { file(it) }
+                    .forEach { file(it, d) }
             }
         }
     }
@@ -58,8 +61,18 @@ internal abstract class MainPageContentBuilder(
         ) {}
     }
 
-    private fun PageContentBuilder.DocumentableContentBuilder.file(fileData: FileData) {
-        text(fileData.id, kind = fileData.kind)
+    private fun PageContentBuilder.DocumentableContentBuilder.file(fileData: FileData, d: Documentable) {
+        group(kind = fileData.kind) {
+            text(fileData.id, kind = D2ContentKind.File)
+            fileData.title(d)?.let { text(it, kind = D2ContentKind.Description) }
+        }
+    }
+
+    private fun FileData.title(d: Documentable) = when (this) {
+        FileData.VISUAL_JSON,
+        FileData.VISUAL_KOTLIN,
+        FileData.VISUAL_YAML -> d.title()
+        else -> null
     }
 
     private fun PageContentBuilder.DocumentableContentBuilder.divider() {

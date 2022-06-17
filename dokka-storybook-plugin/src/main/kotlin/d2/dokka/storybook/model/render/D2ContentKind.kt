@@ -23,6 +23,11 @@ enum class D2ContentKind: Kind {
     Description,
 
     /**
+     * Contains a file
+     */
+    File,
+
+    /**
      * Contains D2 description and/or visual file(s) of the documentable associated with the node.
      */
     Source,

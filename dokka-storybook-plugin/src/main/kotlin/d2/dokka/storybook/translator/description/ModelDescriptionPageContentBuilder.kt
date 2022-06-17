@@ -4,9 +4,10 @@ import d2.dokka.storybook.model.doc.DocumentableIndexes
 import d2.dokka.storybook.model.doc.PageDocumentable
 import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.SectionDocumentable
-import d2.dokka.storybook.model.render.D2TextStyle
 import d2.dokka.storybook.model.doc.utils.documentableIn
+import d2.dokka.storybook.model.doc.utils.title
 import d2.dokka.storybook.model.doc.utils.toTypeString
+import d2.dokka.storybook.model.render.D2TextStyle
 import d2.dokka.storybook.translator.block
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.model.DClasslike
@@ -38,6 +39,7 @@ internal abstract class ModelDescriptionPageContentBuilder(
         return contentBuilder.contentFor(c)  {
             group(kind = ContentKind.Cover) {
                 buildTitle(c)
+                buildType(c)
                 +contentForDescription(c)
             }
 
@@ -52,6 +54,7 @@ internal abstract class ModelDescriptionPageContentBuilder(
         return contentBuilder.contentFor(t)  {
             group(kind = ContentKind.Cover) {
                 buildTitle(t)
+                buildType(t)
                 +contentForDescription(t)
             }
         }
@@ -106,6 +109,13 @@ internal abstract class ModelDescriptionPageContentBuilder(
                     }
                 }
             }
+        }
+    }
+
+    private fun PageContentBuilder.DocumentableContentBuilder.buildType(d: Documentable) {
+        if (d.title() != d.name) {
+            text("Type: ")
+            text(d.name!!, styles = setOf(D2TextStyle.Code))
         }
     }
 }
