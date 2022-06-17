@@ -1,9 +1,9 @@
 package d2.dokka.storybook.translator.description
 
 import d2.dokka.storybook.model.doc.DocumentableIndexes
-import d2.dokka.storybook.model.doc.PageDocumentable
 import d2.dokka.storybook.model.doc.RootDocumentable
-import d2.dokka.storybook.model.doc.SectionDocumentable
+import d2.dokka.storybook.model.doc.isOfType
+import d2.dokka.storybook.model.doc.tag.D2Type
 import d2.dokka.storybook.model.doc.title
 import d2.dokka.storybook.translator.D2StorybookPageContentBuilder
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
@@ -25,8 +25,7 @@ abstract class DescriptionPageContentBuilder: D2StorybookPageContentBuilder {
             ?: return 1
 
         val increaseCount = (parent is RootDocumentable && parent.pageDocumentation != null) ||
-                parent is PageDocumentable ||
-                parent is SectionDocumentable
+                parent.isOfType(D2Type.FUNCTION, D2Type.SECTION, D2Type.PAGE)
         val headerInc = if (increaseCount) 1 else 0
 
         return parent.headerLevel() + headerInc

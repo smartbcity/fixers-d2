@@ -67,7 +67,7 @@ inline fun <reified T : D2DocTagWrapper> Documentable.hasD2TagOfType(): Boolean 
 }
 
 fun Documentable.isOfType(vararg types: D2Type): Boolean {
-	return d2DocTagExtra().firstTagOfType<D2>().type in types
+	return d2DocTagExtra().firstTagOfTypeOrNull<D2>()?.type in types
 }
 
 fun Documentable.d2DocTagExtra() = (this as? WithExtraProperties<Documentable>)
@@ -75,8 +75,8 @@ fun Documentable.d2DocTagExtra() = (this as? WithExtraProperties<Documentable>)
 	?: D2DocTagExtra(emptyList())
 
 fun Documentable.visualType() = when (d2Type()) {
-	D2Type.SERVICE -> serviceVisualType()
-	null -> null
+	D2Type.SERVICE -> VisualType.NONE
+	null -> VisualType.NONE
 	else -> modelVisualType()
 }
 
@@ -85,12 +85,8 @@ private fun Documentable.modelVisualType() = when (this) {
 	is PageDocumentable -> d2DocTagExtra().firstTagOfTypeOrNull<Visual>()?.type ?: VisualType.NONE
 	is SectionDocumentable -> d2DocTagExtra().firstTagOfTypeOrNull<Visual>()?.type ?: VisualType.NONE
 	is DClasslike -> d2DocTagExtra().firstTagOfTypeOrNull<Visual>()?.type ?: VisualType.DEFAULT
-	is DTypeAlias -> d2DocTagExtra().firstTagOfTypeOrNull<Visual>()?.type
-	else -> null
-}
-
-private fun Documentable.serviceVisualType() = when (this) {
-	else -> d2DocTagExtra().firstTagOfTypeOrNull<Visual>()?.type ?: VisualType.NONE
+	is DTypeAlias -> d2DocTagExtra().firstTagOfTypeOrNull<Visual>()?.type ?: VisualType.NONE
+	else -> VisualType.NONE
 }
 
 fun Documentable.directAnnotation(dri: DRI): Annotations.Annotation? = (this as? WithExtraProperties<Documentable>)

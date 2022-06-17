@@ -59,7 +59,6 @@ class ReactFileBuilder(
             }
             if (index < node.params.size - 1) {
                 append(",")
-                appendNewLine()
             }
         }
         if (node.params.isEmpty()) {
