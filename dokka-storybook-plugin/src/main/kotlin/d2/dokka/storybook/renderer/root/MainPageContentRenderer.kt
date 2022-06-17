@@ -85,9 +85,21 @@ open class MainPageContentRenderer(
     open fun ReactFileBuilder.buildTwoColumnsSources(node: ContentGroup, pageContext: ContentPage) {
         val (leftElement, rightElement) = node.children as List<ContentText>
 
+        val leftContainerProps = mutableMapOf<String, String>()
+        val rightContainerProps = mutableMapOf<String, String>()
+
+        if (leftElement.dci.kind == D2ContentKind.Description && rightElement.dci.kind == D2ContentKind.Description) {
+            leftContainerProps["width"] = "50%"
+            rightContainerProps["width"] = "50%"
+            rightContainerProps["position"] = "relative"
+            rightContainerProps["paddingTop"] = "0"
+        }
+
         val component = DescriptedCodeComponent(
             leftElement = leftElement.toSourceComponent(node, pageContext),
-            rightElement = rightElement.toSourceComponent(node, pageContext)
+            leftContainerProps = leftContainerProps,
+            rightElement = rightElement.toSourceComponent(node, pageContext),
+            rightContainerProps = rightContainerProps
         )
         append(component)
     }
