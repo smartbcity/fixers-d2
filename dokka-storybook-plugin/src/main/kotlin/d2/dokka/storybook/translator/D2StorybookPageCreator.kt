@@ -74,14 +74,21 @@ class D2StorybookPageCreator(
     private fun FileData.contentBuilder(d2Type: D2Type?) = when (this) {
         FileData.ROOT -> InnerRootPageContentBuilder()
         FileData.MAIN -> InnerMainPageContentBuilder()
-        FileData.DESCRIPTION -> d2Type.descriptionContentBuilder()
+        FileData.DESCRIPTION -> InnerModelDescriptionPageContentBuilder()
+        FileData.DESCRIPTION_LEFT -> d2Type.leftDescriptionContentBuilder()
+        FileData.DESCRIPTION_RIGHT -> d2Type.rightDescriptionContentBuilder()
         FileData.VISUAL_JSON,
         FileData.VISUAL_KOTLIN,
         FileData.VISUAL_YAML -> InnerVisualPageContentBuilder()
     }
 
-    private fun D2Type?.descriptionContentBuilder() = when (this) {
-        D2Type.SERVICE -> InnerServiceDescriptionPageContentBuilder()
+    private fun D2Type?.leftDescriptionContentBuilder() = when (this) {
+        D2Type.SERVICE -> InnerServiceDescriptionPageContentBuilder(true)
+        else -> InnerModelDescriptionPageContentBuilder()
+    }
+
+    private fun D2Type?.rightDescriptionContentBuilder() = when (this) {
+        D2Type.SERVICE -> InnerServiceDescriptionPageContentBuilder(false)
         else -> InnerModelDescriptionPageContentBuilder()
     }
 
@@ -94,8 +101,8 @@ class D2StorybookPageCreator(
         override fun contentForDescription(d: Documentable): List<ContentNode>
             = this@D2StorybookPageCreator.contentForDescription(d)
     }
-    private inner class InnerServiceDescriptionPageContentBuilder:
-        ServiceDescriptionPageContentBuilder(contentBuilder, documentableIndexes) {
+    private inner class InnerServiceDescriptionPageContentBuilder(isLeft: Boolean):
+        ServiceDescriptionPageContentBuilder(isLeft, contentBuilder, documentableIndexes) {
         override fun contentForComments(d: Documentable): List<ContentNode>
             = this@D2StorybookPageCreator.contentForComments(d)
         override fun contentForDescription(d: Documentable): List<ContentNode>

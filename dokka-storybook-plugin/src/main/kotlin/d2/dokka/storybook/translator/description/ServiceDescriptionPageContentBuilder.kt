@@ -3,6 +3,9 @@ package d2.dokka.storybook.translator.description
 import d2.dokka.storybook.model.Constants
 import d2.dokka.storybook.model.doc.DocumentableIndexes
 import d2.dokka.storybook.model.doc.directAnnotation
+import d2.dokka.storybook.model.doc.f2FunctionType
+import d2.dokka.storybook.model.doc.isCommand
+import d2.dokka.storybook.model.doc.isF2Command
 import d2.dokka.storybook.model.render.D2TextStyle
 import d2.dokka.storybook.model.render.documentableIn
 import d2.dokka.storybook.model.render.isF2
@@ -16,16 +19,15 @@ import org.jetbrains.dokka.model.ArrayValue
 import org.jetbrains.dokka.model.DClasslike
 import org.jetbrains.dokka.model.DFunction
 import org.jetbrains.dokka.model.Documentable
-import org.jetbrains.dokka.model.GenericTypeConstructor
 import org.jetbrains.dokka.model.LiteralValue
 import org.jetbrains.dokka.model.Projection
-import org.jetbrains.dokka.model.TypeAliased
 import org.jetbrains.dokka.pages.ContentKind
 import org.jetbrains.dokka.pages.ContentNode
 import org.jetbrains.dokka.pages.ContentStyle
 import org.jetbrains.dokka.pages.TextStyle
 
 internal abstract class ServiceDescriptionPageContentBuilder(
+    private val isLeft: Boolean,
     private val contentBuilder: PageContentBuilder,
     override val documentableIndexes: DocumentableIndexes
 ): DescriptionPageContentBuilder() {
@@ -40,7 +42,7 @@ internal abstract class ServiceDescriptionPageContentBuilder(
     fun contentFor(c: DClasslike): ContentNode {
         return contentBuilder.contentFor(c) {
             group(kind = ContentKind.Cover) {
-                buildTitle(c)
+                header(c.headerLevel(), if (isLeft) "Commands" else "Queries")
                 +contentForDescription(c)
             }
             group(styles = setOf(ContentStyle.TabbedContent)) {
@@ -53,7 +55,8 @@ internal abstract class ServiceDescriptionPageContentBuilder(
     private fun PageContentBuilder.DocumentableContentBuilder.functionsBlock(
         functions: Collection<DFunction>,
     ) {
-        block(kind = ContentKind.Properties, elements = functions) { function ->
+        val displayedFunctions = functions.filter { it.isCommand() == isLeft }
+        block(kind = ContentKind.Properties, elements = displayedFunctions) { function ->
             functionSignature(function)
             text("<br/>")
             functionAccess(function)
@@ -116,45 +119,41 @@ internal abstract class ServiceDescriptionPageContentBuilder(
         val returnType: Projection?
     ) {
         companion object {
-            fun empty(name: String) = FunctionSignature(
-                name = name,
-                params = emptyList(),
-                returnType = null
-            )
-
             fun of(function: DFunction): FunctionSignature {
                 if (function.type.isF2()) {
-                    val functionType = function.type as? GenericTypeConstructor
-                        ?: (function.type as TypeAliased).inner as GenericTypeConstructor
+                    val functionType = function.f2FunctionType()
+                    val paramName = if (function.isF2Command()) "cmd" else "query"
 
                     return when {
                         functionType.isF2Consumer() -> FunctionSignature(
                             name = function.name,
-                            params = listOf("cmd" to functionType.projections.first()),
-                            returnType = null
+                            params = listOf(paramName to functionType.projections.first()),
+                            returnType = null,
                         )
                         functionType.isF2Function() -> FunctionSignature(
                             name = function.name,
-                            params = listOf("cmd" to functionType.projections.first()),
-                            returnType = functionType.projections.last()
+                            params = listOf(paramName to functionType.projections.first()),
+                            returnType = functionType.projections.last(),
                         )
                         functionType.isF2Supplier() -> FunctionSignature(
                             name = function.name,
                             params = emptyList(),
-                            returnType = functionType.projections.first()
+                            returnType = functionType.projections.first(),
                         )
-                        else -> empty(function.name)
+                        else -> FunctionSignature(
+                            name = function.name,
+                            params = emptyList(),
+                            returnType = null,
+                        )
                     }
                 }
 
                 return FunctionSignature(
                     name = function.name,
                     params = function.parameters.map { param -> param.name.orEmpty() to param.type },
-                    returnType = null
+                    returnType = function.receiver?.type
                 )
             }
         }
     }
-
-
 }
