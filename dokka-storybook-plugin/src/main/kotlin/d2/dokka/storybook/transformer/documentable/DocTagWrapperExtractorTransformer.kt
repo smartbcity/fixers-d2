@@ -6,6 +6,7 @@ import org.jetbrains.dokka.model.DAnnotation
 import org.jetbrains.dokka.model.DClass
 import org.jetbrains.dokka.model.DClasslike
 import org.jetbrains.dokka.model.DEnum
+import org.jetbrains.dokka.model.DFunction
 import org.jetbrains.dokka.model.DInterface
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.DObject
@@ -42,27 +43,32 @@ class DocTagWrapperExtractorTransformer: DocumentableTransformer {
 
     private fun DClass.withD2DocTagExtras() = copy(
         extra = extra + this.toD2DocTagExtra(),
-        properties = properties.map { it.withD2DocTagExtras() }
+        properties = properties.map { it.withD2DocTagExtras() },
+        functions = functions.map { it.withD2DocTagExtras() }
     )
 
     private fun DEnum.withD2DocTagExtras() = copy(
         extra = extra + this.toD2DocTagExtra(),
-        properties = properties.map { it.withD2DocTagExtras() }
+        properties = properties.map { it.withD2DocTagExtras() },
+        functions = functions.map { it.withD2DocTagExtras() }
     )
 
     private fun DInterface.withD2DocTagExtras() = copy(
         extra = extra + this.toD2DocTagExtra(),
-        properties = properties.map { it.withD2DocTagExtras() }
+        properties = properties.map { it.withD2DocTagExtras() },
+        functions = functions.map { it.withD2DocTagExtras() }
     )
 
     private fun DObject.withD2DocTagExtras() = copy(
         extra = extra + this.toD2DocTagExtra(),
-        properties = properties.map { it.withD2DocTagExtras() }
+        properties = properties.map { it.withD2DocTagExtras() },
+        functions = functions.map { it.withD2DocTagExtras() }
     )
 
     private fun DAnnotation.withD2DocTagExtras() = copy(
         extra = extra + this.toD2DocTagExtra(),
-        properties = properties.map { it.withD2DocTagExtras() }
+        properties = properties.map { it.withD2DocTagExtras() },
+        functions = functions.map { it.withD2DocTagExtras() }
     )
 
     private fun DProperty.withD2DocTagExtras() = copy(
@@ -70,7 +76,11 @@ class DocTagWrapperExtractorTransformer: DocumentableTransformer {
     )
 
     private fun DTypeAlias.withD2DocTagExtras() = copy(
-        extra = extra + this.toD2DocTagExtra(),
+        extra = extra + this.toD2DocTagExtra()
+    )
+
+    private fun DFunction.withD2DocTagExtras() = copy(
+        extra = extra + this.toD2DocTagExtra()
     )
 
     private fun Documentable.toD2DocTagExtra(): D2DocTagExtra {
