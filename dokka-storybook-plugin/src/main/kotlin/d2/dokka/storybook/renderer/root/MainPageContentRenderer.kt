@@ -8,7 +8,7 @@ import d2.dokka.storybook.model.code.react.BasicComponent
 import d2.dokka.storybook.model.code.react.g2.CodeHighlighterComponent
 import d2.dokka.storybook.model.code.react.g2.DescriptedCodeComponent
 import d2.dokka.storybook.model.code.react.storybook.MetaComponent
-import d2.dokka.storybook.model.doc.title
+import d2.dokka.storybook.model.doc.utils.title
 import d2.dokka.storybook.model.page.FileData
 import d2.dokka.storybook.model.render.D2ContentKind
 import d2.dokka.storybook.model.render.D2Marker

@@ -1,4 +1,4 @@
-package d2.dokka.storybook.model.render
+package d2.dokka.storybook.model.doc.utils
 
 import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.driOrNull
 import org.jetbrains.dokka.links.DRI

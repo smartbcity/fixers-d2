@@ -1,4 +1,4 @@
-package d2.dokka.storybook.model.doc
+package d2.dokka.storybook.model.doc.utils
 
 import d2.dokka.storybook.model.doc.tag.D2DocTagWrapper
 import d2.dokka.storybook.model.doc.tag.toD2DocTagWrapper

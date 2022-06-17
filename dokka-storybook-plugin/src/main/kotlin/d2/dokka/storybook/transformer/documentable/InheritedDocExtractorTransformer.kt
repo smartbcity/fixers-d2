@@ -1,6 +1,6 @@
 package d2.dokka.storybook.transformer.documentable
 
-import d2.dokka.storybook.model.doc.isNotEmptyDoc
+import d2.dokka.storybook.model.doc.utils.isNotEmptyDoc
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.AdditionalModifiers
 import org.jetbrains.dokka.model.DAnnotation

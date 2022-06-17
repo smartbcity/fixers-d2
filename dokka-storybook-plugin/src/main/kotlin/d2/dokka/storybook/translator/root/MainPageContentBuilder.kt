@@ -1,10 +1,10 @@
 package d2.dokka.storybook.translator.root
 
 import d2.dokka.storybook.model.doc.DocumentableIndexes
-import d2.dokka.storybook.model.doc.d2Type
-import d2.dokka.storybook.model.doc.isOfType
+import d2.dokka.storybook.model.doc.utils.d2Type
+import d2.dokka.storybook.model.doc.utils.isOfType
 import d2.dokka.storybook.model.doc.tag.D2Type
-import d2.dokka.storybook.model.doc.weight
+import d2.dokka.storybook.model.doc.utils.weight
 import d2.dokka.storybook.model.page.FileData
 import d2.dokka.storybook.model.render.D2ContentKind
 import d2.dokka.storybook.model.render.D2Marker

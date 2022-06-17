@@ -4,7 +4,7 @@ import d2.dokka.storybook.model.doc.DocumentableIndexes
 import d2.dokka.storybook.model.doc.PageDocumentable
 import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.SectionDocumentable
-import d2.dokka.storybook.model.doc.d2DocTagExtra
+import d2.dokka.storybook.model.doc.utils.d2DocTagExtra
 import d2.dokka.storybook.model.doc.tag.Example
 import d2.dokka.storybook.model.doc.tag.ExampleLink
 import d2.dokka.storybook.model.doc.tag.ExampleText
@@ -13,9 +13,9 @@ import d2.dokka.storybook.model.doc.tag.VisualLink
 import d2.dokka.storybook.model.doc.tag.VisualSimple
 import d2.dokka.storybook.model.doc.tag.VisualText
 import d2.dokka.storybook.model.doc.tag.WithTarget
-import d2.dokka.storybook.model.render.documentableIn
-import d2.dokka.storybook.model.render.isCollection
-import d2.dokka.storybook.model.render.isMap
+import d2.dokka.storybook.model.doc.utils.documentableIn
+import d2.dokka.storybook.model.doc.utils.isCollection
+import d2.dokka.storybook.model.doc.utils.isMap
 import d2.dokka.storybook.translator.D2StorybookPageContentBuilder
 import d2.dokka.storybook.translator.codeBlock
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder

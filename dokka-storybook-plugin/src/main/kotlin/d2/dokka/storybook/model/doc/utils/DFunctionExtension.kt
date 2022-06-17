@@ -1,8 +1,6 @@
-package d2.dokka.storybook.model.doc
+package d2.dokka.storybook.model.doc.utils
 
 import d2.dokka.storybook.model.doc.tag.D2Type
-import d2.dokka.storybook.model.render.isF2
-import d2.dokka.storybook.model.render.toTypeString
 import org.jetbrains.dokka.model.DFunction
 import org.jetbrains.dokka.model.GenericTypeConstructor
 import org.jetbrains.dokka.model.Projection

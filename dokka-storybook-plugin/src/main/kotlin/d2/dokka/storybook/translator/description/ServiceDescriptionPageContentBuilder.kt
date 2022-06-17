@@ -2,17 +2,17 @@ package d2.dokka.storybook.translator.description
 
 import d2.dokka.storybook.model.Constants
 import d2.dokka.storybook.model.doc.DocumentableIndexes
-import d2.dokka.storybook.model.doc.directAnnotation
-import d2.dokka.storybook.model.doc.f2FunctionType
-import d2.dokka.storybook.model.doc.isCommand
-import d2.dokka.storybook.model.doc.isF2Command
+import d2.dokka.storybook.model.doc.utils.directAnnotation
+import d2.dokka.storybook.model.doc.utils.f2FunctionType
+import d2.dokka.storybook.model.doc.utils.isCommand
+import d2.dokka.storybook.model.doc.utils.isF2Command
 import d2.dokka.storybook.model.render.D2TextStyle
-import d2.dokka.storybook.model.render.documentableIn
-import d2.dokka.storybook.model.render.isF2
-import d2.dokka.storybook.model.render.isF2Consumer
-import d2.dokka.storybook.model.render.isF2Function
-import d2.dokka.storybook.model.render.isF2Supplier
-import d2.dokka.storybook.model.render.toTypeString
+import d2.dokka.storybook.model.doc.utils.documentableIn
+import d2.dokka.storybook.model.doc.utils.isF2
+import d2.dokka.storybook.model.doc.utils.isF2Consumer
+import d2.dokka.storybook.model.doc.utils.isF2Function
+import d2.dokka.storybook.model.doc.utils.isF2Supplier
+import d2.dokka.storybook.model.doc.utils.toTypeString
 import d2.dokka.storybook.translator.block
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.model.ArrayValue

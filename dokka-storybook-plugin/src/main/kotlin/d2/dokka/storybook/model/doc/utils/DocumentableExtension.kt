@@ -1,5 +1,9 @@
-package d2.dokka.storybook.model.doc
+package d2.dokka.storybook.model.doc.utils
 
+import d2.dokka.storybook.model.doc.D2DocTagExtra
+import d2.dokka.storybook.model.doc.PageDocumentable
+import d2.dokka.storybook.model.doc.RootDocumentable
+import d2.dokka.storybook.model.doc.SectionDocumentable
 import d2.dokka.storybook.model.doc.tag.D2
 import d2.dokka.storybook.model.doc.tag.D2DocTagWrapper
 import d2.dokka.storybook.model.doc.tag.D2Type

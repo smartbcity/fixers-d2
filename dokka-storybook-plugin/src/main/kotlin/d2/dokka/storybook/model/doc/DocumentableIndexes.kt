@@ -3,6 +3,8 @@ package d2.dokka.storybook.model.doc
 import com.intellij.util.containers.BidirectionalMap
 import d2.dokka.storybook.model.doc.tag.Child
 import d2.dokka.storybook.model.doc.tag.Parent
+import d2.dokka.storybook.model.doc.utils.d2DocTagExtra
+import d2.dokka.storybook.model.doc.utils.toRootDocumentable
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.Documentable
 

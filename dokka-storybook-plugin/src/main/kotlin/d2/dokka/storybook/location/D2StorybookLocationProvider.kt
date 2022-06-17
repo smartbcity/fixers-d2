@@ -1,7 +1,7 @@
 package d2.dokka.storybook.location
 
 import d2.dokka.storybook.model.doc.DocumentableIndexes
-import d2.dokka.storybook.model.doc.title
+import d2.dokka.storybook.model.doc.utils.title
 import d2.dokka.storybook.model.page.D2StorybookPageNode
 import d2.dokka.storybook.model.page.FileData
 import d2.dokka.storybook.model.page.recursiveDocumentables

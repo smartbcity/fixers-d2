@@ -5,8 +5,8 @@ import d2.dokka.storybook.model.doc.PageDocumentable
 import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.SectionDocumentable
 import d2.dokka.storybook.model.render.D2TextStyle
-import d2.dokka.storybook.model.render.documentableIn
-import d2.dokka.storybook.model.render.toTypeString
+import d2.dokka.storybook.model.doc.utils.documentableIn
+import d2.dokka.storybook.model.doc.utils.toTypeString
 import d2.dokka.storybook.translator.block
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.model.DClasslike
