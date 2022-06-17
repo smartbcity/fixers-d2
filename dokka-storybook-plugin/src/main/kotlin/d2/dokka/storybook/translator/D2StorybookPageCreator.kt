@@ -1,15 +1,12 @@
 package d2.dokka.storybook.translator
 
 import d2.dokka.storybook.model.doc.DocumentableIndexes
-import d2.dokka.storybook.model.doc.PageDocumentable
-import d2.dokka.storybook.model.doc.RootDocumentable
-import d2.dokka.storybook.model.doc.SectionDocumentable
 import d2.dokka.storybook.model.doc.asD2TypeDocumentable
 import d2.dokka.storybook.model.doc.d2Type
 import d2.dokka.storybook.model.doc.tag.D2Type
-import d2.dokka.storybook.model.doc.visualType
 import d2.dokka.storybook.model.page.FileData
 import d2.dokka.storybook.model.page.ModelPageNode
+import d2.dokka.storybook.service.DocumentablePageSelector
 import d2.dokka.storybook.translator.description.ModelDescriptionPageContentBuilder
 import d2.dokka.storybook.translator.description.ServiceDescriptionPageContentBuilder
 import d2.dokka.storybook.translator.root.MainPageContentBuilder
@@ -20,9 +17,7 @@ import org.jetbrains.dokka.base.signatures.SignatureProvider
 import org.jetbrains.dokka.base.transformers.pages.comments.CommentsToContentConverter
 import org.jetbrains.dokka.base.translators.documentables.DefaultPageCreator
 import org.jetbrains.dokka.links.DRI
-import org.jetbrains.dokka.model.DClasslike
 import org.jetbrains.dokka.model.DModule
-import org.jetbrains.dokka.model.DTypeAlias
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.pages.ContentNode
 import org.jetbrains.dokka.pages.ModulePageNode
@@ -59,43 +54,7 @@ class D2StorybookPageCreator(
     }
 
     private fun pagesFor(d: Documentable): List<ModelPageNode> {
-        val visualFileData = d.visualType()?.fileData
-        val pagesToGenerate = when (d) {
-            is RootDocumentable -> listOfNotNull(
-                FileData.ROOT,
-                FileData.MAIN,
-                FileData.DESCRIPTION.takeIf { d.hasDescription },
-                visualFileData
-            )
-            is PageDocumentable -> listOfNotNull(
-                FileData.ROOT,
-                FileData.MAIN,
-                FileData.DESCRIPTION.takeIf { d.hasDescription },
-                visualFileData
-            )
-            is SectionDocumentable -> listOfNotNull(
-                FileData.MAIN,
-                FileData.DESCRIPTION.takeIf { d.hasDescription },
-                visualFileData
-            )
-            is DClasslike -> listOfNotNull(
-                FileData.MAIN,
-                FileData.DESCRIPTION,
-                visualFileData
-            )
-            is DTypeAlias -> listOfNotNull(
-                FileData.MAIN,
-                FileData.DESCRIPTION,
-                visualFileData
-            )
-            else -> emptyList()
-        }
-
-        return d.toPageNodes(pagesToGenerate)
-    }
-
-    private fun Documentable.toPageNodes(files: List<FileData>): List<ModelPageNode> {
-        return files.mapNotNull { toModelPageNode(it) }
+        return DocumentablePageSelector.filesFor(d).mapNotNull { d.toModelPageNode(it) }
     }
 
     private fun Documentable.toModelPageNode(fileData: FileData): ModelPageNode? {
