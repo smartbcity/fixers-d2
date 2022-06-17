@@ -99,3 +99,5 @@ private fun Bound.driContains(str: String): Boolean = when (this) {
     is TypeAliased -> inner.driContains(str)
     else -> safeDri().contains(str)
 }
+
+fun Projection.isCommand() = toTypeString().endsWith("Command", true)

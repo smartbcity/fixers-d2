@@ -67,7 +67,7 @@ internal abstract class MainPageContentBuilder(
     }
 
     private fun List<Documentable>.driSortedByD2Type(): SortedSet<DRI> {
-        val typeMap = this.associate { d -> d.dri to d.d2Type() }
+        val typeMap = this.associate { d -> d.dri to d.sortableD2Type() }
         val weightMap = this.associate { d -> d.dri to (d.weight() ?: Int.MAX_VALUE) }
         return this.map(Documentable::dri)
             .toSortedSet { dri1, dri2 ->
@@ -75,6 +75,15 @@ internal abstract class MainPageContentBuilder(
                     ?: compareWeights(weightMap[dri1], weightMap[dri2]).takeIf { it != 0 }
                     ?: dri1.sureClassNames.compareTo(dri2.sureClassNames, true)
             }
+    }
+
+    private fun Documentable.sortableD2Type(): D2Type? {
+        val type = d2Type()
+        if (type != D2Type.FUNCTION || this !is DTypeAlias) {
+            return type
+        }
+
+        return if (isF2CommandFunction()) D2Type.COMMAND else D2Type.QUERY
     }
 
     private fun compareWeights(w1: Int?, w2: Int?) = (w1 ?: Int.MAX_VALUE).compareTo(w2 ?: Int.MAX_VALUE)

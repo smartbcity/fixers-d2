@@ -3,16 +3,16 @@ package d2.dokka.storybook.translator.description
 import d2.dokka.storybook.model.Constants
 import d2.dokka.storybook.model.doc.DocumentableIndexes
 import d2.dokka.storybook.model.doc.utils.directAnnotation
+import d2.dokka.storybook.model.doc.utils.documentableIn
 import d2.dokka.storybook.model.doc.utils.f2FunctionType
 import d2.dokka.storybook.model.doc.utils.isCommand
-import d2.dokka.storybook.model.doc.utils.isF2Command
-import d2.dokka.storybook.model.render.D2TextStyle
-import d2.dokka.storybook.model.doc.utils.documentableIn
 import d2.dokka.storybook.model.doc.utils.isF2
+import d2.dokka.storybook.model.doc.utils.isF2CommandFunction
 import d2.dokka.storybook.model.doc.utils.isF2Consumer
 import d2.dokka.storybook.model.doc.utils.isF2Function
 import d2.dokka.storybook.model.doc.utils.isF2Supplier
 import d2.dokka.storybook.model.doc.utils.toTypeString
+import d2.dokka.storybook.model.render.D2TextStyle
 import d2.dokka.storybook.translator.block
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.model.ArrayValue
@@ -32,6 +32,8 @@ internal abstract class ServiceDescriptionPageContentBuilder(
     override val documentableIndexes: DocumentableIndexes
 ): DescriptionPageContentBuilder() {
 
+    private val displayCommands = !isLeft
+
     override fun contentFor(d: Documentable): ContentNode? {
         return when (d) {
             is DClasslike -> contentFor(d)
@@ -42,7 +44,7 @@ internal abstract class ServiceDescriptionPageContentBuilder(
     fun contentFor(c: DClasslike): ContentNode {
         return contentBuilder.contentFor(c) {
             group(kind = ContentKind.Cover) {
-                header(c.headerLevel(), if (isLeft) "Commands" else "Queries")
+                header(c.headerLevel(), if (displayCommands) "Commands" else "Queries")
                 +contentForDescription(c)
             }
             group(styles = setOf(ContentStyle.TabbedContent)) {
@@ -55,7 +57,7 @@ internal abstract class ServiceDescriptionPageContentBuilder(
     private fun PageContentBuilder.DocumentableContentBuilder.functionsBlock(
         functions: Collection<DFunction>,
     ) {
-        val displayedFunctions = functions.filter { it.isCommand() == isLeft }
+        val displayedFunctions = functions.filter { it.isCommand() == displayCommands }
         block(kind = ContentKind.Properties, elements = displayedFunctions) { function ->
             functionSignature(function)
             text("<br/>")
@@ -122,7 +124,7 @@ internal abstract class ServiceDescriptionPageContentBuilder(
             fun of(function: DFunction): FunctionSignature {
                 if (function.type.isF2()) {
                     val functionType = function.f2FunctionType()
-                    val paramName = if (function.isF2Command()) "cmd" else "query"
+                    val paramName = if (function.isF2CommandFunction()) "cmd" else "query"
 
                     return when {
                         functionType.isF2Consumer() -> FunctionSignature(
