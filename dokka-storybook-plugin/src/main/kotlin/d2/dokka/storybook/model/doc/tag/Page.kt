@@ -12,7 +12,6 @@ import org.jetbrains.dokka.model.doc.P
 import org.jetbrains.dokka.model.doc.Text
 import org.jetbrains.dokka.model.doc.Ul
 import org.jetbrains.dokka.model.withDescendants
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 
 data class Page(
@@ -51,8 +50,8 @@ data class Page(
                 if (child is CustomTagWrapper) child.toD2DocTagWrapper() ?: child else child
             }
 
-        title = tags.firstIsInstanceOrNull()
-        description = tags.firstIsInstanceOrNull()
-        visual = tags.firstIsInstanceOrNull()
+        title = tags.filterIsInstance<Title>().firstOrNull()
+        description = tags.filterIsInstance<Description>().firstOrNull()
+        visual = tags.filterIsInstance<Visual>().firstOrNull()
     }
 }

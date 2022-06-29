@@ -1,6 +1,5 @@
 package d2.dokka.storybook.model.doc
 
-import com.intellij.util.containers.BidirectionalMap
 import d2.dokka.storybook.model.doc.tag.Child
 import d2.dokka.storybook.model.doc.tag.Parent
 import d2.dokka.storybook.model.doc.utils.d2DocTagExtra
@@ -10,12 +9,12 @@ import org.jetbrains.dokka.model.Documentable
 
 data class DocumentableIndexes(
     val documentables: Map<DRI, Documentable>,
-    val childToParentBiMap: BidirectionalMap<DRI, DRI>
+    val childToParentMap: Map<DRI, DRI>,
+    val parentToChildMap: Map<DRI, List<DRI>>
 ) {
     companion object {
         fun from(documentables: List<Documentable>): DocumentableIndexes {
             val documentablesIndex = documentables.associateBy(Documentable::dri).toMutableMap()
-            val childToParentBiMap = BidirectionalMap<DRI, DRI>()
 
             val childToParentMap = documentables.flatMap { documentable ->
                 val parentDri = documentable.d2DocTagExtra()
@@ -41,11 +40,12 @@ data class DocumentableIndexes(
                     ))
                 }
 
-            childToParentBiMap.putAll(childToParentMap)
+            val parentToChildMap = childToParentMap.entries.groupBy({ it.value }, { it.key })
 
             return DocumentableIndexes(
                 documentables = documentablesIndex,
-                childToParentBiMap = childToParentBiMap
+                childToParentMap = childToParentMap,
+                parentToChildMap = parentToChildMap
             )
         }
     }

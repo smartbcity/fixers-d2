@@ -2,8 +2,8 @@ package d2.dokka.storybook.translator.description
 
 import d2.dokka.storybook.model.doc.DocumentableIndexes
 import d2.dokka.storybook.model.doc.RootDocumentable
-import d2.dokka.storybook.model.doc.utils.isOfType
 import d2.dokka.storybook.model.doc.tag.D2Type
+import d2.dokka.storybook.model.doc.utils.isOfType
 import d2.dokka.storybook.model.doc.utils.title
 import d2.dokka.storybook.translator.D2StorybookPageContentBuilder
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
@@ -21,7 +21,7 @@ abstract class DescriptionPageContentBuilder: D2StorybookPageContentBuilder {
     }
 
     protected fun Documentable.headerLevel(): Int {
-        val parent = documentableIndexes.childToParentBiMap[dri]?.let(documentableIndexes.documentables::get)
+        val parent = documentableIndexes.childToParentMap[dri]?.let(documentableIndexes.documentables::get)
             ?: return 1
 
         val increaseCount = (parent is RootDocumentable && parent.pageDocumentation != null) ||

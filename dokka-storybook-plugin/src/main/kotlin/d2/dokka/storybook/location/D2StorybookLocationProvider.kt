@@ -106,7 +106,7 @@ class D2StorybookLocationProvider(
         get() = if (this is PackagePageNode) name else identifierToFilename(name)
 
     private fun Documentable.parent(): Documentable? {
-        return documentableIndexes.childToParentBiMap[dri]
+        return documentableIndexes.childToParentMap[dri]
             ?.let(documentableIndexes.documentables::get)
     }
 

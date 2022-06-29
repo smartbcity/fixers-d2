@@ -51,8 +51,7 @@ internal abstract class MainPageContentBuilder(
 
     private fun contentForChildrenOf(d: Documentable): ContentNode {
         return contentBuilder.contentFor(
-            dri = documentableIndexes.childToParentBiMap
-                .getKeysByValue(d.dri)
+            dri = documentableIndexes.parentToChildMap[d.dri]
                 .orEmpty()
                 .mapNotNull(documentableIndexes.documentables::get)
                 .driSortedByD2Type(),

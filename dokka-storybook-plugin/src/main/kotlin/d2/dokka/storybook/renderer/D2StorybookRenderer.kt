@@ -92,6 +92,7 @@ open class D2StorybookRenderer(
                 is RenderingStrategy.Write -> outputWriter.write(path, strategy.text, "")
                 is RenderingStrategy.Callback -> outputWriter.write(path, strategy.instructions(this, page), "")
                 RenderingStrategy.DoNothing -> Unit
+                else -> Unit
             }
             else -> throw AssertionError(
                 "Page ${page.name} cannot be rendered by renderer as it is not renderer specific nor contains any content"

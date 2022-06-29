@@ -2,7 +2,6 @@ package d2.dokka.storybook.model.doc.tag
 
 import d2.dokka.storybook.model.page.FileData
 import org.jetbrains.dokka.model.doc.DocTag
-import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 
 sealed interface Visual: D2DocTagWrapper, WithOneParam {
     val type: VisualType
@@ -20,6 +19,6 @@ enum class VisualType(val id: String, val fileData: FileData?) {
 
     companion object {
         val DEFAULT = JSON
-        operator fun get(id: String) = values().find { it.id == id.toLowerCaseAsciiOnly() }
+        operator fun get(id: String) = values().find { it.id == id.lowercase() }
     }
 }

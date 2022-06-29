@@ -1,9 +1,9 @@
 package d2.dokka.storybook.translator
 
 import d2.dokka.storybook.model.doc.DocumentableIndexes
+import d2.dokka.storybook.model.doc.tag.D2Type
 import d2.dokka.storybook.model.doc.utils.asD2TypeDocumentable
 import d2.dokka.storybook.model.doc.utils.d2Type
-import d2.dokka.storybook.model.doc.tag.D2Type
 import d2.dokka.storybook.model.page.FileData
 import d2.dokka.storybook.model.page.ModelPageNode
 import d2.dokka.storybook.service.DocumentablePageSelector
@@ -38,8 +38,7 @@ class D2StorybookPageCreator(
 
         documentableIndexes = DocumentableIndexes.from(documentables)
 
-        val pages = documentableIndexes.childToParentBiMap
-            .getKeysByValue(DRI.topLevel)
+        val pages = documentableIndexes.parentToChildMap[DRI.topLevel]
             .orEmpty()
             .mapNotNull(documentableIndexes.documentables::get)
             .plus(documentables)

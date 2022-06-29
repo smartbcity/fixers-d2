@@ -5,6 +5,7 @@ import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.Bound
 import org.jetbrains.dokka.model.Contravariance
 import org.jetbrains.dokka.model.Covariance
+import org.jetbrains.dokka.model.DefinitelyNonNullable
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.Dynamic
 import org.jetbrains.dokka.model.Invariance
@@ -41,6 +42,7 @@ private fun Bound.toTypeString(): String {
         is JavaObject -> "JavaObject"
         is Dynamic -> "Dynamic"
         is UnresolvedBound -> name
+        is DefinitelyNonNullable -> inner.toTypeString()
     }
 }
 
