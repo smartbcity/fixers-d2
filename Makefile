@@ -1,4 +1,4 @@
 libs: package-libs
 
 package-libs:
-	VERSION=${VERSION} ./gradlew clean build publishToMavenLocal publish
+	VERSION=${VERSION} gradle clean build publishToMavenLocal publish
