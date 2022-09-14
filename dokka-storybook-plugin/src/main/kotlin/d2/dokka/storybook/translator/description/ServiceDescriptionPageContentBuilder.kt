@@ -163,7 +163,7 @@ internal abstract class ServiceDescriptionPageContentBuilder(
                 return FunctionSignature(
                     name = function.name,
                     params = function.parameters.map { param -> param.name.orEmpty() to param.type },
-                    returnType = function.receiver?.type
+                    returnType = function.type.takeUnless { it.toTypeString(documentableIndexes.documentables) == "Unit" }
                 )
             }
         }

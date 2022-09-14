@@ -34,7 +34,14 @@ Annoying function
 </article>
 <article>
 
-**sleep** ( duration: `Long` ) <br/> 
+**procrastinate** ( query: `String` ) <br/> 
+
+Doesn't even bother to do anything
+
+</article>
+<article>
+
+**sleep** ( duration: `Long` ) : `Boolean` <br/> 
 
 So boring, can't help but sleep
 

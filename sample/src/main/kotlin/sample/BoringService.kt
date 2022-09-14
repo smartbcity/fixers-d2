@@ -24,6 +24,11 @@ class BoringService {
     fun sleep(duration: Long): Boolean = duration > 0
 
     /**
+     * Doesn't even bother to do anything
+     */
+    fun procrastinate(query: String) {}
+
+    /**
      * Would consume stuff if it weren't lazy
      */
     @RolesAllowed("get_stuff", "consume_stuff")
