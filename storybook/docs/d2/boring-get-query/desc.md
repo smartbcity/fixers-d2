@@ -1,8 +1,8 @@
 
 
-### BoringGetQuery
+#### Query
 
-
+Type: `BoringGetQuery`
 
 
 

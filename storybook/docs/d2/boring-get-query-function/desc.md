@@ -1,8 +1,8 @@
 
 
-### BoringGetQueryFunction
+###  Boring Get Query 
 
-
+Type: `BoringGetQueryFunction`
 
 Retrieve a boring thing
 

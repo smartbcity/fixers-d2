@@ -1,3 +1,22 @@
-import BoringServiceDesc from './desc.md'
+import BoringServiceDescLeft from './descLeft.md'
+import BoringServiceDescRight from './descRight.md'
+import { DescriptedCode } from '@smartb/g2-documentation'
 
-<BoringServiceDesc />
+<DescriptedCode
+  leftElement={<BoringServiceDescLeft />}
+  leftContainerProps={
+    {
+      width: "50%"
+    }
+  }
+  rightElement={<BoringServiceDescRight />}
+  rightContainerProps={
+    {
+      width: "50%",
+      position: "relative",
+      paddingTop: "0"
+    }
+  }
+/>
+
+---

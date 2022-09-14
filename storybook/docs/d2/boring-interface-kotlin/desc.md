@@ -2,7 +2,7 @@
 
 ### Boring Object but in Kotlin
 
-
+Type: `BoringInterfaceKotlin`
 
 
 

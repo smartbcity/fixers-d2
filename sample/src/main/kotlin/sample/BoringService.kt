@@ -39,4 +39,9 @@ class BoringService {
      * Supplies a useless not-ever-changing indicator
      */
     fun supply(): F2Supplier<Boolean> = f2SupplierSingle { true }
+
+    /**
+     * Annoying function
+     */
+    fun getBoring(): BoringGetQueryFunction = f2Function { TODO() }
 }

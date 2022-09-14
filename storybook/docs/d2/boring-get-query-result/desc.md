@@ -1,8 +1,8 @@
 
 
-### BoringGetQueryResult
+#### Event
 
-
+Type: `BoringGetQueryResult`
 
 
 

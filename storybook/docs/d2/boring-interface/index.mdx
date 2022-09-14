@@ -7,14 +7,18 @@ import { CodeHighlighter, DescriptedCode } from '@smartb/g2-documentation'
 
 <DescriptedCode
   leftElement={<BoringInterfaceDesc />}
+  leftContainerProps={{}}
   rightElement={
     <CodeHighlighter
       object={BoringInterfaceVisualJson}
       language={"json"}
-      title={"Example"}
+      title={"Boring Object"}
     />
   }
+  rightContainerProps={{}}
 />
+
+---
 
 <ChildInterfaceIndex />
 
