@@ -79,15 +79,15 @@ class InheritedDocExtractorTransformer: DocumentableTransformer {
         documentablesMap: Map<DRI, Documentable>
     ): SourceSetDependent<DocumentationNode> {
         return documentation.takeIf { it.isNotEmptyDoc() }
-            ?: parent(documentablesMap)?.closerAncestorNotEmptyDoc(documentablesMap)
+            ?: supertype(documentablesMap)?.closerAncestorNotEmptyDoc(documentablesMap)
             ?: documentation
     }
 
-    private fun DProperty.parent(documentablesMap: Map<DRI, Documentable>): DProperty? {
-        return parents(documentablesMap).firstOrNull() as? DProperty
+    private fun DProperty.supertype(documentablesMap: Map<DRI, Documentable>): DProperty? {
+        return supertypes(documentablesMap).firstOrNull() as? DProperty
     }
 
-    private fun <T: Documentable> T.parents(documentablesMap: Map<DRI, Documentable>): List<Documentable> {
+    private fun <T: Documentable> T.supertypes(documentablesMap: Map<DRI, Documentable>): List<Documentable> {
         return when (this) {
             is WithSupertypes -> supertypes.values.flatten().mapNotNull { documentablesMap[it.typeConstructor.dri] }
             is DProperty -> {
@@ -100,7 +100,7 @@ class InheritedDocExtractorTransformer: DocumentableTransformer {
                     if (!isOverride()) return@ifEmpty emptyList()
 
                     documentablesMap[dri.copy(callable = null)]
-                        ?.parents(documentablesMap)
+                        ?.supertypes(documentablesMap)
                         .orEmpty()
                         .mapNotNull { parent -> documentablesMap[parent.dri.copy(callable = dri.callable)] }
                 }

@@ -3,8 +3,9 @@ package d2.dokka.storybook.service
 import d2.dokka.storybook.model.doc.PageDocumentable
 import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.SectionDocumentable
-import d2.dokka.storybook.model.doc.utils.d2Type
 import d2.dokka.storybook.model.doc.tag.D2Type
+import d2.dokka.storybook.model.doc.utils.d2Type
+import d2.dokka.storybook.model.doc.utils.isOfType
 import d2.dokka.storybook.model.doc.utils.visualType
 import d2.dokka.storybook.model.page.FileData
 import org.jetbrains.dokka.model.DClasslike
@@ -13,6 +14,10 @@ import org.jetbrains.dokka.model.Documentable
 
 object DocumentablePageSelector {
     fun filesFor(d: Documentable): List<FileData> {
+        if (d.isOfType(D2Type.INHERIT)) {
+            return emptyList()
+        }
+
         return when (d) {
             is RootDocumentable -> filesFor(d)
             is PageDocumentable -> filesFor(d)

@@ -95,9 +95,9 @@ internal abstract class ModelDescriptionPageContentBuilder(
 
             val propertyTypeDocumentable = property.type.documentableIn(documentableIndexes.documentables)
             if (propertyTypeDocumentable == null) {
-                text(property.type.toTypeString(), styles = setOf(D2TextStyle.Code))
+                text(property.type.toTypeString(documentableIndexes.documentables), styles = setOf(D2TextStyle.Code))
             } else {
-                link(text = property.type.toTypeString(), address = propertyTypeDocumentable.dri, styles = setOf(D2TextStyle.Code))
+                link(text = property.type.toTypeString(documentableIndexes.documentables), address = propertyTypeDocumentable.dri, styles = setOf(D2TextStyle.Code))
             }
 
             group(setOf(property.dri), property.sourceSets.toSet(), ContentKind.Main) {

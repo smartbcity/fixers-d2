@@ -1,5 +1,6 @@
 package d2.dokka.storybook.model.doc.utils
 
+import d2.dokka.storybook.model.doc.tag.D2Type
 import org.jetbrains.dokka.base.signatures.KotlinSignatureUtils.driOrNull
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.Bound
@@ -21,37 +22,40 @@ import org.jetbrains.dokka.model.UnresolvedBound
 import org.jetbrains.dokka.model.Variance
 import org.jetbrains.dokka.model.Void
 
-fun Projection.toTypeString(): String {
+fun Projection.toTypeString(documentables: Map<DRI, Documentable>): String {
     return when (this) {
-        is Bound -> toTypeString()
+        is Bound -> toTypeString(documentables)
         is Star -> "*"
-        is Covariance<*> -> "out ${inner.toTypeString()}"
-        is Contravariance<*> -> "in ${inner.toTypeString()}"
-        is Invariance<*> -> inner.toTypeString()
+        is Covariance<*> -> "out ${inner.toTypeString(documentables)}"
+        is Contravariance<*> -> "in ${inner.toTypeString(documentables)}"
+        is Invariance<*> -> inner.toTypeString(documentables)
     }
 }
 
-private fun Bound.toTypeString(): String {
+private fun Bound.toTypeString(documentables: Map<DRI, Documentable>): String {
     return when (this) {
         is TypeParameter -> dri.classNames ?: "Unknown"
-        is TypeConstructor -> toTypeString()
-        is Nullable -> "${inner.toTypeString()}?"
-        is TypeAliased -> typeAlias.toTypeString()
+        is TypeConstructor -> toTypeString(documentables)
+        is Nullable -> "${inner.toTypeString(documentables)}?"
+        is TypeAliased -> typeAlias.toTypeString(documentables)
         is PrimitiveJavaType -> name
         is Void -> "Unit"
         is JavaObject -> "JavaObject"
         is Dynamic -> "Dynamic"
         is UnresolvedBound -> name
-        is DefinitelyNonNullable -> inner.toTypeString()
+        is DefinitelyNonNullable -> inner.toTypeString(documentables)
     }
 }
 
-private fun TypeConstructor.toTypeString(): String {
-    val typeName = dri.classNames ?: "Unknown"
+private fun TypeConstructor.toTypeString(documentables: Map<DRI, Documentable>): String {
+    val typeName = documentables[dri]?.name
+        ?: dri.classNames
+        ?: "Unknown"
+
     if (projections.isEmpty()) {
         return typeName
     }
-    val projectionNames = this.projections.joinToString(", ", transform = Projection::toTypeString)
+    val projectionNames = this.projections.joinToString(", ") { it.toTypeString(documentables) }
     return "$typeName<$projectionNames>"
 }
 
@@ -102,4 +106,6 @@ private fun Bound.driContains(str: String): Boolean = when (this) {
     else -> safeDri().contains(str)
 }
 
-fun Projection.isCommand() = toTypeString().endsWith("Command", true)
+fun Projection.isCommand(documentables: Map<DRI, Documentable>) = documentableIn(documentables)
+    ?.isOfType(D2Type.COMMAND)
+    ?:toTypeString(documentables).contains("Command")

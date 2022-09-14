@@ -95,7 +95,7 @@ internal abstract class MainPageContentBuilder(
             return type
         }
 
-        return if (isF2CommandFunction()) D2Type.COMMAND else D2Type.QUERY
+        return if (isF2CommandFunction(documentableIndexes.documentables)) D2Type.COMMAND else D2Type.QUERY
     }
 
     private fun compareWeights(w1: Int?, w2: Int?) = (w1 ?: Int.MAX_VALUE).compareTo(w2 ?: Int.MAX_VALUE)

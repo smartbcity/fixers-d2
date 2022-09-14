@@ -59,7 +59,7 @@ internal abstract class ServiceDescriptionPageContentBuilder(
     private fun PageContentBuilder.DocumentableContentBuilder.functionsBlock(
         functions: Collection<DFunction>,
     ) {
-        val displayedFunctions = functions.filter { it.isCommand() == displayCommands }
+        val displayedFunctions = functions.filter { it.isCommand(documentableIndexes.documentables) == displayCommands }
         block(kind = ContentKind.Properties, elements = displayedFunctions) { function ->
             functionSignature(function)
             text("<br/>")
@@ -78,7 +78,7 @@ internal abstract class ServiceDescriptionPageContentBuilder(
     }
 
     private fun PageContentBuilder.DocumentableContentBuilder.functionSignature(function: DFunction) {
-        val signature = FunctionSignature.of(function)
+        val signature = FunctionSignature.of(function, documentableIndexes)
         text(signature.name, styles = setOf(TextStyle.Bold))
         text("(")
         signature.params.forEachIndexed { i, (name, type) ->
@@ -96,13 +96,13 @@ internal abstract class ServiceDescriptionPageContentBuilder(
     private fun PageContentBuilder.DocumentableContentBuilder.type(type: Projection)  {
         val typeDocumentable = type.documentableIn(documentableIndexes.documentables)
         if (typeDocumentable == null) {
-            text(type.toTypeString(), styles = setOf(D2TextStyle.Code))
+            text(type.toTypeString(documentableIndexes.documentables), styles = setOf(D2TextStyle.Code))
         } else {
             val linkedDocumentableDri = documentableIndexes.childToParentMap[typeDocumentable.dri]
                 ?.takeIf { typeDocumentable.isOfType(D2Type.COMMAND, D2Type.QUERY, D2Type.EVENT, D2Type.RESULT) }
                 ?: typeDocumentable.dri
 
-            link(text = type.toTypeString(), address = linkedDocumentableDri, styles = setOf(D2TextStyle.Code))
+            link(text = type.toTypeString(documentableIndexes.documentables), address = linkedDocumentableDri, styles = setOf(D2TextStyle.Code))
         }
     }
 
@@ -127,10 +127,10 @@ internal abstract class ServiceDescriptionPageContentBuilder(
         val returnType: Projection?
     ) {
         companion object {
-            fun of(function: DFunction): FunctionSignature {
+            fun of(function: DFunction, documentableIndexes: DocumentableIndexes): FunctionSignature {
                 if (function.type.isF2()) {
                     val functionType = function.f2FunctionType()
-                    val paramName = if (function.isF2CommandFunction()) "cmd" else "query"
+                    val paramName = if (function.isF2CommandFunction(documentableIndexes.documentables)) "cmd" else "query"
 
                     return when {
                         functionType.isF2Consumer() -> FunctionSignature(
