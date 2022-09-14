@@ -8,7 +8,7 @@ import f2.dsl.fnc.F2Function
  * @D2 function
  * @parent [BoringInterface]
  */
-typealias BoringGetQueryFunction = F2Function<BoringGetQuery, BoringGetQueryResult>
+typealias BoringGetQueryFunction = F2Function<InheritedBoringGetQuery, BoringGetQueryResult>
 
 /**
  * @D2 query
@@ -29,6 +29,16 @@ interface BoringGetQuery {
 }
 
 /**
+ * @D2 inherit
+ */
+interface InheritedBoringGetQuery: BoringGetQuery {
+    /**
+     * This should not appear anywhere
+     */
+    val invisible: String
+}
+
+/**
  * @D2 event
  * @parent [BoringGetQueryFunction]
  */
@@ -42,5 +52,5 @@ interface BoringGetQueryResult {
      *   "things": [[]]
      * }
      */
-    val boringStuff: BoringInterface?
+    val boringStuff: InheritedBoringInterface?
 }

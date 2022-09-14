@@ -60,6 +60,11 @@ interface BoringInterface {
 }
 
 /**
+ * @d2 inherit
+ */
+interface InheritedBoringInterface: BoringInterface
+
+/**
  * @D2 model
  * @title Boring Object but in Kotlin
  * @parent [BoringInterfaceKotlinSection]
