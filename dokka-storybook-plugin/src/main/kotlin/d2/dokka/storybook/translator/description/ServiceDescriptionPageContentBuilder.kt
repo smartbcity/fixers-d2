@@ -102,7 +102,11 @@ internal abstract class ServiceDescriptionPageContentBuilder(
                 ?.takeIf { typeDocumentable.isOfType(D2Type.COMMAND, D2Type.QUERY, D2Type.EVENT, D2Type.RESULT) }
                 ?: typeDocumentable.dri
 
-            link(text = type.toTypeString(documentableIndexes.documentables), address = linkedDocumentableDri, styles = setOf(D2TextStyle.Code))
+            link(
+                text = type.toTypeString(documentableIndexes.documentables),
+                address = linkedDocumentableDri,
+                styles = setOf(D2TextStyle.Code)
+            )
         }
     }
 

@@ -60,6 +60,7 @@ data class DocumentableIndexes(
             )
         }
 
+        @Suppress("ThrowsCount")
         private fun <T: Documentable> T.supertypeIn(index: Map<DRI, Documentable>): Documentable {
             val superDocumentables = when (this) {
                 is WithSupertypes -> supertypes.values.flatten().mapNotNull { it.typeConstructor.documentableIn(index) }
@@ -70,7 +71,9 @@ data class DocumentableIndexes(
             return when (superDocumentables.size) {
                 0 -> throw IllegalArgumentException("$dri is tagged with 'inherit' but none of its supertypes are tagged with @d2")
                 1 -> superDocumentables.first()
-                else -> throw IllegalArgumentException("$dri is tagged with 'inherit' but more than one of its supertypes are tagged with @d2")
+                else -> throw IllegalArgumentException(
+                    "$dri is tagged with 'inherit' but more than one of its supertypes are tagged with @d2"
+                )
             }
         }
     }
