@@ -2,6 +2,7 @@ package d2.dokka.storybook.translator.description
 
 import d2.dokka.storybook.model.Constants
 import d2.dokka.storybook.model.doc.DocumentableIndexes
+import d2.dokka.storybook.model.doc.tag.D2Type
 import d2.dokka.storybook.model.doc.utils.directAnnotation
 import d2.dokka.storybook.model.doc.utils.documentableIn
 import d2.dokka.storybook.model.doc.utils.f2FunctionType
@@ -11,6 +12,7 @@ import d2.dokka.storybook.model.doc.utils.isF2CommandFunction
 import d2.dokka.storybook.model.doc.utils.isF2Consumer
 import d2.dokka.storybook.model.doc.utils.isF2Function
 import d2.dokka.storybook.model.doc.utils.isF2Supplier
+import d2.dokka.storybook.model.doc.utils.isOfType
 import d2.dokka.storybook.model.doc.utils.toTypeString
 import d2.dokka.storybook.model.render.D2TextStyle
 import d2.dokka.storybook.translator.block
@@ -96,7 +98,11 @@ internal abstract class ServiceDescriptionPageContentBuilder(
         if (typeDocumentable == null) {
             text(type.toTypeString(), styles = setOf(D2TextStyle.Code))
         } else {
-            link(text = type.toTypeString(), address = typeDocumentable.dri, styles = setOf(D2TextStyle.Code))
+            val linkedDocumentableDri = documentableIndexes.childToParentMap[typeDocumentable.dri]
+                ?.takeIf { typeDocumentable.isOfType(D2Type.COMMAND, D2Type.QUERY, D2Type.EVENT, D2Type.RESULT) }
+                ?: typeDocumentable.dri
+
+            link(text = type.toTypeString(), address = linkedDocumentableDri, styles = setOf(D2TextStyle.Code))
         }
     }
 
