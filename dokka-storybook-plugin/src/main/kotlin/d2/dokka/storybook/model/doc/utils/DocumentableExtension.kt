@@ -59,7 +59,7 @@ fun Documentable.title(): String = if (this is RootDocumentable) {
 } else {
 	d2DocTagExtra().firstTagOfTypeOrNull<Title>()?.body
 		?: generateTitle()
-}
+}.trim()
 private fun Documentable.generateTitle() = when (d2Type()) {
 	D2Type.COMMAND -> "Command"
 	D2Type.QUERY -> "Query"
