@@ -8,6 +8,7 @@ data class D2(override val root: DocTag) : WithTextBody {
 
 enum class D2Type(val id: String, val order: Int) {
 	PAGE("page", order = 0),
+	API("api", order = 3),
 	SERVICE("service", order = 5),
 	MODEL("model", order = 10),
 	FUNCTION("function", order = 20),

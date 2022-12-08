@@ -2,10 +2,6 @@
 
 ## ExpectedInterface
 
-
-
-
-
   
 <article>
 

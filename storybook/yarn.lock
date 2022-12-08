@@ -1612,12 +1612,12 @@
   resolved "https://registry.yarnpkg.com/@popperjs/core/-/core-2.11.2.tgz#830beaec4b4091a9e9398ac50f865ddea52186b9"
   integrity sha512-92FRmppjjqz29VMJ2dn+xdyXZBrMlE42AV6Kq6BwjWV7CNUW1hs2FtxSNLQE+gJhaZ6AAmYuO9y8dshhcBl7vA==
 
-"@smartb/g2-documentation@^1.0.0-alpha.34":
-  version "1.0.0-alpha.35"
-  resolved "https://gitlab.smartb.city/api/v4/projects/52/packages/npm/@smartb/g2-documentation/-/@smartb/g2-documentation-1.0.0-alpha.35.tgz#6837e3b4a0a9db647e130c3b9f1f6ff5fb1c8f08"
-  integrity sha1-aDfjtKCp22R+Eww7nx9v9fscjwg=
+"@smartb/g2-documentation@^1.0.0-alpha.38":
+  version "1.0.0-alpha.106"
+  resolved "https://gitlab.smartb.city/api/v4/projects/127/packages/npm/@smartb/g2-documentation/-/@smartb/g2-documentation-1.0.0-alpha.106.tgz#700f8fffa1651933c308222a889e8c879750109a"
+  integrity sha1-cA+P/6FlGTPDCCIqiJ6Mh5dQEJo=
   dependencies:
-    "@smartb/g2-themes" "^1.0.0-alpha.35"
+    "@smartb/g2-themes" "1.0.0-alpha.106"
     github-markdown-css "^4.0.0"
     react-markdown "^6.0.2"
     react-syntax-highlighter "^15.4.3"
@@ -1625,21 +1625,21 @@
     rehype-sanitize "^4.0.0"
     remark-gfm "^1.0.0"
 
-"@smartb/g2-storybook-documentation@^1.0.0-alpha.34":
-  version "1.0.0-alpha.35"
-  resolved "https://gitlab.smartb.city/api/v4/projects/52/packages/npm/@smartb/g2-storybook-documentation/-/@smartb/g2-storybook-documentation-1.0.0-alpha.35.tgz#4082a9318b01a71123715f19b1fa3bdb0ade8c94"
-  integrity sha1-QIKpMYsBpxEjcV8Zsfo72wrejJQ=
+"@smartb/g2-storybook-documentation@^1.0.0-alpha.38":
+  version "1.0.0-alpha.106"
+  resolved "https://gitlab.smartb.city/api/v4/projects/127/packages/npm/@smartb/g2-storybook-documentation/-/@smartb/g2-storybook-documentation-1.0.0-alpha.106.tgz#a31e1f1875aa9a271b6784f08631354b9b688b0e"
+  integrity sha1-ox4fGHWqmicbZ4TwhjE1S5toiw4=
   dependencies:
     "@storybook/addon-docs" "^6.3.6"
 
-"@smartb/g2-themes@^1.0.0-alpha.34", "@smartb/g2-themes@^1.0.0-alpha.35":
-  version "1.0.0-alpha.35"
-  resolved "https://gitlab.smartb.city/api/v4/projects/52/packages/npm/@smartb/g2-themes/-/@smartb/g2-themes-1.0.0-alpha.35.tgz#8ad39deeb7029cb8f082a5fa4826f8f948a332b4"
-  integrity sha1-itOd7rcCnLjwgqX6SCb4+UijMrQ=
+"@smartb/g2-themes@1.0.0-alpha.106", "@smartb/g2-themes@^1.0.0-alpha.38":
+  version "1.0.0-alpha.106"
+  resolved "https://gitlab.smartb.city/api/v4/projects/127/packages/npm/@smartb/g2-themes/-/@smartb/g2-themes-1.0.0-alpha.106.tgz#be335f0211a2c67b9dc9c1559a354e9f29a429ef"
+  integrity sha1-vjNfAhGixnudycFVmjVOnymkKe8=
   dependencies:
-    ramda "^0.27.1"
+    ramda "^0.28.0"
     tinycolor2 "^1.4.2"
-    tss-react "^3.3.1"
+    tss-react "^3.7.0"
 
 "@storybook/addon-actions@6.5.3", "@storybook/addon-actions@^6.5.0":
   version "6.5.3"
@@ -9071,10 +9071,10 @@ ramda@^0.21.0:
   resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.21.0.tgz#a001abedb3ff61077d4ff1d577d44de77e8d0a35"
   integrity sha1-oAGr7bP/YQd9T/HVd9RN536NCjU=
 
-ramda@^0.27.1:
-  version "0.27.2"
-  resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.27.2.tgz#84463226f7f36dc33592f6f4ed6374c48306c3f1"
-  integrity sha512-SbiLPU40JuJniHexQSAgad32hfwd+DRUdwF2PlVuI5RZD0/vahUco7R8vD86J/tcEKKF9vZrUVwgtmGCqlCKyA==
+ramda@^0.28.0:
+  version "0.28.0"
+  resolved "https://registry.yarnpkg.com/ramda/-/ramda-0.28.0.tgz#acd785690100337e8b063cab3470019be427cc97"
+  integrity sha512-9QnLuG/kPVgWvMQ4aODhsBUFKOUmnbUnsSXACv+NCQZcHbeb+v8Lodp8OVxtRULN1/xOyYLLaL6npE6dMq5QTA==
 
 randombytes@^2.0.0, randombytes@^2.0.1, randombytes@^2.0.5, randombytes@^2.1.0:
   version "2.1.0"
@@ -10619,10 +10619,10 @@ tslib@^2.0.0, tslib@^2.0.1, tslib@^2.0.3, tslib@^2.3.0:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.3.1.tgz#e8a335add5ceae51aa261d32a490158ef042ef01"
   integrity sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==
 
-tss-react@^3.3.1:
-  version "3.5.2"
-  resolved "https://registry.yarnpkg.com/tss-react/-/tss-react-3.5.2.tgz#1b5db1f4a71fe62c939eed5368ea7809ca2ad0a9"
-  integrity sha512-IgGizaOhbntrWdh2EISJYnhYEEWXXWf3sn5aa8LYf7e59NCM5mg0PxJuEoLx9pLG5WlJF80zTRN/Y1Jnjw9LYA==
+tss-react@^3.7.0:
+  version "3.7.1"
+  resolved "https://registry.yarnpkg.com/tss-react/-/tss-react-3.7.1.tgz#119647731490f9e7e62c7f6a38a78df981929a4b"
+  integrity sha512-dfWUoxBlKZfIG9UC1A2h02OmcE/Ni0itCmmZu94E9g+KyBhKMHKcsKvUm0bNlRqTmYjXiCgPJDmj5fyc8CSrLg==
   dependencies:
     "@emotion/cache" "*"
     "@emotion/serialize" "*"

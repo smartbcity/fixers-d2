@@ -6,10 +6,6 @@
 
 The child
 
-
-
-
-
   
 <article>
 

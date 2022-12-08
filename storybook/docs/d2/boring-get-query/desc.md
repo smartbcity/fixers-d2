@@ -2,11 +2,7 @@
 
 #### Query
 
-Type: `BoringGetQuery`
-
-
-
-  
+Type: `BoringGetQuery`  
 <article>
 
 ***description*** `String?` 
