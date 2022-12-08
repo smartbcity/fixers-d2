@@ -90,6 +90,7 @@ fun Documentable.d2DocTagExtra() = (this as? WithExtraProperties<Documentable>)
 	?: D2DocTagExtra(emptyList())
 
 fun Documentable.visualType() = when (d2Type()) {
+	D2Type.API -> VisualType.NONE
 	D2Type.SERVICE -> VisualType.NONE
 	null -> VisualType.NONE
 	else -> modelVisualType()

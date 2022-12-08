@@ -4,7 +4,7 @@ D2 is a module for generating automatic documentation of the SmartB architecture
 
 ## dokka-storybook-plugin
 
-Plugin [Dokka](https://github.com/Kotlin/dokka) compatible with Storybook and [Archetypes-UI](https://gitlab.smartb.city/app/archetypes-ui)
+Plugin [Dokka](https://github.com/Kotlin/dokka) compatible with Storybook and [G2-UI](https://gitlab.smartb.city/fixers/g2)
 
 ### Installation with gradle
 
@@ -88,7 +88,10 @@ Available types (case-insensitive):
  - Model: Classlike object containing data
  - Function: Typically takes a command as input and returns an event as output 
  - Command: Classlike used as input of a function
- - Event: Classlike used as output of a function
+ - Event: Classlike used as output of a command function
+ - Result: Classlike used as output of a query function
+ - Service: Classlike interface containing functions
+ - Api: Classlike interface containing f2 functions
 
 #### @parent identifier
 

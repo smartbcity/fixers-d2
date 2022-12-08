@@ -1,13 +1,9 @@
 
 
-###  Boring Get Query 
+### Boring Get Query
 
 Type: `BoringGetQueryFunction`
 
 Retrieve a boring thing
-
-
-
-
 
 

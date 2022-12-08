@@ -3,7 +3,3 @@
 ## Kotlin section
 
 
-
-
-
-

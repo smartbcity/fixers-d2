@@ -6,10 +6,6 @@
 
 I expected this. This is all within my calculations.
 
-
-
-
-
   
 <article>
 

@@ -2,11 +2,7 @@
 
 #### Event
 
-Type: `BoringGetQueryResult`
-
-
-
-  
+Type: `BoringGetQueryResult`  
 <article>
 
 ***boringStuff*** [`BoringInterface?`](#boring-object) 

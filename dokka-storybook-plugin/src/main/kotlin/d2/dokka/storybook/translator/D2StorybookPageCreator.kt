@@ -7,6 +7,7 @@ import d2.dokka.storybook.model.doc.utils.d2Type
 import d2.dokka.storybook.model.page.FileData
 import d2.dokka.storybook.model.page.ModelPageNode
 import d2.dokka.storybook.service.DocumentablePageSelector
+import d2.dokka.storybook.translator.description.FunctionDisplayType
 import d2.dokka.storybook.translator.description.ModelDescriptionPageContentBuilder
 import d2.dokka.storybook.translator.description.ServiceDescriptionPageContentBuilder
 import d2.dokka.storybook.translator.root.MainPageContentBuilder
@@ -82,12 +83,14 @@ class D2StorybookPageCreator(
     }
 
     private fun D2Type?.leftDescriptionContentBuilder() = when (this) {
-        D2Type.SERVICE -> InnerServiceDescriptionPageContentBuilder(true)
+        D2Type.API -> InnerServiceDescriptionPageContentBuilder(true, FunctionDisplayType.HTTP)
+        D2Type.SERVICE -> InnerServiceDescriptionPageContentBuilder(true, FunctionDisplayType.KOTLIN)
         else -> InnerModelDescriptionPageContentBuilder()
     }
 
     private fun D2Type?.rightDescriptionContentBuilder() = when (this) {
-        D2Type.SERVICE -> InnerServiceDescriptionPageContentBuilder(false)
+        D2Type.API -> InnerServiceDescriptionPageContentBuilder(false, FunctionDisplayType.HTTP)
+        D2Type.SERVICE -> InnerServiceDescriptionPageContentBuilder(false, FunctionDisplayType.KOTLIN)
         else -> InnerModelDescriptionPageContentBuilder()
     }
 
@@ -100,8 +103,8 @@ class D2StorybookPageCreator(
         override fun contentForDescription(d: Documentable): List<ContentNode>
             = this@D2StorybookPageCreator.contentForDescription(d)
     }
-    private inner class InnerServiceDescriptionPageContentBuilder(isLeft: Boolean):
-        ServiceDescriptionPageContentBuilder(isLeft, contentBuilder, documentableIndexes) {
+    private inner class InnerServiceDescriptionPageContentBuilder(isLeft: Boolean, display: FunctionDisplayType):
+        ServiceDescriptionPageContentBuilder(isLeft, display, contentBuilder, documentableIndexes) {
         override fun contentForComments(d: Documentable): List<ContentNode>
             = this@D2StorybookPageCreator.contentForComments(d)
         override fun contentForDescription(d: Documentable): List<ContentNode>

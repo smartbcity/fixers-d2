@@ -6,10 +6,6 @@
 
 Does some boring stuff
 
-
-
-
-
   
 <article>
 
@@ -27,7 +23,7 @@ Probably does stuff but it's not really interesting
 </article>
 <article>
 
-**getBoring** ( query: [`BoringGetQuery`](/docs/sample-boring-documentation--page#-boring-get-query-) ) : [`BoringGetQueryResult`](/docs/sample-boring-documentation--page#-boring-get-query-) <br/> 
+**getBoring** ( query: [`BoringGetQuery`](/docs/sample-boring-documentation--page#boring-get-query) ) : [`BoringGetQueryResult`](/docs/sample-boring-documentation--page#boring-get-query) <br/> 
 
 Annoying function
 

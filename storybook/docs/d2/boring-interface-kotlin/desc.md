@@ -2,11 +2,7 @@
 
 ### Boring Object but in Kotlin
 
-Type: `BoringInterfaceKotlin`
-
-
-
-  
+Type: `BoringInterfaceKotlin`  
 <article>
 
 ***description*** `String` 
