@@ -3,5 +3,5 @@ plugins {
 }
 
 dependencies {
-    jvmImplementation(project(":sample"))
+    jvmMainImplementation(project(":sample"))
 }
