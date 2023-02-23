@@ -2,6 +2,7 @@ package d2.dokka.storybook.renderer.description
 
 import d2.dokka.storybook.model.render.Article
 import d2.dokka.storybook.renderer.MarkdownRenderer
+import d2.dokka.storybook.renderer.builder.ReactFileBuilder
 import org.jetbrains.dokka.model.withDescendants
 import org.jetbrains.dokka.pages.ContentGroup
 import org.jetbrains.dokka.pages.ContentPage
@@ -11,7 +12,7 @@ import org.jetbrains.dokka.plugability.DokkaContext
 
 class DescriptionPageContentRenderer(context: DokkaContext): MarkdownRenderer(context) {
 
-    override fun StringBuilder.buildTableProperties(node: ContentTable, pageContext: ContentPage) {
+    override fun ReactFileBuilder.buildTableProperties(node: ContentTable, pageContext: ContentPage) {
         node.children.forEach { property ->
             wrapWith(Article) {
                 append("\n")
@@ -26,7 +27,7 @@ class DescriptionPageContentRenderer(context: DokkaContext): MarkdownRenderer(co
                     } else {
                         " "
                     }
-                    append(buildString { child.build(this, pageContext) } + trailingChar)
+                    append(buildString { child.build(ReactFileBuilder(this), pageContext) } + trailingChar)
                 }
             }
             append("\n")
