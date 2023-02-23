@@ -15,7 +15,7 @@ import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.sureClassNames
 import org.jetbrains.dokka.model.Annotations
 import org.jetbrains.dokka.model.DClasslike
-import org.jetbrains.dokka.model.DTypeAlias
+import org.jetbrains.dokka.model.DEnum
 import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.properties.PropertyContainer
 import org.jetbrains.dokka.model.properties.WithExtraProperties
@@ -60,6 +60,7 @@ fun Documentable.title(): String = if (this is RootDocumentable) {
 	d2DocTagExtra().firstTagOfTypeOrNull<Title>()?.body
 		?: generateTitle()
 }.trim()
+
 private fun Documentable.generateTitle() = when (d2Type()) {
 	D2Type.COMMAND -> "Command"
 	D2Type.QUERY -> "Query"
@@ -96,12 +97,15 @@ fun Documentable.visualType() = when (d2Type()) {
 	else -> modelVisualType()
 }
 
-private fun Documentable.modelVisualType() = when (this) {
-	is RootDocumentable -> pageDocumentation?.visual?.type ?: VisualType.NONE
-	is PageDocumentable -> d2DocTagExtra().firstTagOfTypeOrNull<Visual>()?.type ?: VisualType.NONE
-	is SectionDocumentable -> d2DocTagExtra().firstTagOfTypeOrNull<Visual>()?.type ?: VisualType.NONE
-	is DClasslike -> d2DocTagExtra().firstTagOfTypeOrNull<Visual>()?.type ?: VisualType.DEFAULT
-	is DTypeAlias -> d2DocTagExtra().firstTagOfTypeOrNull<Visual>()?.type ?: VisualType.NONE
+private fun Documentable.modelVisualType() = if (this is RootDocumentable) {
+	pageDocumentation?.visual?.type ?: VisualType.NONE
+} else {
+	d2DocTagExtra().firstTagOfTypeOrNull<Visual>()?.type ?: defaultVisualType()
+}
+
+private fun Documentable.defaultVisualType() = when (this) {
+	is DEnum -> VisualType.NONE
+	is DClasslike -> VisualType.DEFAULT
 	else -> VisualType.NONE
 }
 

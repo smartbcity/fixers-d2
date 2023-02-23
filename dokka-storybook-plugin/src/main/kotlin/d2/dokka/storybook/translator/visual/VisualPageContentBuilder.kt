@@ -4,7 +4,6 @@ import d2.dokka.storybook.model.doc.DocumentableIndexes
 import d2.dokka.storybook.model.doc.PageDocumentable
 import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.SectionDocumentable
-import d2.dokka.storybook.model.doc.utils.d2DocTagExtra
 import d2.dokka.storybook.model.doc.tag.Example
 import d2.dokka.storybook.model.doc.tag.ExampleLink
 import d2.dokka.storybook.model.doc.tag.ExampleText
@@ -13,6 +12,7 @@ import d2.dokka.storybook.model.doc.tag.VisualLink
 import d2.dokka.storybook.model.doc.tag.VisualSimple
 import d2.dokka.storybook.model.doc.tag.VisualText
 import d2.dokka.storybook.model.doc.tag.WithTarget
+import d2.dokka.storybook.model.doc.utils.d2DocTagExtra
 import d2.dokka.storybook.model.doc.utils.documentableIn
 import d2.dokka.storybook.model.doc.utils.isCollection
 import d2.dokka.storybook.model.doc.utils.isMap
@@ -20,6 +20,7 @@ import d2.dokka.storybook.translator.D2StorybookPageContentBuilder
 import d2.dokka.storybook.translator.codeBlock
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
 import org.jetbrains.dokka.model.DClasslike
+import org.jetbrains.dokka.model.DEnum
 import org.jetbrains.dokka.model.DProperty
 import org.jetbrains.dokka.model.DTypeAlias
 import org.jetbrains.dokka.model.Documentable
@@ -39,6 +40,7 @@ abstract class VisualPageContentBuilder(
 			is RootDocumentable -> rawContentFor(d)
 			is PageDocumentable -> rawContentFor(d)
 			is SectionDocumentable -> rawContentFor(d)
+			is DEnum -> contentFor(d)
 			is DClasslike -> contentFor(d)
 			is DTypeAlias -> rawContentFor(d)
 			is DProperty -> contentFor(d)
@@ -56,6 +58,18 @@ abstract class VisualPageContentBuilder(
 			}
 		} else {
 			rawContentForVisualTag(c, visualTag)
+		}
+	}
+
+	private fun contentFor(e: DEnum): ContentNode {
+		val visualTag = e.d2DocTagExtra().firstTagOfTypeOrNull<Visual>()
+
+		return if (visualTag == null || visualTag is VisualSimple) {
+			contentBuilder.contentFor(e, kind = ContentKind.Sample) {
+				codeBlock("\"${e.entries.firstOrNull()?.name ?: ""}\"", "")
+			}
+		} else {
+			rawContentForVisualTag(e, visualTag)
 		}
 	}
 
