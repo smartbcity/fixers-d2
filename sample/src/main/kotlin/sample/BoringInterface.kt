@@ -57,6 +57,11 @@ interface BoringInterface {
      * @example [["Weird thingy", "Eww wat is dis"]]
      */
     val things: List<String?>
+
+    /**
+     * The state of that not-interesting thing
+     */
+    val state: BoringState
 }
 
 /**

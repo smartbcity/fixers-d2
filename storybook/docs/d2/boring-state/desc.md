@@ -1,0 +1,19 @@
+
+
+# BoringState
+
+
+
+The state of a... well... huh never mind.
+
+ - **IDLE**: Not doing anything.
+ - **PROCRASTINATING**: Should be doing something but is somehow not doing it.
+ - **MENTALLY_PREPARING**: Is mentally preparing for doing the thing.
+ - **ABOUT_TO_GET_STARTED**: About to start the thing.
+ - **ALMOST_STARTED**: Just a bit more before starting the thing.
+ - **STARTING_TO_START**: Has started to eventually start the thing.
+ - **CONFUSED_START**: Trying to figure out how to start the thing.
+ - **DISTRACTED**: Got distracted by something else.
+ - **DOUBTING**: Starting to doubt if the thing is worth doing.
+ - **GAVE_UP**: Gave up on the thing.
+

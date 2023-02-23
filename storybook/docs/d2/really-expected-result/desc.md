@@ -6,10 +6,11 @@
 
 ... OK.
 
-  
+
 <article>
 
-***predictedStuff*** `String` 
+  ***predictedStuff*** `String` 
+
 
 </article>
 
