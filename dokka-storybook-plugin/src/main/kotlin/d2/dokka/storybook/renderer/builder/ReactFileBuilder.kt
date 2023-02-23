@@ -4,9 +4,9 @@ import d2.dokka.storybook.model.code.CodeElement
 import d2.dokka.storybook.model.code.WithImport
 import d2.dokka.storybook.model.code.WithParams
 import d2.dokka.storybook.model.code.imports.CodeImport
+import d2.dokka.storybook.model.code.react.HtmlElement
 import d2.dokka.storybook.model.code.react.JsonNode
 import d2.dokka.storybook.model.code.react.LiteralNode
-import d2.dokka.storybook.model.code.react.ReactComponent
 import d2.dokka.storybook.model.code.react.ReactNode
 
 class ReactFileBuilder(
@@ -39,7 +39,7 @@ class ReactFileBuilder(
         when (node) {
             is LiteralNode -> append(node, indentLevel, indentFirstLine)
             is JsonNode -> append(node, indentLevel, indentFirstLine)
-            is ReactComponent -> append(node, indentLevel, indentFirstLine)
+            is HtmlElement -> append(node, indentLevel, indentFirstLine)
             else -> throw NotImplementedError("Unsupported react node type: ${node::class.simpleName}")
         }
     }
@@ -69,36 +69,43 @@ class ReactFileBuilder(
         }
     }
 
-    private fun append(component: ReactComponent, indentLevel: Int, indentFirstLine: Boolean) {
-        when {
-            component.params.isEmpty() -> appendSimpleComponent(component, actualIndentLevel(indentLevel, indentFirstLine))
-            else -> appendComplexComponent(component, indentLevel, indentFirstLine)
-        }
-    }
-
-    private fun appendSimpleComponent(component: ReactComponent, indentLevel: Int) {
-        append("<${component.identifier} />", indentLevel)
-    }
-
-    private fun appendComplexComponent(component: ReactComponent, indentLevel: Int, indentFirstLine: Boolean) {
+    private fun append(component: HtmlElement, indentLevel: Int, indentFirstLine: Boolean) {
         append("<${component.identifier}", actualIndentLevel(indentLevel, indentFirstLine))
-        appendNewLine()
 
-        component.params.map { (key, value) ->
-            append("$key={", indentLevel + 1)
-            if (value is WithParams && value.params.isNotEmpty()) {
-                appendNewLine()
-                append(value, indentLevel + 2)
-                appendNewLine()
-                append("}", indentLevel + 1)
-            } else {
-                append(value)
-                append("}")
-            }
+        if (component.params.isNotEmpty()) {
             appendNewLine()
+            component.params.map { (key, value) ->
+                append("$key={", indentLevel + 1)
+                if (value is WithParams && value.params.isNotEmpty()) {
+                    appendNewLine()
+                    append(value, indentLevel + 2)
+                    appendNewLine()
+                    append("}", indentLevel + 1)
+                } else {
+                    append(value)
+                    append("}")
+                }
+                appendNewLine()
+            }
         }
 
-        append("/>", indentLevel)
+        val closeIndentLevel = indentLevel.takeIf { component.params.isNotEmpty() } ?: 0
+
+        if (component.children.isNotEmpty()) {
+            append(">", closeIndentLevel)
+            appendNewLine()
+            component.children.forEach { child ->
+                appendNewLine()
+                append(child, indentLevel + 1)
+                appendNewLine()
+            }
+            append("</${component.identifier}>", indentLevel)
+        } else {
+            if (component.params.isEmpty()) {
+                append(" ")
+            }
+            append("/>", closeIndentLevel)
+        }
     }
 
     private fun buildImports(): String {

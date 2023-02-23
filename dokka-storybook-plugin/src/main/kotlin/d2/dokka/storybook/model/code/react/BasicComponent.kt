@@ -8,4 +8,5 @@ open class BasicComponent(
     override val identifier: String = importData.element
 ): ReactComponent {
     override val params: Map<String, CodeElement> = emptyMap()
+    override val children: Collection<CodeElement> = emptyList()
 }

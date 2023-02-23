@@ -2,7 +2,6 @@ package d2.dokka.storybook.renderer
 
 import d2.dokka.storybook.location.D2StorybookLocationProvider
 import d2.dokka.storybook.model.render.D2TextStyle
-import d2.dokka.storybook.model.render.WrapperTag
 import d2.dokka.storybook.renderer.builder.ReactFileBuilder
 import org.jetbrains.dokka.base.renderers.DefaultRenderer
 import org.jetbrains.dokka.base.renderers.isImage
@@ -47,7 +46,8 @@ abstract class MarkdownRenderer(
 	}
 
 	override fun buildPageContent(context: ReactFileBuilder, page: ContentPage) {
-		page.content.build(context, page)
+		context.buildContentNode(page.content, page)
+		context.build()
 	}
 
 	override fun ReactFileBuilder.buildTable(
@@ -58,10 +58,12 @@ abstract class MarkdownRenderer(
 		buildNewLine()
 		when (node.dci.kind) {
 			ContentKind.Properties -> buildTableProperties(node, pageContext)
+			ContentKind.Functions -> buildTableFunctions(node, pageContext)
 			else -> Unit
 		}
 	}
 	protected abstract fun ReactFileBuilder.buildTableProperties(node: ContentTable, pageContext: ContentPage)
+	protected abstract fun ReactFileBuilder.buildTableFunctions(node: ContentTable, pageContext: ContentPage)
 
 	protected open fun ReactFileBuilder.buildNewLine() {
 		append("\n")
@@ -78,16 +80,6 @@ abstract class MarkdownRenderer(
 		}
 	}
 
-	protected open fun ReactFileBuilder.wrapWith(tag: WrapperTag, buildContent: ReactFileBuilder.() -> Unit) {
-		wrapWith(listOf(tag), buildContent)
-	}
-
-	protected open fun ReactFileBuilder.wrapWith(tags: List<WrapperTag>, buildContent: ReactFileBuilder.() -> Unit) {
-		tags.forEach { tag -> append(tag.open()) }
-		buildContent()
-		tags.forEach { tag -> append(tag.close()) }
-	}
-
 	protected open fun decorators(styles: Set<Style>) = buildString {
 		styles.forEach { style ->
 			when (style) {
@@ -100,11 +92,6 @@ abstract class MarkdownRenderer(
 			}
 		}
 	}
-
-	protected open fun String.withEntersAsHtml(): String = this
-		.replace("\\\n", "\n\n")
-		.replace("\n[\n]+".toRegex(), "<br>")
-		.replace("\n", " ")
 
 	override fun ReactFileBuilder.buildDRILink(
 		node: ContentDRILink,

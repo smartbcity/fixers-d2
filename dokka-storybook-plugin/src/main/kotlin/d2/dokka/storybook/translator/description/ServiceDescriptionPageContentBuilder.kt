@@ -29,13 +29,10 @@ import org.jetbrains.dokka.pages.ContentStyle
 import org.jetbrains.dokka.pages.TextStyle
 
 internal abstract class ServiceDescriptionPageContentBuilder(
-    private val isLeft: Boolean,
     private val displayType: FunctionDisplayType,
     private val contentBuilder: PageContentBuilder,
     override val documentableIndexes: DocumentableIndexes
 ): DescriptionPageContentBuilder() {
-
-    private val displayCommands = !isLeft
 
     override fun contentFor(d: Documentable): ContentNode? {
         return when (d) {
@@ -46,29 +43,71 @@ internal abstract class ServiceDescriptionPageContentBuilder(
 
     fun contentFor(c: DClasslike): ContentNode {
         return contentBuilder.contentFor(c) {
+            val (commands, queries) = c.functions.partition { it.isCommand(documentableIndexes.documentables) }
+            contentFor(c, queries, "Queries")
+            contentFor(c, commands, "Commands")
+        }
+    }
+
+    private fun PageContentBuilder.DocumentableContentBuilder.contentFor(
+        c: DClasslike,
+        functions: Collection<DFunction>,
+        title: String
+    ) {
+        if (functions.isNotEmpty()) {
             group(kind = ContentKind.Cover) {
-                header(c.headerLevel(), if (displayCommands) "Commands" else "Queries")
-                +contentForDescription(c)
+                header(c.headerLevel(), title)
             }
             group(styles = setOf(ContentStyle.TabbedContent)) {
                 +contentForComments(c)
-                functionsBlock(c.functions)
+                when (displayType) {
+                    FunctionDisplayType.HTTP -> httpFunctionsBlock(functions)
+                    FunctionDisplayType.KOTLIN -> kotlinFunctionsBlock(functions)
+                }
             }
         }
     }
 
-    private fun PageContentBuilder.DocumentableContentBuilder.functionsBlock(
+    private fun PageContentBuilder.DocumentableContentBuilder.httpFunctionsBlock(
         functions: Collection<DFunction>,
     ) {
-        val displayedFunctions = functions.filter { it.isCommand(documentableIndexes.documentables) == displayCommands }
-        block(kind = ContentKind.Properties, elements = displayedFunctions) { function ->
-            when(displayType) {
-                FunctionDisplayType.KOTLIN -> functionSignature(function)
-                FunctionDisplayType.HTTP -> httpSignature(function)
-            }
+        block(kind = ContentKind.Functions, elements = functions) { function ->
+            val signature = FunctionSignature.of(function, documentableIndexes)
+            group(setOf(function.dri), function.sourceSets.toSet(), ContentKind.Main) {
+                text("POST /${signature.name}", styles = setOf(TextStyle.Bold))
 
+                function.documentation.forEach { (_, docNode) ->
+                    docNode.children.firstOrNull()?.root?.let {
+                        group(kind = ContentKind.Comment) {
+                            comment(it)
+                        }
+                    }
+                }
+            }
+            group(setOf(function.dri), function.sourceSets.toSet(), ContentKind.Parameters) {
+                if (signature.params.isNotEmpty()) {
+                    text("Body:")
+                }
+                signature.params.forEachIndexed { i, (_, type) ->
+                    val separator = if (i > 0) ", " else ""
+                    text(separator)
+                    type(type)
+                }
+                text("<br />")
+                if (signature.returnType != null) {
+                    text("Result:")
+                    type(signature.returnType)
+                }
+            }
+        }
+    }
+
+    private fun PageContentBuilder.DocumentableContentBuilder.kotlinFunctionsBlock(
+        functions: Collection<DFunction>,
+    ) {
+        block(kind = ContentKind.Properties, elements = functions) { function ->
+            functionSignature(function)
             text("<br/>")
-            functionAccess(function)
 
             group(setOf(function.dri), function.sourceSets.toSet(), ContentKind.Main) {
                 function.documentation.forEach { (_, docNode) ->
@@ -82,27 +121,8 @@ internal abstract class ServiceDescriptionPageContentBuilder(
         }
     }
 
-    private fun PageContentBuilder.DocumentableContentBuilder.httpSignature(function: DFunction) {
-        val signature = FunctionSignature.of(function, documentableIndexes, displayType)
-        text("POST", styles = setOf(TextStyle.Bold))
-        text("/${signature.name}", styles = setOf(TextStyle.Bold))
-        if (signature.params.isNotEmpty()) {
-            text("<br/>")
-            text("Body:")
-            signature.params.forEachIndexed { i, (_, type) ->
-                val separator = if (i > 0) ", " else ""
-                text(separator)
-                type(type)
-            }
-            if(signature.returnType != null) {
-                text("Result:")
-                type(signature.returnType)
-            }
-        }
-    }
-
     private fun PageContentBuilder.DocumentableContentBuilder.functionSignature(function: DFunction) {
-        val signature = FunctionSignature.of(function, documentableIndexes, displayType)
+        val signature = FunctionSignature.of(function, documentableIndexes)
         text(signature.name, styles = setOf(TextStyle.Bold))
         text("(")
         signature.params.forEachIndexed { i, (name, type) ->
@@ -152,12 +172,10 @@ internal abstract class ServiceDescriptionPageContentBuilder(
     private data class FunctionSignature(
         val name: String,
         val params: List<Pair<String, Projection>>,
-        val returnType: Projection?,
-        val display: FunctionDisplayType,
-
+        val returnType: Projection?
     ) {
         companion object {
-            fun of(function: DFunction, documentableIndexes: DocumentableIndexes, display: FunctionDisplayType): FunctionSignature {
+            fun of(function: DFunction, documentableIndexes: DocumentableIndexes): FunctionSignature {
                 if (function.type.isF2()) {
                     val functionType = function.f2FunctionType()
                     val paramName = if (function.isF2CommandFunction(documentableIndexes.documentables)) "cmd" else "query"
@@ -167,25 +185,21 @@ internal abstract class ServiceDescriptionPageContentBuilder(
                             name = function.name,
                             params = listOf(paramName to functionType.projections.first()),
                             returnType = null,
-                            display = display
                         )
                         functionType.isF2Function() -> FunctionSignature(
                             name = function.name,
                             params = listOf(paramName to functionType.projections.first()),
                             returnType = functionType.projections.last(),
-                            display = display
                         )
                         functionType.isF2Supplier() -> FunctionSignature(
                             name = function.name,
                             params = emptyList(),
                             returnType = functionType.projections.first(),
-                            display = display
                         )
                         else -> FunctionSignature(
                             name = function.name,
                             params = emptyList(),
                             returnType = null,
-                            display = display
                         )
                     }
                 }
@@ -194,7 +208,6 @@ internal abstract class ServiceDescriptionPageContentBuilder(
                     name = function.name,
                     params = function.parameters.map { param -> param.name.orEmpty() to param.type },
                     returnType = function.type.takeUnless { it.toTypeString(documentableIndexes.documentables) == "Unit" },
-                    display = display
                 )
             }
         }

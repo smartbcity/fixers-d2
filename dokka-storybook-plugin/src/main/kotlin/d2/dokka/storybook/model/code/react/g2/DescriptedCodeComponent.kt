@@ -25,4 +25,6 @@ class DescriptedCodeComponent(
             ::rightElement.name to rightElement,
             ::rightContainerProps.name to JsonNode(rightContainerProps),
         )
+
+    override val children: Collection<CodeElement> = emptyList()
 }

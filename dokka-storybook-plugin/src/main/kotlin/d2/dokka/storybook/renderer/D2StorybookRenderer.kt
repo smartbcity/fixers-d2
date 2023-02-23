@@ -39,13 +39,11 @@ open class D2StorybookRenderer(
         FileData.ROOT to MainPageContentRenderer(true),
         FileData.MAIN to MainPageContentRenderer(false),
         FileData.DESCRIPTION to DescriptionPageContentRenderer(context),
-        FileData.DESCRIPTION_LEFT to DescriptionPageContentRenderer(context),
-        FileData.DESCRIPTION_RIGHT to DescriptionPageContentRenderer(context),
         FileData.VISUAL_JSON to VisualJsonPageContentRenderer(),
         FileData.VISUAL_KOTLIN to VisualKotlinPageContentRenderer(),
 //        FileData.VISUAL_YAML to VisualYamlPageContentRenderer(),
     )
-    private val defaultRenderer = MarkdownRenderer(context)
+    private val defaultRenderer = DescriptionPageContentRenderer(context)
 
     private fun PageNode.renderer(): D2ContentRenderer {
         return if (this is ModelPageNode) {

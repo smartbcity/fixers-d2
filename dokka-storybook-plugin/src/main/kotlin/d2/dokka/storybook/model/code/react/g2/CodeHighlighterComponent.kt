@@ -28,4 +28,6 @@ class CodeHighlighterComponent(
             ::language.name to StringNode(language),
             ::title.name to StringNode(title)
         )
+
+    override val children: Collection<CodeElement> = emptyList()
 }

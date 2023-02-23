@@ -74,23 +74,15 @@ class D2StorybookPageCreator(
     private fun FileData.contentBuilder(d2Type: D2Type?) = when (this) {
         FileData.ROOT -> InnerRootPageContentBuilder()
         FileData.MAIN -> InnerMainPageContentBuilder()
-        FileData.DESCRIPTION -> InnerModelDescriptionPageContentBuilder()
-        FileData.DESCRIPTION_LEFT -> d2Type.leftDescriptionContentBuilder()
-        FileData.DESCRIPTION_RIGHT -> d2Type.rightDescriptionContentBuilder()
+        FileData.DESCRIPTION -> d2Type.descriptionContentBuilder()
         FileData.VISUAL_JSON,
         FileData.VISUAL_KOTLIN,
         FileData.VISUAL_YAML -> InnerVisualPageContentBuilder()
     }
 
-    private fun D2Type?.leftDescriptionContentBuilder() = when (this) {
-        D2Type.API -> InnerServiceDescriptionPageContentBuilder(true, FunctionDisplayType.HTTP)
-        D2Type.SERVICE -> InnerServiceDescriptionPageContentBuilder(true, FunctionDisplayType.KOTLIN)
-        else -> InnerModelDescriptionPageContentBuilder()
-    }
-
-    private fun D2Type?.rightDescriptionContentBuilder() = when (this) {
-        D2Type.API -> InnerServiceDescriptionPageContentBuilder(false, FunctionDisplayType.HTTP)
-        D2Type.SERVICE -> InnerServiceDescriptionPageContentBuilder(false, FunctionDisplayType.KOTLIN)
+    private fun D2Type?.descriptionContentBuilder() = when (this) {
+        D2Type.API -> InnerServiceDescriptionPageContentBuilder(FunctionDisplayType.HTTP)
+        D2Type.SERVICE -> InnerServiceDescriptionPageContentBuilder(FunctionDisplayType.KOTLIN)
         else -> InnerModelDescriptionPageContentBuilder()
     }
 
@@ -103,8 +95,8 @@ class D2StorybookPageCreator(
         override fun contentForDescription(d: Documentable): List<ContentNode>
             = this@D2StorybookPageCreator.contentForDescription(d)
     }
-    private inner class InnerServiceDescriptionPageContentBuilder(isLeft: Boolean, display: FunctionDisplayType):
-        ServiceDescriptionPageContentBuilder(isLeft, display, contentBuilder, documentableIndexes) {
+    private inner class InnerServiceDescriptionPageContentBuilder(display: FunctionDisplayType):
+        ServiceDescriptionPageContentBuilder(display, contentBuilder, documentableIndexes) {
         override fun contentForComments(d: Documentable): List<ContentNode>
             = this@D2StorybookPageCreator.contentForComments(d)
         override fun contentForDescription(d: Documentable): List<ContentNode>

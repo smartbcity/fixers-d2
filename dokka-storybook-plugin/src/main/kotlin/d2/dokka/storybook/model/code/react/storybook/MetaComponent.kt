@@ -24,4 +24,6 @@ class MetaComponent(
             )
         )
     )
+
+    override val children: Collection<CodeElement> = emptyList()
 }

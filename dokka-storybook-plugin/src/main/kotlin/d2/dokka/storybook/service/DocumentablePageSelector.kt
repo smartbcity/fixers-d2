@@ -51,14 +51,12 @@ object DocumentablePageSelector {
     fun filesFor(d: DClasslike) = when (d.d2Type()) {
         D2Type.API -> listOfNotNull(
             FileData.MAIN,
-            FileData.DESCRIPTION_LEFT,
-            FileData.DESCRIPTION_RIGHT,
+            FileData.DESCRIPTION,
             d.visualType().fileData
         )
         D2Type.SERVICE -> listOfNotNull(
             FileData.MAIN,
-            FileData.DESCRIPTION_LEFT,
-            FileData.DESCRIPTION_RIGHT,
+            FileData.DESCRIPTION,
             d.visualType().fileData
         )
         else -> listOfNotNull(
