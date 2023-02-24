@@ -7,6 +7,7 @@ import d2.dokka.storybook.model.page.FileData
 import d2.dokka.storybook.model.page.ModelPageNode
 import d2.dokka.storybook.renderer.description.DescriptionPageContentRenderer
 import d2.dokka.storybook.renderer.root.MainPageContentRenderer
+import d2.dokka.storybook.renderer.visual.VisualAutomatePageContentRenderer
 import d2.dokka.storybook.renderer.visual.VisualJsonPageContentRenderer
 import d2.dokka.storybook.renderer.visual.VisualKotlinPageContentRenderer
 import kotlinx.coroutines.Dispatchers
@@ -36,9 +37,10 @@ open class D2StorybookRenderer(
     protected open val preprocessors = context.plugin<D2StorybookPlugin>().query { storybookPreprocessors }
 
     private val renderers = mutableMapOf(
-        FileData.ROOT to MainPageContentRenderer(true),
-        FileData.MAIN to MainPageContentRenderer(false),
+        FileData.ROOT to MainPageContentRenderer(context, true),
+        FileData.MAIN to MainPageContentRenderer(context, false),
         FileData.DESCRIPTION to DescriptionPageContentRenderer(context),
+        FileData.VISUAL_AUTOMATE to VisualAutomatePageContentRenderer(),
         FileData.VISUAL_JSON to VisualJsonPageContentRenderer(),
         FileData.VISUAL_KOTLIN to VisualKotlinPageContentRenderer(),
 //        FileData.VISUAL_YAML to VisualYamlPageContentRenderer(),

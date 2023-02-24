@@ -13,6 +13,7 @@ data class VisualLink(override val root: DocTag): Visual, WithTarget
 
 enum class VisualType(val id: String, val fileData: FileData?) {
     NONE("none", null),
+    AUTOMATE("automate", FileData.VISUAL_AUTOMATE),
     JSON("json", FileData.VISUAL_JSON),
     KOTLIN("kotlin", FileData.VISUAL_KOTLIN),
     YAML("yaml", FileData.VISUAL_YAML);

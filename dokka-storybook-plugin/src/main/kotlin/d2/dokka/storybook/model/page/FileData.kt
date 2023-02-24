@@ -17,6 +17,7 @@ enum class FileData(
     ROOT("root", ".stories.mdx", CodeLanguage.REACT, ContentKind.Main),
     MAIN("index", ".mdx", CodeLanguage.REACT, ContentKind.Main),
     DESCRIPTION("desc", ".mdx", CodeLanguage.REACT, D2ContentKind.Description),
+    VISUAL_AUTOMATE("visualAutomate", ".mdx", CodeLanguage.REACT, D2ContentKind.Visual),
     VISUAL_JSON("visualJson", ".json", CodeLanguage.JSON, D2ContentKind.Visual),
     VISUAL_KOTLIN("visualKotlin", ".kt", CodeLanguage.KOTLIN, D2ContentKind.Visual),
     VISUAL_YAML("visualYaml", ".yml", CodeLanguage.YAML, D2ContentKind.Visual);

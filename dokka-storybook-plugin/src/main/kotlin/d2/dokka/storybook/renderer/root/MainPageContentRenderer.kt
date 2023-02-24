@@ -1,6 +1,5 @@
 package d2.dokka.storybook.renderer.root
 
-import d2.dokka.storybook.location.D2StorybookLocationProvider
 import d2.dokka.storybook.model.code.BasicImportedElement
 import d2.dokka.storybook.model.code.CodeElement
 import d2.dokka.storybook.model.code.imports.CodeImport
@@ -11,8 +10,7 @@ import d2.dokka.storybook.model.code.react.storybook.MetaComponent
 import d2.dokka.storybook.model.doc.utils.title
 import d2.dokka.storybook.model.page.FileData
 import d2.dokka.storybook.model.render.D2ContentKind
-import d2.dokka.storybook.model.render.D2Marker
-import d2.dokka.storybook.renderer.D2ContentRenderer
+import d2.dokka.storybook.renderer.MarkdownRenderer
 import d2.dokka.storybook.renderer.builder.ReactFileBuilder
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.links.sureClassNames
@@ -22,16 +20,16 @@ import org.jetbrains.dokka.pages.ContentKind
 import org.jetbrains.dokka.pages.ContentNode
 import org.jetbrains.dokka.pages.ContentPage
 import org.jetbrains.dokka.pages.ContentText
+import org.jetbrains.dokka.plugability.DokkaContext
 
 open class MainPageContentRenderer(
+    context: DokkaContext,
     private val isRoot: Boolean
-): D2ContentRenderer {
+): MarkdownRenderer(context) {
 
     companion object {
         val RAW_LOADED_FILES = listOf(FileData.VISUAL_KOTLIN, FileData.VISUAL_YAML)
     }
-
-    override lateinit var d2LocationProvider: D2StorybookLocationProvider
 
     override fun buildPageContent(context: StringBuilder, page: ContentPage) {
         val builder = ReactFileBuilder(context)
@@ -46,15 +44,8 @@ open class MainPageContentRenderer(
     ) {
         when (node) {
             is ContentGroup -> buildGroup(node, pageContext)
-            is ContentText -> buildMarker(node, pageContext)
+            is ContentText -> buildText(node)
             else -> throw IllegalArgumentException("Cannot render content of type [${node::class.java}] in a Main page")
-        }
-    }
-
-    open fun ReactFileBuilder.buildMarker(node: ContentText, pageContext: ContentPage) {
-        when (node.dci.kind) {
-            D2Marker.Divider -> appendDivider()
-            else -> throw IllegalArgumentException("Cannot render marker of type [${node.dci.kind}] in a Main page")
         }
     }
 
@@ -113,9 +104,13 @@ open class MainPageContentRenderer(
 
         return when (this.dci.kind) {
             D2ContentKind.Description -> BasicComponent(importData = codeImport!!)
-            D2ContentKind.Visual -> {
-                val visual = BasicImportedElement(importData = codeImport!!)
-                CodeHighlighterComponent(displayed = visual, language = fileData.language.id, title = title?.text ?: "Example")
+            D2ContentKind.Visual -> when (fileData) {
+                FileData.VISUAL_AUTOMATE -> BasicComponent(importData = codeImport!!)
+                else -> CodeHighlighterComponent(
+                    displayed = BasicImportedElement(importData = codeImport!!),
+                    language = fileData.language.id,
+                    title = title?.text ?: "Example"
+                )
             }
             else -> throw IllegalArgumentException("Unsupported ContentKind[${this.dci.kind}] for source files")
         }
@@ -156,11 +151,5 @@ open class MainPageContentRenderer(
 
         val name = pageContext.documentable!!.title()
         append(MetaComponent(name))
-    }
-
-    open fun ReactFileBuilder.appendDivider() {
-        appendNewLine()
-        appendNewLine()
-        append("---")
     }
 }

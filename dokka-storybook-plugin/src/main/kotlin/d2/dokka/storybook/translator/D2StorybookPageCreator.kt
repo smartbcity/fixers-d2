@@ -75,6 +75,7 @@ class D2StorybookPageCreator(
         FileData.ROOT -> InnerRootPageContentBuilder()
         FileData.MAIN -> InnerMainPageContentBuilder()
         FileData.DESCRIPTION -> d2Type.descriptionContentBuilder()
+        FileData.VISUAL_AUTOMATE,
         FileData.VISUAL_JSON,
         FileData.VISUAL_KOTLIN,
         FileData.VISUAL_YAML -> InnerVisualPageContentBuilder()

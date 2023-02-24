@@ -1,6 +1,9 @@
 package d2.dokka.storybook.renderer
 
 import d2.dokka.storybook.location.D2StorybookLocationProvider
+import d2.dokka.storybook.model.code.react.StringNode
+import d2.dokka.storybook.model.code.react.html.SimpleHtmlElement
+import d2.dokka.storybook.model.render.D2Marker
 import d2.dokka.storybook.model.render.D2TextStyle
 import d2.dokka.storybook.renderer.builder.ReactFileBuilder
 import org.jetbrains.dokka.base.renderers.DefaultRenderer
@@ -55,21 +58,24 @@ abstract class MarkdownRenderer(
 		pageContext: ContentPage,
 		sourceSetRestriction: Set<DisplaySourceSet>?
 	) {
-		buildNewLine()
 		when (node.dci.kind) {
 			ContentKind.Properties -> buildTableProperties(node, pageContext)
 			ContentKind.Functions -> buildTableFunctions(node, pageContext)
 			else -> Unit
 		}
 	}
-	protected abstract fun ReactFileBuilder.buildTableProperties(node: ContentTable, pageContext: ContentPage)
-	protected abstract fun ReactFileBuilder.buildTableFunctions(node: ContentTable, pageContext: ContentPage)
+	protected open fun ReactFileBuilder.buildTableProperties(node: ContentTable, pageContext: ContentPage) {}
+	protected open fun ReactFileBuilder.buildTableFunctions(node: ContentTable, pageContext: ContentPage) {}
 
 	protected open fun ReactFileBuilder.buildNewLine() {
 		append("\n")
 	}
 
 	override fun ReactFileBuilder.buildText(textNode: ContentText) {
+		when (textNode.dci.kind) {
+			D2Marker.Divider -> appendDivider()
+			D2Marker.Spacer -> appendSpacer()
+		}
 		if (textNode.text.isNotBlank()) {
 			val decorators = decorators(textNode.style)
 			append(textNode.text.takeWhile { it == ' ' })
@@ -117,6 +123,21 @@ abstract class MarkdownRenderer(
 		}
 	}
 
+	protected open fun ReactFileBuilder.appendDivider() {
+		appendNewLine()
+		appendNewLine()
+		append("---")
+		appendNewLine()
+		appendNewLine()
+	}
+
+	protected open fun ReactFileBuilder.appendSpacer() {
+		appendNewLine()
+		appendNewLine()
+		append(SimpleHtmlElement("div", params = mapOf("class" to StringNode("spacer"))))
+		appendNewLine()
+		appendNewLine()
+	}
 
 	// ======================= Copied from CommonMarkRenderer =======================
 	// (will be rewritten bit by bit when/if the need arise)

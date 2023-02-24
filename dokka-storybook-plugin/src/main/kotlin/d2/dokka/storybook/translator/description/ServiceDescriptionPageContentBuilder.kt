@@ -14,6 +14,7 @@ import d2.dokka.storybook.model.doc.utils.isF2Function
 import d2.dokka.storybook.model.doc.utils.isF2Supplier
 import d2.dokka.storybook.model.doc.utils.isOfType
 import d2.dokka.storybook.model.doc.utils.toTypeString
+import d2.dokka.storybook.model.render.D2Marker
 import d2.dokka.storybook.model.render.D2TextStyle
 import d2.dokka.storybook.translator.block
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
@@ -44,7 +45,9 @@ internal abstract class ServiceDescriptionPageContentBuilder(
     fun contentFor(c: DClasslike): ContentNode {
         return contentBuilder.contentFor(c) {
             val (commands, queries) = c.functions.partition { it.isCommand(documentableIndexes.documentables) }
+            text("", kind = D2Marker.Spacer)
             contentFor(c, queries, "Queries")
+            text("", kind = D2Marker.Spacer)
             contentFor(c, commands, "Commands")
         }
     }

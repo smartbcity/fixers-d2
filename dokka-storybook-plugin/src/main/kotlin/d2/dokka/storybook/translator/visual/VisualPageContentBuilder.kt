@@ -11,11 +11,13 @@ import d2.dokka.storybook.model.doc.tag.Visual
 import d2.dokka.storybook.model.doc.tag.VisualLink
 import d2.dokka.storybook.model.doc.tag.VisualSimple
 import d2.dokka.storybook.model.doc.tag.VisualText
+import d2.dokka.storybook.model.doc.tag.VisualType
 import d2.dokka.storybook.model.doc.tag.WithTarget
 import d2.dokka.storybook.model.doc.utils.d2DocTagExtra
 import d2.dokka.storybook.model.doc.utils.documentableIn
 import d2.dokka.storybook.model.doc.utils.isCollection
 import d2.dokka.storybook.model.doc.utils.isMap
+import d2.dokka.storybook.model.doc.utils.visualType
 import d2.dokka.storybook.translator.D2StorybookPageContentBuilder
 import d2.dokka.storybook.translator.codeBlock
 import org.jetbrains.dokka.base.translators.documentables.PageContentBuilder
@@ -36,35 +38,41 @@ abstract class VisualPageContentBuilder(
 ) : D2StorybookPageContentBuilder {
 
 	override fun contentFor(d: Documentable): ContentNode? {
+		return contentFor(d, null)
+	}
+
+	private fun contentFor(d: Documentable, visualType: VisualType?): ContentNode? {
 		return when (d) {
 			is RootDocumentable -> rawContentFor(d)
 			is PageDocumentable -> rawContentFor(d)
 			is SectionDocumentable -> rawContentFor(d)
-			is DEnum -> contentFor(d)
-			is DClasslike -> contentFor(d)
+			is DEnum -> contentFor(d, visualType)
+			is DClasslike -> contentFor(d, visualType)
 			is DTypeAlias -> rawContentFor(d)
-			is DProperty -> contentFor(d)
+			is DProperty -> contentFor(d, visualType)
 			else -> null
 		}
 	}
 
-	private fun contentFor(c: DClasslike): ContentNode {
+	private fun contentFor(c: DClasslike, visualType: VisualType?): ContentNode {
 		val visualTag = c.d2DocTagExtra().firstTagOfTypeOrNull<Visual>()
+		val actualVisualType = visualType ?: c.visualType()
 
-		return if (visualTag == null || visualTag is VisualSimple) {
+		return if (visualTag == null || visualTag is VisualSimple || visualTag.type != actualVisualType) {
 			contentBuilder.contentFor(c, kind = ContentKind.Properties) {
 				header(0, c.name!!, kind = ContentKind.Symbol)
-				+c.properties.mapNotNull(this@VisualPageContentBuilder::contentFor)
+				+c.properties.mapNotNull { contentFor(it, actualVisualType) }
 			}
 		} else {
 			rawContentForVisualTag(c, visualTag)
 		}
 	}
 
-	private fun contentFor(e: DEnum): ContentNode {
+	private fun contentFor(e: DEnum, visualType: VisualType?): ContentNode {
 		val visualTag = e.d2DocTagExtra().firstTagOfTypeOrNull<Visual>()
+		val actualVisualType = visualType ?: e.visualType()
 
-		return if (visualTag == null || visualTag is VisualSimple) {
+		return if (visualTag == null || visualTag is VisualSimple || visualTag.type != actualVisualType) {
 			contentBuilder.contentFor(e, kind = ContentKind.Sample) {
 				codeBlock("\"${e.entries.firstOrNull()?.name ?: ""}\"", "")
 			}
@@ -87,31 +95,31 @@ abstract class VisualPageContentBuilder(
 			when (visualTag) {
 				is VisualSimple -> Unit
 				is VisualText -> codeBlock(visualTag.body ?: "", "")
-				is VisualLink -> contentForLinkedSample(d, visualTag)?.let { +it }
+				is VisualLink -> contentForLinkedSample(d, visualTag, visualTag.type)?.let { +it }
 			}
 		}
 	}
 
-	private fun contentFor(property: DProperty): ContentNode? {
+	private fun contentFor(property: DProperty, visualType: VisualType?): ContentNode? {
 		return property.d2DocTagExtra().firstTagOfTypeOrNull<Example>()
-			?.let { exampleTag -> contentForTaggedProperty(property, exampleTag) }
-			?: contentForUntaggedProperty(property)
+			?.let { exampleTag -> contentForTaggedProperty(property, exampleTag, visualType) }
+			?: contentForUntaggedProperty(property, visualType)
 	}
 
-	private fun contentForTaggedProperty(property: DProperty, exampleTag: Example): ContentNode? {
+	private fun contentForTaggedProperty(property: DProperty, exampleTag: Example, visualType: VisualType?): ContentNode? {
 		return when (exampleTag) {
-			is ExampleLink -> contentForLinkedSample(property, exampleTag)
+			is ExampleLink -> contentForLinkedSample(property, exampleTag, visualType)
 			is ExampleText -> exampleTag.body?.let { body ->
 				contentFor(property) { text(body) }
 			}
 		}
 	}
 
-	private fun contentForLinkedSample(d: Documentable, targetTag: WithTarget): ContentNode? {
+	private fun contentForLinkedSample(d: Documentable, targetTag: WithTarget, visualType: VisualType?): ContentNode? {
 		val targetDri = targetTag.target ?: return null
 
 		if (targetDri.callable == null) {
-			return documentableIndexes.documentables[targetDri]?.let(::contentFor)
+			return documentableIndexes.documentables[targetDri]?.let { contentFor(it, visualType) }
 		}
 
 		val targetDocumentable = documentableIndexes.documentables[targetDri.copy(callable = null)]
@@ -119,10 +127,10 @@ abstract class VisualPageContentBuilder(
 			return null
 		}
 		val targetProperty = targetDocumentable.properties.find { it.name == targetDri.callable!!.name } ?: return null
-		return contentFor(targetProperty.copy(name = d.name!!))
+		return contentFor(targetProperty.copy(name = d.name!!), visualType)
 	}
 
-	private fun contentForUntaggedProperty(property: DProperty): ContentGroup? {
+	private fun contentForUntaggedProperty(property: DProperty, visualType: VisualType?): ContentGroup? {
 		val styles = setOfNotNull<Style>(
 			ContentStyle.TabbedContent.takeIf { property.type.isCollection() && !property.type.isMap() }
 		)
@@ -130,7 +138,7 @@ abstract class VisualPageContentBuilder(
 		val propertyType = property.type.documentableIn(documentableIndexes.documentables)
 			?: return null
 
-		val contentForPropertyType = contentFor(propertyType)
+		val contentForPropertyType = contentFor(propertyType, visualType)
 			?.takeIf { it.children.isNotEmpty() }
 			?: return null
 

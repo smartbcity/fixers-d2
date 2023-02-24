@@ -40,11 +40,11 @@ internal abstract class MainPageContentBuilder(
         return contentBuilder.contentFor(d, kind = D2ContentKind.Container)  {
             block()
             if (d.isOfType(D2Type.MODEL, D2Type.API, D2Type.SERVICE)) {
-                divider()
+                text("", kind = D2Marker.Spacer)
             }
             +contentForChildrenOf(d)
             if (d.isOfType(D2Type.FUNCTION)) {
-                divider()
+                text("", kind = D2Marker.Spacer)
             }
         }
     }
@@ -72,10 +72,6 @@ internal abstract class MainPageContentBuilder(
         FileData.VISUAL_KOTLIN,
         FileData.VISUAL_YAML -> d.title()
         else -> null
-    }
-
-    private fun PageContentBuilder.DocumentableContentBuilder.divider() {
-        text("", kind = D2Marker.Divider)
     }
 
     private fun List<Documentable>.driSortedByD2Type(): SortedSet<DRI> {
