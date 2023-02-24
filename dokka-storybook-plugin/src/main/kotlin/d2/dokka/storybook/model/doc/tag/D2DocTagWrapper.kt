@@ -45,6 +45,7 @@ fun CustomTagWrapper.toD2DocTagWrapper(): D2DocTagWrapper? {
         "order" -> ::Order
         "page" -> ::Page
         "parent" -> ::Parent
+        "ref" -> ::Ref
         "title" -> ::Title
         "visual" -> onVisual()
         else -> null

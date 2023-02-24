@@ -10,20 +10,17 @@ package sample
  */
 interface BoringPlagiarism {
     /**
-     * The name of smth not interesting at all
-     * @example "Stuff"
+     * @ref [sample.BoringInterface.name]
      */
     val name: String
 
     /**
-     * The most boring description you could ever think of
-     * @example [sample.BoringInterface.description]
+     * @ref [sample.BoringInterface.description]
      */
     val description: String
 
     /**
-     * A vain attempt to make it look like there are a lot to see here
-     * @example [["Weird thingy", "Eww wat is dis"]]
+     * @ref [sample.BoringInterface.things]
      */
     val things: List<String?>
 }

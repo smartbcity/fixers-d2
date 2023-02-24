@@ -5,6 +5,8 @@ import d2.dokka.storybook.model.doc.PageDocumentable
 import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.SectionDocumentable
 import d2.dokka.storybook.model.doc.tag.D2Type
+import d2.dokka.storybook.model.doc.tag.Ref
+import d2.dokka.storybook.model.doc.utils.d2DocTagExtra
 import d2.dokka.storybook.model.doc.utils.documentableIn
 import d2.dokka.storybook.model.doc.utils.isOfType
 import d2.dokka.storybook.model.doc.utils.title
@@ -120,30 +122,45 @@ internal abstract class ModelDescriptionPageContentBuilder(
     ) {
         block(kind = ContentKind.Properties, elements = properties) { property ->
             text(property.name, styles = setOf(TextStyle.Italic, TextStyle.Bold))
+            buildProperty(property)
+        }
+    }
 
-            val propertyType = property.type
-            val propertyTypeDocumentable = propertyType.documentableIn(documentableIndexes.documentables)
-            if (propertyTypeDocumentable == null || propertyTypeDocumentable.isOfType(D2Type.HIDDEN)) {
-                val typeString = if (propertyType is TypeAliased) {
-                    propertyType.inner.toTypeString(documentableIndexes.documentables)
-                } else {
-                    propertyType.toTypeString(documentableIndexes.documentables)
-                }
-                text(typeString, styles = setOf(D2TextStyle.Code))
-            } else {
-                link(
-                    text = propertyType.toTypeString(documentableIndexes.documentables),
-                    address = propertyTypeDocumentable.dri,
-                    styles = setOf(D2TextStyle.Code)
-                )
+    private fun PageContentBuilder.DocumentableContentBuilder.buildProperty(p: DProperty) {
+        val ref = p.d2DocTagExtra().firstTagOfTypeOrNull<Ref>()?.target
+        if (ref != null) {
+            if (ref.callable == null) {
+                throw IllegalArgumentException("Tag @ref of a property must link to a property (${p.dri} -> $ref")
             }
+            val refProperty = (documentableIndexes.documentables[ref.copy(callable = null)] as DClasslike)
+                .properties
+                .first { it.name == ref.callable!!.name }
 
-            group(setOf(property.dri), property.sourceSets.toSet(), ContentKind.Main) {
-                property.documentation.forEach { (_, docNode) ->
-                    docNode.children.firstOrNull()?.root?.let {
-                        group(kind = ContentKind.Comment) {
-                            comment(it)
-                        }
+            return buildProperty(refProperty)
+        }
+
+        val propertyType = p.type
+        val propertyTypeDocumentable = propertyType.documentableIn(documentableIndexes.documentables)
+        if (propertyTypeDocumentable == null || propertyTypeDocumentable.isOfType(D2Type.HIDDEN)) {
+            val typeString = if (propertyType is TypeAliased) {
+                propertyType.inner.toTypeString(documentableIndexes.documentables)
+            } else {
+                propertyType.toTypeString(documentableIndexes.documentables)
+            }
+            text(typeString, styles = setOf(D2TextStyle.Code))
+        } else {
+            link(
+                text = propertyType.toTypeString(documentableIndexes.documentables),
+                address = propertyTypeDocumentable.dri,
+                styles = setOf(D2TextStyle.Code)
+            )
+        }
+
+        group(setOf(p.dri), p.sourceSets.toSet(), ContentKind.Main) {
+            p.documentation.forEach { (_, docNode) ->
+                docNode.children.firstOrNull()?.root?.let {
+                    group(kind = ContentKind.Comment) {
+                        comment(it)
                     }
                 }
             }

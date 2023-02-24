@@ -7,6 +7,7 @@ import d2.dokka.storybook.model.doc.SectionDocumentable
 import d2.dokka.storybook.model.doc.tag.Example
 import d2.dokka.storybook.model.doc.tag.ExampleLink
 import d2.dokka.storybook.model.doc.tag.ExampleText
+import d2.dokka.storybook.model.doc.tag.Ref
 import d2.dokka.storybook.model.doc.tag.Visual
 import d2.dokka.storybook.model.doc.tag.VisualLink
 import d2.dokka.storybook.model.doc.tag.VisualSimple
@@ -130,7 +131,15 @@ abstract class VisualPageContentBuilder(
 		return contentFor(targetProperty.copy(name = d.name!!), visualType)
 	}
 
-	private fun contentForUntaggedProperty(property: DProperty, visualType: VisualType?): ContentGroup? {
+	private fun contentForUntaggedProperty(property: DProperty, visualType: VisualType?): ContentNode? {
+		val refTag = property.d2DocTagExtra().firstTagOfTypeOrNull<Ref>()
+		if (refTag != null) {
+			if (refTag.target?.callable == null) {
+				throw IllegalArgumentException("Tag @ref of a property must link to a property (${property.dri} -> ${refTag.target}")
+			}
+			return contentForLinkedSample(property, refTag, visualType)
+		}
+
 		val styles = setOfNotNull<Style>(
 			ContentStyle.TabbedContent.takeIf { property.type.isCollection() && !property.type.isMap() }
 		)
