@@ -196,7 +196,7 @@ abstract class MarkdownRenderer(
 	}
 
 	override fun ReactFileBuilder.buildLineBreak() {
-		append("\\")
+		append("  ")
 		buildNewLine()
 	}
 

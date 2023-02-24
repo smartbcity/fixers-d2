@@ -6,7 +6,7 @@ import d2.dokka.storybook.model.code.CodeElement
 import d2.dokka.storybook.model.code.imports.CodeImport
 import d2.dokka.storybook.model.code.react.BasicComponent
 import d2.dokka.storybook.model.code.react.g2.CodeHighlighterComponent
-import d2.dokka.storybook.model.code.react.g2.DescriptedCodeComponent
+import d2.dokka.storybook.model.code.react.g2.SegmentedContainerComponent
 import d2.dokka.storybook.model.code.react.storybook.MetaComponent
 import d2.dokka.storybook.model.doc.utils.title
 import d2.dokka.storybook.model.page.FileData
@@ -95,7 +95,7 @@ open class MainPageContentRenderer(
             rightContainerProps["paddingTop"] = "0"
         }
 
-        val component = DescriptedCodeComponent(
+        val component = SegmentedContainerComponent(
             leftElement = leftElement.toSourceComponent(node, pageContext),
             leftContainerProps = leftContainerProps,
             rightElement = rightElement.toSourceComponent(node, pageContext),

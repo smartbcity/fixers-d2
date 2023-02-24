@@ -96,7 +96,7 @@ class ReactFileBuilder(
             appendNewLine()
             component.children.forEach { child ->
                 appendNewLine()
-                append(child, indentLevel + 1)
+                append(child, minOf(indentLevel + 1, 1)) // markdown interprets 4-spaces indent as code block
                 appendNewLine()
             }
             append("</${component.identifier}>", indentLevel)

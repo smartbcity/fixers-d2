@@ -6,14 +6,14 @@ import d2.dokka.storybook.model.code.imports.ImportPath
 import d2.dokka.storybook.model.code.react.JsonNode
 import d2.dokka.storybook.model.code.react.ReactComponent
 
-class DescriptedCodeComponent(
+class SegmentedContainerComponent(
     val leftElement: CodeElement,
     val leftContainerProps: Map<String, String> = emptyMap(),
     val rightElement: CodeElement,
     val rightContainerProps: Map<String, String> = emptyMap(),
 ): ReactComponent {
     override val identifier: String
-        get() = "DescriptedCode"
+        get() = "SegmentedContainer"
 
     override val importData: CodeImport
         get() = CodeImport(path = ImportPath.G2_DOCUMENTATION, element = identifier, isComposite = true)

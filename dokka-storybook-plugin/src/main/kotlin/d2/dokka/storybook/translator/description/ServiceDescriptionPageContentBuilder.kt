@@ -74,7 +74,8 @@ internal abstract class ServiceDescriptionPageContentBuilder(
         block(kind = ContentKind.Functions, elements = functions) { function ->
             val signature = FunctionSignature.of(function, documentableIndexes)
             group(setOf(function.dri), function.sourceSets.toSet(), ContentKind.Main) {
-                text("POST /${signature.name}", styles = setOf(TextStyle.Bold))
+                header(4, "POST /${signature.name}")
+                functionAccess(function)
 
                 function.documentation.forEach { (_, docNode) ->
                     docNode.children.firstOrNull()?.root?.let {
@@ -86,16 +87,17 @@ internal abstract class ServiceDescriptionPageContentBuilder(
             }
             group(setOf(function.dri), function.sourceSets.toSet(), ContentKind.Parameters) {
                 if (signature.params.isNotEmpty()) {
-                    text("Body:")
+                    breakLine()
+                    text("Body: ")
                 }
                 signature.params.forEachIndexed { i, (_, type) ->
                     val separator = if (i > 0) ", " else ""
                     text(separator)
                     type(type)
                 }
-                text("<br />")
+                breakLine()
                 if (signature.returnType != null) {
-                    text("Result:")
+                    text("Result: ")
                     type(signature.returnType)
                 }
             }
