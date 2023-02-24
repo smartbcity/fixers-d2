@@ -14,7 +14,7 @@ import org.jetbrains.dokka.model.Documentable
 
 object DocumentablePageSelector {
     fun filesFor(d: Documentable): List<FileData> {
-        if (d.isOfType(D2Type.INHERIT)) {
+        if (d.isOfType(D2Type.INHERIT, D2Type.HIDDEN)) {
             return emptyList()
         }
 

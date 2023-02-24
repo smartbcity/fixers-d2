@@ -4,7 +4,9 @@ import d2.dokka.storybook.model.doc.DocumentableIndexes
 import d2.dokka.storybook.model.doc.PageDocumentable
 import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.SectionDocumentable
+import d2.dokka.storybook.model.doc.tag.D2Type
 import d2.dokka.storybook.model.doc.utils.documentableIn
+import d2.dokka.storybook.model.doc.utils.isOfType
 import d2.dokka.storybook.model.doc.utils.title
 import d2.dokka.storybook.model.doc.utils.toTypeString
 import d2.dokka.storybook.model.render.D2TextStyle
@@ -15,6 +17,7 @@ import org.jetbrains.dokka.model.DEnum
 import org.jetbrains.dokka.model.DProperty
 import org.jetbrains.dokka.model.DTypeAlias
 import org.jetbrains.dokka.model.Documentable
+import org.jetbrains.dokka.model.TypeAliased
 import org.jetbrains.dokka.pages.ContentKind
 import org.jetbrains.dokka.pages.ContentNode
 import org.jetbrains.dokka.pages.ContentStyle
@@ -118,12 +121,18 @@ internal abstract class ModelDescriptionPageContentBuilder(
         block(kind = ContentKind.Properties, elements = properties) { property ->
             text(property.name, styles = setOf(TextStyle.Italic, TextStyle.Bold))
 
-            val propertyTypeDocumentable = property.type.documentableIn(documentableIndexes.documentables)
-            if (propertyTypeDocumentable == null) {
-                text(property.type.toTypeString(documentableIndexes.documentables), styles = setOf(D2TextStyle.Code))
+            val propertyType = property.type
+            val propertyTypeDocumentable = propertyType.documentableIn(documentableIndexes.documentables)
+            if (propertyTypeDocumentable == null || propertyTypeDocumentable.isOfType(D2Type.HIDDEN)) {
+                val typeString = if (propertyType is TypeAliased) {
+                    propertyType.inner.toTypeString(documentableIndexes.documentables)
+                } else {
+                    propertyType.toTypeString(documentableIndexes.documentables)
+                }
+                text(typeString, styles = setOf(D2TextStyle.Code))
             } else {
                 link(
-                    text = property.type.toTypeString(documentableIndexes.documentables),
+                    text = propertyType.toTypeString(documentableIndexes.documentables),
                     address = propertyTypeDocumentable.dri,
                     styles = setOf(D2TextStyle.Code)
                 )

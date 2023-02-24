@@ -42,9 +42,8 @@ interface BoringInterfaceKotlinSection
 interface BoringInterface {
     /**
      * The name of smth not interesting at all
-     * @example "Stuff"
      */
-    val name: String
+    val name: BoringName
 
     /**
      * The most boring description you could ever think of
@@ -63,6 +62,12 @@ interface BoringInterface {
      */
     val state: BoringState
 }
+
+/**
+ * @d2 hidden
+ * @visual json "Stuff"
+ */
+typealias BoringName = String
 
 /**
  * @d2 inherit

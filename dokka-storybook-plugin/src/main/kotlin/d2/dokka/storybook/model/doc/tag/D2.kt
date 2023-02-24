@@ -17,6 +17,7 @@ enum class D2Type(val id: String, val order: Int) {
 	COMMAND("command", order = 40),
 	EVENT("event", order = 45),
 	SECTION("section", order = 50),
+	HIDDEN("hidden", order = -1),
 	INHERIT("inherit", order = -1);
 
 	companion object {
