@@ -15,7 +15,6 @@ class DescriptionPageContentRenderer(context: DokkaContext): MarkdownRenderer(co
             appendDivider()
             property.children.forEach { child ->
                 append(buildString { child.build(ReactFileBuilder(this), pageContext) })
-                append(" ")
             }
         }
     }

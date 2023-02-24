@@ -139,8 +139,17 @@ abstract class MarkdownRenderer(
 		appendNewLine()
 	}
 
+	override fun ReactFileBuilder.buildLineBreak() {
+		append("  ")
+		buildNewLine()
+	}
+
 	// ======================= Copied from CommonMarkRenderer =======================
 	// (will be rewritten bit by bit when/if the need arise)
+
+
+
+
 
 
 	override fun ReactFileBuilder.wrapGroup(
@@ -179,46 +188,6 @@ abstract class MarkdownRenderer(
 		append("[")
 		content()
 		append("]($address)")
-	}
-
-	private fun ReactFileBuilder.buildList(
-		node: ContentList,
-		pageContext: ContentPage
-	) {
-		node.children.forEachIndexed { i, it ->
-			if (node.ordered) {
-				// number is irrelevant, but a nice touch
-				// period is more widely compatible
-				append("${i + 1}. ")
-			} else {
-				append("- ")
-			}
-
-			/*
-            Handle case when list item transitions to another complex node with no preceding text.
-            For example, the equivalent of:
-            <li>
-               <ul><li><ul>Item</ul></li></ul>
-            </li>
-
-            Would be:
-            -
-               - Item
-             */
-			if (it is ContentGroup && it.children.firstOrNull()?.let { it !is ContentText } == true) {
-				append("\n   ")
-			}
-
-			buildString { it.build(ReactFileBuilder(this), pageContext, it.sourceSets) }
-				.replace("\n", "\n   ") // apply indent
-				.trim().let { append(it) }
-			buildNewLine()
-		}
-	}
-
-	override fun ReactFileBuilder.buildLineBreak() {
-		append("  ")
-		buildNewLine()
 	}
 
 	private fun ReactFileBuilder.buildParagraph() {

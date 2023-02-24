@@ -5,6 +5,7 @@ import d2.dokka.storybook.model.doc.PageDocumentable
 import d2.dokka.storybook.model.doc.RootDocumentable
 import d2.dokka.storybook.model.doc.SectionDocumentable
 import d2.dokka.storybook.model.doc.tag.D2Type
+import d2.dokka.storybook.model.doc.tag.Default
 import d2.dokka.storybook.model.doc.tag.Ref
 import d2.dokka.storybook.model.doc.utils.d2DocTagExtra
 import d2.dokka.storybook.model.doc.utils.documentableIn
@@ -22,7 +23,6 @@ import org.jetbrains.dokka.model.Documentable
 import org.jetbrains.dokka.model.TypeAliased
 import org.jetbrains.dokka.pages.ContentKind
 import org.jetbrains.dokka.pages.ContentNode
-import org.jetbrains.dokka.pages.ContentStyle
 import org.jetbrains.dokka.pages.TextStyle
 
 internal abstract class ModelDescriptionPageContentBuilder(
@@ -100,7 +100,7 @@ internal abstract class ModelDescriptionPageContentBuilder(
                 +contentForDescription(c)
             }
 
-            group(styles = setOf(ContentStyle.TabbedContent)) {
+            group {
                 +contentForComments(c)
                 propertiesBlock(c.properties)
             }
@@ -121,23 +121,26 @@ internal abstract class ModelDescriptionPageContentBuilder(
         properties: Collection<DProperty>,
     ) {
         block(kind = ContentKind.Properties, elements = properties) { property ->
-            text(property.name, styles = setOf(TextStyle.Italic, TextStyle.Bold))
-            buildProperty(property)
+            propertySignature(property)
+
+            val ref = property.d2DocTagExtra().firstTagOfTypeOrNull<Ref>()?.target
+            if (ref != null) {
+                if (ref.callable == null) {
+                    throw IllegalArgumentException("Tag @ref of a property must link to a property (${property.dri} -> $ref")
+                }
+                val refProperty = (documentableIndexes.documentables[ref.copy(callable = null)] as DClasslike)
+                    .properties
+                    .first { it.name == ref.callable!!.name }
+
+                propertyComment(refProperty)
+            } else {
+                propertyComment(property)
+            }
         }
     }
 
-    private fun PageContentBuilder.DocumentableContentBuilder.buildProperty(p: DProperty) {
-        val ref = p.d2DocTagExtra().firstTagOfTypeOrNull<Ref>()?.target
-        if (ref != null) {
-            if (ref.callable == null) {
-                throw IllegalArgumentException("Tag @ref of a property must link to a property (${p.dri} -> $ref")
-            }
-            val refProperty = (documentableIndexes.documentables[ref.copy(callable = null)] as DClasslike)
-                .properties
-                .first { it.name == ref.callable!!.name }
-
-            return buildProperty(refProperty)
-        }
+    private fun PageContentBuilder.DocumentableContentBuilder.propertySignature(p: DProperty) {
+        text("${p.name} ", styles = setOf(TextStyle.Italic, TextStyle.Bold))
 
         val propertyType = p.type
         val propertyTypeDocumentable = propertyType.documentableIn(documentableIndexes.documentables)
@@ -156,6 +159,14 @@ internal abstract class ModelDescriptionPageContentBuilder(
             )
         }
 
+        p.d2DocTagExtra().firstTagOfTypeOrNull<Default>()?.body?.let { defaultValue ->
+            text(" (default: ", styles = emptySet())
+            text(defaultValue, styles = setOf(TextStyle.Monospace))
+            text(")", styles = emptySet())
+        }
+    }
+
+    private fun PageContentBuilder.DocumentableContentBuilder.propertyComment(p: DProperty) {
         group(setOf(p.dri), p.sourceSets.toSet(), ContentKind.Main) {
             p.documentation.forEach { (_, docNode) ->
                 docNode.children.firstOrNull()?.root?.let {

@@ -41,6 +41,7 @@ fun CustomTagWrapper.toD2DocTagWrapper(): D2DocTagWrapper? {
     return when (name.lowercase()) {
         "child" -> ::Child
         "d2" -> ::D2
+        "default" -> ::Default
         "example" -> onExample()
         "order" -> ::Order
         "page" -> ::Page
