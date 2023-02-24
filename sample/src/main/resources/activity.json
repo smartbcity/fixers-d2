@@ -1,7 +1,4 @@
-import { SsmViewer } from '@smartb/g2-s2'
-
-<SsmViewer
-  automate={{
+{
   "name": "DidS2",
   "version": null,
   "transitions": [{
@@ -67,14 +64,3 @@ import { SsmViewer } from '@smartb/g2-s2'
     "result": null
   }]
 }
-}
-  style={
-    {
-      width: "100%",
-      height: "300px",
-      border: "1px solid #eeedea",
-      borderRadius: "6px",
-      backgroundColor: "#fffefb"
-    }
-  }
-/>

@@ -1,8 +1,8 @@
 package sample
-// * @visual automate sample/src/main/resources/activity.json
 /**
  * The state of a... well... huh never mind.
  * @d2 model
+ * @visual automate sample/src/main/resources/activity.json
  */
 enum class BoringState {
     /** Not doing anything. */
