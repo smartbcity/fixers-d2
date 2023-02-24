@@ -24,7 +24,7 @@ fun <T: Documentable> PageContentBuilder.DocumentableContentBuilder.block(
     styles: Set<Style> = mainStyles,
     extra: PropertyContainer<ContentNode> = mainExtra,
     renderWhenEmpty: Boolean = false,
-    needsSorting: Boolean = true,
+    needsSorting: Boolean = false,
     headers: List<ContentGroup> = emptyList(),
     needsAnchors: Boolean = false,
     operation: PageContentBuilder.DocumentableContentBuilder.(T) -> Unit
