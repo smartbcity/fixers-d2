@@ -59,6 +59,7 @@ interface BoringInterface {
 
     /**
      * The state of that not-interesting thing
+     * @default "IDLE"
      */
     val state: BoringState
 }

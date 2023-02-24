@@ -92,6 +92,10 @@ Available types (case-insensitive):
  - Result: Classlike used as output of a query function
  - Service: Classlike interface containing functions
  - Api: Classlike interface containing f2 functions
+ - Page:
+ - Section:
+ - Hidden: The entity will not be displayed on any page, but can be used to generate examples
+ - Inherit: The Classlike will not be displayed on any page, but any link to it will be redirected to its superclass or interface 
 
 #### @parent identifier
 
@@ -103,6 +107,12 @@ A documentable without parent means that it will have its own dedicated page.
 Specifies an example json value for a property inside a classlike.\
 If an identifier is given instead, the example of the targeted documentable will be used.\
 If a property with a d2 documentable type misses an @example tag, it will attempt to use the generated sample of the type if it exists.
+
+#### @ref identifier
+
+Used only on properties, and the identifier must link to another property.\
+A property tagged with @ref will use the description and example of the property the identifier refers to.\
+NB: It is possible to overwrite the example with an @example tag
 
 #### @title
 
@@ -117,6 +127,8 @@ The block after this tag is parsed as a standalone KDoc block, except that the t
 The page can optionally have a title, description and example, which are defined the same way as for documentables. 
 
 #### Example
+
+See `sample` and `sample-fragment` modules for more in-depth examples.
 
 ```kotlin
 package sample

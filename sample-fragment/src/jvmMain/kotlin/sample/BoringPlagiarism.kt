@@ -23,4 +23,9 @@ interface BoringPlagiarism {
      * @ref [sample.BoringInterface.things]
      */
     val things: List<String?>
+
+    /**
+     * @ref [sample.BoringInterface.state]
+     */
+    val state: BoringState
 }
