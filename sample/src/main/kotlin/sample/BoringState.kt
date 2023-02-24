@@ -1,5 +1,5 @@
 package sample
-
+// * @visual automate sample/src/main/resources/activity.json
 /**
  * The state of a... well... huh never mind.
  * @d2 model

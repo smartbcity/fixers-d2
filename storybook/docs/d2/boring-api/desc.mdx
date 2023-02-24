@@ -11,7 +11,11 @@ import { DocsTable } from '@smartb/g2-documentation'
 
   <div>
 
-    **POST /getBoring**
+  
+
+#### POST /getBoring
+
+
 
 Annoying function
 
@@ -20,12 +24,18 @@ Annoying function
 
   <div>
 
-    Body:[`BoringGetQuery`](#boring-get-query)Result:[`BoringGetQueryResult`](#boring-get-query)
+    
+Body: [`BoringGetQuery`](#boring-get-query)  
+Result: [`BoringGetQueryResult`](#boring-get-query)
   </div>
 
   <div>
 
-    **POST /supply**
+  
+
+#### POST /supply
+
+
 
 Supplies a useless not-ever-changing indicator
 
@@ -34,7 +44,8 @@ Supplies a useless not-ever-changing indicator
 
   <div>
 
-    Result:`Boolean`
+    
+Result: `Boolean`
   </div>
 </DocsTable>
 
@@ -47,7 +58,11 @@ Supplies a useless not-ever-changing indicator
 
   <div>
 
-    **POST /consume**
+  
+
+#### POST /consume
+
+*Access: get_stuff, consume_stuff*
 
 Would consume stuff if it weren't lazy
 
@@ -56,12 +71,18 @@ Would consume stuff if it weren't lazy
 
   <div>
 
-    Body:`Long`
+    
+Body: `Long`  
+
   </div>
 
   <div>
 
-    **POST /doStuff**
+  
+
+#### POST /doStuff
+
+*Access: public*
 
 Probably does stuff but it's not really interesting
 
@@ -70,12 +91,18 @@ Probably does stuff but it's not really interesting
 
   <div>
 
-    Body:[`BoringInterface`](#boring-object)Result:`Boolean`
+    
+Body: [`BoringInterface`](#boring-object)  
+Result: `Boolean`
   </div>
 
   <div>
 
-    **POST /procrastinate**
+  
+
+#### POST /procrastinate
+
+
 
 Doesn't even bother to do anything
 
@@ -84,12 +111,18 @@ Doesn't even bother to do anything
 
   <div>
 
-    Body:`String`
+    
+Body: `String`  
+
   </div>
 
   <div>
 
-    **POST /sleep**
+  
+
+#### POST /sleep
+
+
 
 So boring, can't help but sleep
 
@@ -98,6 +131,8 @@ So boring, can't help but sleep
 
   <div>
 
-    Body:`Long`Result:`Boolean`
+    
+Body: `Long`  
+Result: `Boolean`
   </div>
 </DocsTable>
