@@ -77,6 +77,7 @@ internal abstract class ServiceDescriptionPageContentBuilder(
         block(kind = ContentKind.Functions, elements = functions) { function ->
             val signature = FunctionSignature.of(function, documentableIndexes)
             group(setOf(function.dri), function.sourceSets.toSet(), ContentKind.Main) {
+                @Suppress("MagicNumber")
                 header(4, "POST /${signature.name}")
                 functionAccess(function)
 

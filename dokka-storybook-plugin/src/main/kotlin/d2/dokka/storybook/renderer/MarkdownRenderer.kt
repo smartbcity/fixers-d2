@@ -235,8 +235,11 @@ abstract class MarkdownRenderer(
 	override fun ReactFileBuilder.buildNavigation(page: PageNode) {
 		locationProvider.ancestors(page).asReversed().forEach { node ->
 			append("/")
-			if (node.isNavigable) buildLink(node, page)
-			else append(node.name)
+			if (node.isNavigable) {
+				buildLink(node, page)
+			} else {
+				append(node.name)
+			}
 		}
 		buildParagraph()
 	}
