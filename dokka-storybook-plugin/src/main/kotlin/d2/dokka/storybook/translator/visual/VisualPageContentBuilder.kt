@@ -34,12 +34,17 @@ import org.jetbrains.dokka.pages.ContentStyle
 import org.jetbrains.dokka.pages.Style
 
 abstract class VisualPageContentBuilder(
-    protected val contentBuilder: PageContentBuilder,
-    protected val documentableIndexes: DocumentableIndexes
+	protected val contentBuilder: PageContentBuilder,
+	protected val documentableIndexes: DocumentableIndexes
 ) : D2StorybookPageContentBuilder {
 
 	override fun contentFor(d: Documentable): ContentNode? {
-		return contentFor(d, null)
+		try {
+			return contentFor(d, null)
+		} catch (e: StackOverflowError) {
+			println("StackOverflowError when generating the visual of Documentable [${d.dri}]")
+			throw e
+		}
 	}
 
 	private fun contentFor(d: Documentable, visualType: VisualType?): ContentNode? {
@@ -155,8 +160,8 @@ abstract class VisualPageContentBuilder(
 	}
 
 	private fun contentFor(
-        property: DProperty, kind: ContentKind = ContentKind.Main, styles: Set<Style> = emptySet(),
-        propertyValue: PageContentBuilder.DocumentableContentBuilder.() -> Unit
+		property: DProperty, kind: ContentKind = ContentKind.Main, styles: Set<Style> = emptySet(),
+		propertyValue: PageContentBuilder.DocumentableContentBuilder.() -> Unit
 	): ContentGroup {
 		return contentBuilder.contentFor(property, sourceSets = property.sourceSets, kind = kind, styles = styles) {
 			text(property.name)
