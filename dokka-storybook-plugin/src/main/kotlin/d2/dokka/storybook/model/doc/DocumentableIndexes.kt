@@ -64,13 +64,19 @@ data class DocumentableIndexes(
         private fun <T: Documentable> T.supertypeIn(index: Map<DRI, Documentable>): Documentable {
             val superDocumentables = when (this) {
                 is WithSupertypes -> supertypes.values.flatten().mapNotNull { it.typeConstructor.documentableIn(index) }
-                is DTypeAlias -> underlyingType.values.mapNotNull { it.documentableIn(index) }
+                is DTypeAlias -> underlyingType.values.mapNotNull { it.documentableIn(index)?.supertypeIn(index) }
                 else -> throw IllegalArgumentException("'inherit' d2 type is not supported for $dri")
             }
 
             return when (superDocumentables.size) {
                 0 -> throw IllegalArgumentException("$dri is tagged with 'inherit' but none of its supertypes are tagged with @d2")
-                1 -> superDocumentables.first()
+                1 -> superDocumentables.first().let {
+                    if (it.isOfType(D2Type.INHERIT)) {
+                        it.supertypeIn(index)
+                    } else {
+                        it
+                    }
+                }
                 else -> throw IllegalArgumentException(
                     "$dri is tagged with 'inherit' but more than one of its supertypes are tagged with @d2"
                 )
