@@ -179,7 +179,7 @@ internal abstract class ModelDescriptionPageContentBuilder(
     }
 
     private fun PageContentBuilder.DocumentableContentBuilder.buildType(d: Documentable) {
-        if (d.title() != d.name) {
+        if (d.title() != d.name && !d.isOfType(D2Type.FUNCTION)) {
             text("Type: ")
             text(d.name!!, styles = setOf(D2TextStyle.Code))
         }
