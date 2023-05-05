@@ -1,4 +1,5 @@
 package sample
+
 /**
  * The state of a... well... huh never mind.
  * @d2 model

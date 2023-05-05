@@ -39,7 +39,7 @@ internal abstract class MainPageContentBuilder(
     private fun contentFor(d: Documentable, block: PageContentBuilder.DocumentableContentBuilder.() -> Unit = {}): ContentGroup {
         return contentBuilder.contentFor(d, kind = D2ContentKind.Container)  {
             block()
-            if (d.isOfType(D2Type.MODEL, D2Type.API, D2Type.SERVICE)) {
+            if (d.isOfType(D2Type.MODEL, D2Type.AUTOMATE, D2Type.API, D2Type.SERVICE)) {
                 text("", kind = D2Marker.Spacer)
             }
             +contentForChildrenOf(d)
