@@ -1,6 +1,6 @@
 # D2
 
-D2 is a module for generating automatic documentation of the SmartB architecture
+D2 is a module for generating automatic documentation of the SmartB architecture.
 
 ## dokka-storybook-plugin
 
