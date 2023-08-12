@@ -1,7 +1,20 @@
+import city.smartb.gradle.dependencies.FixersDependencies
+
 plugins {
-    id("city.smartb.fixers.gradle.kotlin.mpp")
+    kotlin("multiplatform")
 }
 
-dependencies {
-    jvmMainImplementation(project(":sample"))
+kotlin {
+    js(IR) {
+        browser()
+    }
+    jvm {
+    }
+    sourceSets {
+        val jvmMain by getting {
+            dependencies {
+                implementation(project(":sample"))
+            }
+        }
+    }
 }

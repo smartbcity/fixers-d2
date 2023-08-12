@@ -1,9 +1,14 @@
+import city.smartb.gradle.dependencies.FixersDependencies
+
 plugins {
-    id("city.smartb.fixers.gradle.kotlin.jvm")
-    id("city.smartb.fixers.gradle.publish")
+    `kotlin-dsl`
+    kotlin("jvm")
+    id("com.gradle.plugin-publish")
 }
 
+
 dependencies {
+    FixersDependencies.Jvm.Kotlin.coroutines(::implementation)
     compileOnly("org.jetbrains.dokka:dokka-core:${PluginVersions.dokka}")
     implementation("org.jetbrains.dokka:dokka-base:${PluginVersions.dokka}")
     implementation("org.jetbrains.dokka:gfm-plugin:${PluginVersions.dokka}")

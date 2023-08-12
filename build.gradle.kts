@@ -1,12 +1,11 @@
 plugins {
-    kotlin("plugin.jpa") version PluginVersions.kotlin apply false
-    kotlin("kapt") version PluginVersions.kotlin apply false
+    kotlin("plugin.jpa") version PluginVersions.kotlinDsl apply false
+    kotlin("kapt") version PluginVersions.kotlinDsl apply false
+    kotlin("jvm") version PluginVersions.kotlinDsl apply false
+    kotlin("multiplatform") version PluginVersions.kotlinDsl apply false
 
     id("org.jetbrains.dokka") version PluginVersions.dokka
     id("com.gradle.plugin-publish") version PluginVersions.gradlePublish apply false
-
-    id("city.smartb.fixers.gradle.config") version PluginVersions.fixers
-    id("city.smartb.fixers.gradle.sonar") version PluginVersions.fixers
 }
 
 allprojects {
@@ -17,15 +16,6 @@ allprojects {
         maven { url = uri("https://oss.sonatype.org/service/local/repositories/releases/content") }
         maven { url = uri("https://oss.sonatype.org/content/repositories/snapshots") }
         mavenLocal()
-    }
-}
-
-fixers {
-    bundle {
-        id = "d2"
-        name = "D2"
-        description = "Dokka plugin for SmartB projects"
-        url = "https://gitlab.smartb.city/fixers/d2"
     }
 }
 
